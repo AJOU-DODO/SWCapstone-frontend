@@ -1,7 +1,7 @@
 name: DODO CI Pipleline
 
 on:
-  pull_requests:
+  pull_request:
     branches: ["main", "develop"]
 
 jobs:
