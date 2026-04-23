@@ -6,26 +6,18 @@ import { NestSummary } from "@/app/(webview)/nests/page";
 
 export type PostType = "image" | "text";
 
-/*export interface Post {
-  id: number;
-  type: PostType;
-  hasLeaf: boolean;
-  content: string;
-  title?: string;
-  gradient?: string;
-}
-  */
-
 interface PostCardProps {
   post: NestSummary;
   key?: React.Key;
+  selectNest: () => void;
 }
 
-export default function PostCard({ post }: PostCardProps) {
-  //const isImageType = post.type === "image";
-
+export default function PostCard({ post, selectNest }: PostCardProps) {
   return (
-    <div className="relative bg-white rounded-[2rem] p-5 shadow-sm border border-[#F0EBE0] mb-6 last:mb-0">
+    <div
+      onClick={selectNest}
+      className="relative bg-white rounded-[2rem] p-5 shadow-sm border border-[#F0EBE0] mb-6 last:mb-0"
+    >
       {/* Leaf Icon */}
       {/*{post.hasLeaf && (
         <div className="absolute -top-2 -left-2 bg-white rounded-full p-2 shadow-sm border border-[#F0EBE0] z-10">
@@ -49,9 +41,9 @@ export default function PostCard({ post }: PostCardProps) {
               <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
               <Lock size={32} className="text-white/60 relative z-10" />
             </div>
-            {/* Content Text */}
+            {/* Title */}
             <p className="text-[#4A4A4A] text-[0.95rem] leading-relaxed line-clamp-2 font-medium">
-              {/*post.*/}
+              {post.title}
             </p>
           </>
         ) : (

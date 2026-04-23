@@ -2,6 +2,7 @@
 
 import FeedHeader from "@/components/FeedHeader";
 import PostCard from "@/components/PostCard";
+import UnlockModal from "@/components/UnlockModal";
 import { useState, useEffect } from "react";
 
 export interface ApiResponse {
@@ -14,7 +15,7 @@ export interface ApiResponse {
 export interface NestSummary {
   id: number;
   title: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   ad: boolean;
   unlocked: boolean;
 }
@@ -23,20 +24,34 @@ export default function Page() {
   const [nestIds, setNestIds] = useState<number[]>([]);
   const [accessToken, setAccessToken] = useState<string>("");
   const [nestSummaries, setNestSummaries] = useState<NestSummary[]>([]);
+  const [selectedNest, setSelectedNest] = useState<NestSummary | null>(null);
+
+  const handleNestClick = (nest: NestSummary) => {
+    setSelectedNest(nest);
+  };
+
+  const handleConfirmNest = () => {
+    if (selectedNest) {
+      sendNestToNative(selectedNest);
+      setSelectedNest(null);
+    }
+  };
+
+  const sendNestToNative = (nest: NestSummary) => {
+    if (window.AndroidBridge && window.AndroidBridge.sendNestIdSelected) {
+      window.AndroidBridge.sendNestIdSelected(nest.id);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.AndroidBridge) {
       try {
-        // 안드로이드 브릿지 함수를 '실행'하여 리턴값을 변수에 담습니다.
-        // (주의: 콘솔에서 괄호 없이 쳤을 때 값이 나왔다면 괄호를 빼야 할 수도 있지만,
-        // 보통 안드로이드 네이티브 브릿지는 함수 형태이므로 괄호()를 붙여서 실행합니다.)
         const token = window.AndroidBridge.getAccessToken();
         const idsString = window.AndroidBridge.getNestIds();
 
         console.log("네이티브에서 꺼내온 토큰:", token);
         console.log("네이티브에서 꺼내온 IDs:", idsString);
 
-        // 토큰이 정상적으로 들어왔다면 상태와 로컬 스토리지에 저장
         if (token) {
           setAccessToken(token);
           localStorage.setItem("accessToken", token);
@@ -94,10 +109,21 @@ export default function Page() {
 
         <div className="flex flex-col">
           {nestSummaries.map((nestSummary) => (
-            <PostCard key={nestSummary.id} post={nestSummary} />
+            <PostCard
+              key={nestSummary.id}
+              post={nestSummary}
+              selectNest={() => handleNestClick(nestSummary)}
+            />
           ))}
         </div>
       </div>
+      {selectedNest && (
+        <UnlockModal
+          nest={selectedNest}
+          onClose={() => setSelectedNest(null)}
+          onConfirm={handleConfirmNest}
+        />
+      )}
     </div>
   );
 }
