@@ -17,44 +17,44 @@ export default function UnlockModal({
     <Dialog open={!!nest} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-sm rounded-[2.5rem] border-none bg-white p-6 shadow-2xl"
+        className="max-w-[320px] rounded-[2rem] border-none bg-white p-5 shadow-2xl"
       >
         <div className="flex flex-col">
           {/* Post Preview Area */}
-          <div className="bg-[#FAF7E4] rounded-[2rem] p-4 border border-[#F0EBE0] mb-8">
+          <div className="bg-[#FAF7E4] rounded-2xl p-4 border border-[#F0EBE0] mb-5">
             {nest.thumbnailUrl ? (
               <div
-                className={`w-full aspect-[4/3] rounded-2xl bg-gradient-to-br mb-3 flex items-center justify-center overflow-hidden`}
+                className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br mb-2 flex items-center justify-center overflow-hidden`}
                 style={{ backgroundImage: `url(${nest.thumbnailUrl})` }}
               >
-                <Lock size={24} className="text-white/40" />
+                <Lock size={20} className="text-white/40" />
               </div>
             ) : null}
-            <p className="text-[#4A4A4A] text-sm leading-relaxed line-clamp-2 text-center font-medium">
+            <p className="text-[#4A4A4A] text-[13px] leading-relaxed line-clamp-2 text-center font-medium">
               {nest.title}
             </p>
           </div>
 
           {/* Text Section */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-6">
             <DialogHeader>
-              <DialogTitle className="text-[#2D2D2D] text-lg font-bold tracking-tight text-center">
+              <DialogTitle className="text-[#2D2D2D] text-[16px] font-bold tracking-tight text-center">
                 해당 둥지를 찾으러 가시겠습니까?
               </DialogTitle>
             </DialogHeader>
           </div>
 
           {/* Buttons Section */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 h-16 rounded-2xl border border-[#F0EBE0] text-[#8E8A7E] font-bold text-lg active:bg-gray-50 transition-colors cursor-pointer"
+              className="flex-1 h-14 rounded-xl border border-[#F0EBE0] text-[#8E8A7E] font-bold text-base active:bg-gray-50 transition-colors cursor-pointer"
             >
               NO
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 h-16 rounded-2xl border border-[#F0EBE0] text-[#2D2D2D] font-bold text-lg active:bg-gray-50 transition-colors cursor-pointer"
+              className="flex-1 h-14 rounded-xl border border-[#F0EBE0] text-[#2D2D2D] font-bold text-base active:bg-gray-50 transition-colors cursor-pointer"
             >
               YES
             </button>
