@@ -14,8 +14,10 @@ export interface ApiResponse {
 
 export interface NestSummary {
   id: number;
-  title: string;
+  content: string;
   thumbnailUrl?: string;
+  likeCount: number;
+  categoryNames: string[];
   ad: boolean;
   unlocked: boolean;
 }

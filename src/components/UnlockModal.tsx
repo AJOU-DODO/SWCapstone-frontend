@@ -31,7 +31,7 @@ export default function UnlockModal({
               </div>
             ) : null}
             <p className="text-[#4A4A4A] text-[13px] leading-relaxed line-clamp-2 text-center font-medium">
-              {nest.title}
+              {nest.content}
             </p>
           </div>
 

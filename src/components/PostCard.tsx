@@ -18,22 +18,11 @@ export default function PostCard({ post, selectNest }: PostCardProps) {
       onClick={selectNest}
       className="relative bg-white rounded-[2rem] p-5 shadow-sm border border-[#F0EBE0] mb-6 last:mb-0"
     >
-      {/* Leaf Icon */}
-      {/*{post.hasLeaf && (
-        <div className="absolute -top-2 -left-2 bg-white rounded-full p-2 shadow-sm border border-[#F0EBE0] z-10">
-          <Leaf size={18} className="text-[#3C5A3E] fill-[#3C5A3E]/10" />
-        </div>
-      )}*/}
-
-      {/*<div
-              className={`w-full aspect-[16/9] rounded-2xl bg-gradient-to-br ${post.gradient} flex items-center justify-center relative overflow-hidden`}
-            ></div>*/}
-
       {/* Content Area */}
       <div className="flex flex-col gap-4">
         {post.thumbnailUrl ? (
           <>
-            {/* Mock Image Area */}
+            {/*Image Area */}
             <div
               className="w-full aspect-[16/9] rounded-2xl bg-cover bg- center flex items-center justify-center relative"
               style={{ backgroundImage: `url(${post.thumbnailUrl})` }}
@@ -41,22 +30,23 @@ export default function PostCard({ post, selectNest }: PostCardProps) {
               <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
               <Lock size={32} className="text-white/60 relative z-10" />
             </div>
-            {/* Title */}
+            {/* Content */}
             <p className="text-[#4A4A4A] text-[0.95rem] leading-relaxed line-clamp-2 font-medium">
-              {post.title}
+              {post.content}
             </p>
           </>
         ) : (
           <div className="py-2">
-            {/* Title */}
-            {post.title && (
-              <h3 className="text-[#2D2D2D] text-lg font-bold mb-2 tracking-tight">
-                {post.title}
-              </h3>
-            )}
-            {/* Body Text */}
+            {/* Mock Image Area */}
+            <div
+              className={`w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-rose-100 to-teal-100 flex items-center justify-center relative overflow-hidden`}
+            >
+              <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
+              <Lock size={32} className="text-white/60 relative z-10" />
+            </div>
+            {/* Content */}
             <p className="text-[#5A5A5A] text-[0.95rem] leading-relaxed line-clamp-4">
-              {/*post.message*/}
+              {post.content}
             </p>
           </div>
         )}
