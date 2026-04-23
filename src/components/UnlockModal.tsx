@@ -27,9 +27,17 @@ export default function UnlockModal({
                 className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br mb-2 flex items-center justify-center overflow-hidden`}
                 style={{ backgroundImage: `url(${nest.thumbnailUrl})` }}
               >
-                <Lock size={20} className="text-white/40" />
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-lg" />
+                <Lock size={20} className="text-black/40" />
               </div>
-            ) : null}
+            ) : (
+              <div
+                className={`w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-rose-100 to-teal-100 flex items-center justify-center relative`}
+              >
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-lg" />
+                <Lock size={20} className="text-black/40 relative z-10" />
+              </div>
+            )}
             <p className="text-[#4A4A4A] text-[13px] leading-relaxed line-clamp-2 text-center font-medium">
               {nest.content}
             </p>
