@@ -21,7 +21,7 @@ export async function saveDraft(
   const res = await fetch(`${BASE_URL}/api/v1/nests/drafts`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      //"Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({ data: payload }),
