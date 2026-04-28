@@ -23,12 +23,13 @@ export function useBridge() {
 
     if (typeof window !== "undefined" && window.AndroidBridge) {
       const token = window.AndroidBridge.getAccessToken();
-      const location = window.AndroidBridge.getLocation();
+      const location = JSON.parse(window.AndroidBridge.getLocation());
 
       if (token && location) {
         try {
           const parsed: BridgeInitialData = {
-            ...JSON.parse(location),
+            latitude: Number(location.latitude),
+            longitude: Number(location.longitude),
             accessToken: token,
           };
           setBridgeData(parsed);
