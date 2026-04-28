@@ -21,7 +21,5 @@ export interface NestPayload {
 }
 
 export interface BridgeInitialData {
-  latitude: number;
-  longitude: number;
   accessToken: string;
 }

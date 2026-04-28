@@ -7,7 +7,7 @@ export function UnlockRadiusSelector() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-[#8B8070] font-medium">해금 범위 설정</span>
+      <span className="text-s text-[#8B8070] font-medium">해금 범위 설정</span>
       <div className="flex items-center gap-3 ml-1">
         {([150, 10] as const).map((val) => (
           <label key={val} className="flex items-center gap-1.5 cursor-pointer">
@@ -25,7 +25,7 @@ export function UnlockRadiusSelector() {
             <button
               type="button"
               onClick={() => setUnlockRadius(val)}
-              className="text-xs text-[#5C5346]"
+              className="text-s text-[#5C5346]"
             >
               {val === 150 ? "넓게" : "좁게"}
             </button>
