@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useNestEditorStore } from "@/lib/store/nestEditorStore";
@@ -18,17 +18,10 @@ export function NestEditorClient() {
     accessToken,
     isSubmitting,
     setSubmitting,
-    setBridgeData,
     getDraftPayload,
     getPublishPayload,
     errors,
   } = useNestEditorStore();
-  useEffect(() => {
-    setBridgeData({
-      accessToken:
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0d2lsaWdodDIyQGFqb3UuYWMua3IiLCJ1aWQiOiJLTkowM25aMiIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3NzczNjAyMTgsImV4cCI6MTc3NzM2MjAxOH0.pUByZ8gWEoNy9__u53ZI2l393icPxBh2c69z2ijvOrM",
-    });
-  }, [setBridgeData]);
 
   const [toast, setToast] = useState<ToastState>(null);
 

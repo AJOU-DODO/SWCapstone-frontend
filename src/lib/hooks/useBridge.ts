@@ -22,10 +22,15 @@ export function useBridge() {
     };
 
     if (typeof window !== "undefined" && window.AndroidBridge) {
-      const dataStr = window.AndroidBridge.getAccessToken();
-      if (dataStr) {
+      const token = window.AndroidBridge.getAccessToken();
+      const location = window.AndroidBridge.getLocation();
+
+      if (token && location) {
         try {
-          const parsed: BridgeInitialData = JSON.parse(dataStr);
+          const parsed: BridgeInitialData = {
+            ...JSON.parse(location),
+            accessToken: token,
+          };
           setBridgeData(parsed);
         } catch (e) {
           console.error("Bridge initial data parse error:", e);

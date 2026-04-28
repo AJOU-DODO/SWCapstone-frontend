@@ -5,6 +5,7 @@ declare global {
     AndroidBridge: {
       getNestIds: () => string;
       getAccessToken: () => string;
+      getLocation: () => string;
       sendNestIdSelected: (nestId: number) => void;
       requestImageUpload: () => void;
       onCategorySelected?: (categoryIds: string) => void;
