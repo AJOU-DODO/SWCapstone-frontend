@@ -62,7 +62,7 @@ export function NestEditorClient() {
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
-    <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
       {toast && (
         <div
           className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl shadow-lg text-sm font-medium transition-all ${
@@ -87,8 +87,16 @@ export function NestEditorClient() {
 
         <div className="h-px bg-[#E0DDD3]" />
 
-        <section className="space-y-3">
+        <section>
+          <span className="text-s text-[#8B8070] font-medium">
+            카테고리 선택
+          </span>
           <CategorySelector />
+        </section>
+
+        <div className="h-px bg-[#E0DDD3]" />
+
+        <section className="space-y-3">
           <UnlockRadiusSelector />
         </section>
 
