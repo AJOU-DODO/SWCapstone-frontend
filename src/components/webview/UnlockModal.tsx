@@ -24,7 +24,7 @@ export default function UnlockModal({
           <div className="bg-[#FAF7E4] rounded-2xl p-4 border border-[#F0EBE0] mb-5">
             {nest.thumbnailUrl ? (
               <div
-                className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br mb-2 flex items-center justify-center overflow-hidden`}
+                className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br mb-2 flex items-center justify-center overflow-hidden relative`}
                 style={{ backgroundImage: `url(${nest.thumbnailUrl})` }}
               >
                 <div className="absolute inset-0 bg-white/20 backdrop-blur-lg" />
