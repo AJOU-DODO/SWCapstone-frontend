@@ -1,8 +1,8 @@
 "use client";
 
-import FeedHeader from "@/components/FeedHeader";
-import PostCard from "@/components/PostCard";
-import UnlockModal from "@/components/UnlockModal";
+import FeedHeader from "@/components/webview/FeedHeader";
+import PostCard from "@/components/webview/PostCard";
+import UnlockModal from "@/components/webview/UnlockModal";
 import { useState, useEffect } from "react";
 
 export interface ApiResponse {

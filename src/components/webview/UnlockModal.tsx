@@ -1,6 +1,6 @@
 import { NestSummary } from "@/app/(webview)/nests/page";
 import { Lock } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 interface UnlockModalProps {
   nest: NestSummary;
