@@ -15,7 +15,7 @@ export interface NestPayload {
   latitude: number | null;
   longitude: number | null;
   content: string | null;
-  unlockRadius: 100 | 200;
+  unlockRadius: 10 | 150;
   categoryIds: number[] | null;
   imageUrls: string[] | null;
 }

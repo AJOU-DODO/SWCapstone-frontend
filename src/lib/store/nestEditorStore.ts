@@ -8,7 +8,7 @@ interface NestEditorState {
   isBridgeReady: boolean;
   imageUrls: string[];
   categoryIds: number[];
-  unlockRadius: 100 | 200;
+  unlockRadius: 150 | 10;
   content: string;
   isSubmitting: boolean;
   errors: Partial<Record<keyof NestPayload, string>>;
@@ -17,7 +17,7 @@ interface NestEditorState {
   addImage: (url: string) => void;
   removeImage: (url: string) => void;
   setCategoryIds: (ids: number[]) => void;
-  setUnlockRadius: (radius: 100 | 200) => void;
+  setUnlockRadius: (radius: 150 | 10) => void;
   setContent: (content: string) => void;
   setSubmitting: (value: boolean) => void;
   setErrors: (errors: Partial<Record<keyof NestPayload, string>>) => void;
@@ -33,7 +33,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   isBridgeReady: false,
   imageUrls: [],
   categoryIds: [],
-  unlockRadius: 200,
+  unlockRadius: 10,
   content: "",
   isSubmitting: false,
   errors: {},
