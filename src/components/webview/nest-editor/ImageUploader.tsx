@@ -34,7 +34,7 @@ export function ImageUploader() {
             className="relative shrink-0 w-24 h-24 rounded-2xl overflow-hidden group"
           >
             <Image
-              src={`data:image/png;base64,${url}`}
+              src={`${url}`}
               alt="Base64 이미지"
               fill
               className="object-cover"
