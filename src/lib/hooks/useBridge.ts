@@ -22,6 +22,10 @@ export function useBridge() {
       addImage(imageUrl);
     };
 
+    window.onImageReceived = (base64Data: string) => {
+      addImage(base64Data);
+    };
+
     if (typeof window !== "undefined" && window.AndroidBridge) {
       console.log("브릿지 실행 시작");
       const token = window.AndroidBridge.getAccessToken();
@@ -48,14 +52,12 @@ export function useBridge() {
     return () => {
       window.onInitialData = undefined;
       window.onImageUploaded = undefined;
+      window.onImageReceived = undefined;
     };
-  }, []);
+  }, [addImage, setBridgeData]);
 
   const requestImageUpload = () => {
     window.AndroidBridge.requestImageUpload();
-    const imageBase64 = window.onImageReceived();
-    console.log(imageBase64);
-    addImage(imageBase64);
   };
 
   const sendCategorySelection = (categoryIds: number[]) => {
