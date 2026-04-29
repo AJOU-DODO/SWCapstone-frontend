@@ -12,6 +12,7 @@ declare global {
     };
     onInitialData?: (data: string) => void;
     onImageUploaded?: (imageUrl: string) => void;
+    onImageReceived: () => string;
   }
 }
 

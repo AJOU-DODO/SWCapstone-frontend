@@ -29,7 +29,7 @@ export function useBridge() {
 
       if (token && location) {
         try {
-          console.log("token, location 수신 성공");
+          console.log(`token:${token}, location${location}`);
           const parsed: BridgeInitialData = {
             latitude: Number(location.latitude),
             longitude: Number(location.longitude),
@@ -50,7 +50,8 @@ export function useBridge() {
   }, []);
 
   const requestImageUpload = () => {
-    const imageBase64 = window.AndroidBridge.requestImageUpload();
+    window.AndroidBridge.requestImageUpload();
+    const imageBase64 = window.onImageReceived();
     addImage(imageBase64);
   };
 
