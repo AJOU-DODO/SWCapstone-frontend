@@ -54,6 +54,7 @@ export function useBridge() {
   const requestImageUpload = () => {
     window.AndroidBridge.requestImageUpload();
     const imageBase64 = window.onImageReceived();
+    console.log(imageBase64);
     addImage(imageBase64);
   };
 
