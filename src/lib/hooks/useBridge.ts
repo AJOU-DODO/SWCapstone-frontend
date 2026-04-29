@@ -8,6 +8,7 @@ export function useBridge() {
   const { setBridgeData, addImage } = useNestEditorStore();
 
   useEffect(() => {
+    console.log("Bridge Hook Mounted");
     window.onInitialData = (dataStr: string) => {
       try {
         const parsed: BridgeInitialData = JSON.parse(dataStr);
@@ -22,11 +23,13 @@ export function useBridge() {
     };
 
     if (typeof window !== "undefined" && window.AndroidBridge) {
+      console.log("브릿지 실행 시작");
       const token = window.AndroidBridge.getAccessToken();
       const location = JSON.parse(window.AndroidBridge.getLocation());
 
       if (token && location) {
         try {
+          console.log("token, location 수신 성공");
           const parsed: BridgeInitialData = {
             latitude: Number(location.latitude),
             longitude: Number(location.longitude),
@@ -36,16 +39,19 @@ export function useBridge() {
         } catch (e) {
           console.error("Bridge initial data parse error:", e);
         }
+      } else {
+        console.log("token, location 수신 실패");
       }
     }
     return () => {
       window.onInitialData = undefined;
       window.onImageUploaded = undefined;
     };
-  }, [setBridgeData, addImage]);
+  }, []);
 
   const requestImageUpload = () => {
-    window.AndroidBridge.requestImageUpload?.();
+    const imageBase64 = window.AndroidBridge.requestImageUpload();
+    addImage(imageBase64);
   };
 
   const sendCategorySelection = (categoryIds: number[]) => {

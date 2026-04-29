@@ -7,7 +7,7 @@ declare global {
       getAccessToken: () => string;
       getLocation: () => string;
       sendNestIdSelected: (nestId: number) => void;
-      requestImageUpload: () => void;
+      requestImageUpload: () => string;
       onCategorySelected?: (categoryIds: string) => void;
     };
     onInitialData?: (data: string) => void;

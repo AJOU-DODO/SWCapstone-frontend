@@ -41,6 +41,8 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   setBridgeData: (data) =>
     set({
       accessToken: data.accessToken,
+      latitude: data.latitude,
+      longitude: data.longitude,
       isBridgeReady: true,
     }),
 
