@@ -29,12 +29,14 @@ export function useBridge() {
 
       if (token && location) {
         try {
-          console.log(`token:${token}, location${location}`);
           const parsed: BridgeInitialData = {
             latitude: Number(location.latitude),
             longitude: Number(location.longitude),
             accessToken: token,
           };
+          console.log(
+            `token:${parsed.accessToken}, latitude:${parsed.latitude}, longitue:${parsed.longitude}`,
+          );
           setBridgeData(parsed);
         } catch (e) {
           console.error("Bridge initial data parse error:", e);
