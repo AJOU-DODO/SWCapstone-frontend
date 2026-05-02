@@ -8,15 +8,14 @@ interface UserSortSectionProps {
   initialSort: string;
 }
 
-export default function UserSortSection({ initialSort }: UserSortSectionProps) {
-  // 클라이언트의 상태 관리
+export default function UserSortSection() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const currentSort = searchParams.get("sort") || "id";
-  const currentOrder = searchParams.get("order") || "asc";
 
+  //정렬 옵션
   const sortOptions = [
     { label: "유저 ID", value: "id" },
     { label: "가입 날짜", value: "createdAt" },
@@ -26,10 +25,8 @@ export default function UserSortSection({ initialSort }: UserSortSectionProps) {
   ];
 
   const handleSort = (newField: string) => {
-    // 1. 기존의 모든 파라미터(page 등)를 복사한 새로운 바구니 생성
     const params = new URLSearchParams(searchParams.toString());
 
-    // 2. 토글 로직: 같은 필드면 방향 전환, 새로운 필드면 asc로 시작
     if (params.get("sort") === newField) {
       const nextOrder = params.get("order") === "asc" ? "desc" : "asc";
       params.set("order", nextOrder);
@@ -38,17 +35,16 @@ export default function UserSortSection({ initialSort }: UserSortSectionProps) {
       params.set("order", "asc");
     }
 
-    // 3. 정렬이 바뀌면 페이지는 항상 1페이지로!
+    //옵션이 바뀌면 페이지는 1로 설정.
     params.set("page", "1");
 
-    // 4. 완성된 주소로 이동 (예: /admin/users?sort=id&order=desc&page=1)
     router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
     <SortFilterGroup
       options={sortOptions}
-      currentValue={currentSort} // 현재 어떤 필드가 선택됐는지 전달
+      currentValue={currentSort}
       onChange={handleSort}
     />
   );

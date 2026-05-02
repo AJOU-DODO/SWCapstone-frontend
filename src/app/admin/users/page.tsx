@@ -16,9 +16,6 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
   ];
 
   //임의 데이터 (페이지네이션을 위한)
-  const params = await searchParams;
-  const currentPage = Number(params.page) || 1;
-
   const totalItems = 80; // 전체 유저 수
   const itemsPerPage = 10; // 한 페이지당 보여줄 수
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -30,7 +27,7 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
       </div>
 
       <div>
-        <UserSortSection initialSort={currentSort} />
+        <UserSortSection/>
       </div>
 
       <div className="overflow-hidden">
@@ -38,7 +35,7 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
       </div>
 
       <div className="mt-6 py-4 border-t">
-        <Pagination totalPages={totalPages} currentPage={currentPage}/>
+        <Pagination totalPages={totalPages}/>
       </div>
     </div>
   )

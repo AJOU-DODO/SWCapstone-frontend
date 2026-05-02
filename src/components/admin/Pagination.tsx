@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Pagination,
   PaginationContent,
@@ -7,12 +9,13 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-interface Props {
-  totalPages: number;
-  currentPage: number;
-}
+import { useSearchParams, usePathname } from "next/navigation";
 
-export default function Paginaition({ totalPages, currentPage }: Props) {
+export default function Paginaition({ totalPages }: { totalPages: number }) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const currentPage = Number(searchParams.get("page")) || 1;
+
   //페이지 버튼은 5개씩 보여준다
   const displayRange = 5;
   const startPage = Math.floor((currentPage - 1) / displayRange) * displayRange + 1;
@@ -23,13 +26,19 @@ export default function Paginaition({ totalPages, currentPage }: Props) {
     pages.push(i);
   }
 
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", pageNumber.toString());
+    return `${pathname}?${params.toString()}`; 
+  };
+
   return (
     <Pagination>
       <PaginationContent>
         {/* 이전 페이지 버튼 */}
         <PaginationItem>
           <PaginationPrevious 
-            href={`/admin/users?page=${startPage - 1}`} 
+            href={createPageURL(startPage - 1)}
             className={startPage === 1 ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
@@ -37,7 +46,7 @@ export default function Paginaition({ totalPages, currentPage }: Props) {
         {pages.map((page) => (
           <PaginationItem key={page}>
             <PaginationLink 
-              href={`/admin/users?page=${page}`} 
+              href={createPageURL(page)}
               isActive={page === currentPage}
               className={page === currentPage ? "bg-[#2B6340] text-white hover:bg-green-700 hover:text-white" : "hover:bg-transparent"}
             >
@@ -49,7 +58,7 @@ export default function Paginaition({ totalPages, currentPage }: Props) {
         {/* 다음 페이지 버튼 */}
         <PaginationItem>
           <PaginationNext 
-            href={`/admin/users?page=${endPage + 1}`}
+            href={createPageURL(endPage + 1)}
             className={endPage >= totalPages ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
