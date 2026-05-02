@@ -14,9 +14,9 @@ interface User {
   email: string;
   role: "USER" | "ADMIN" | "ADVERTISER";
   status: "AVTIVE" | "BANNED";
-  created_at: string;
-  num_nest: number;
-  num_reply: number;
+  createdAt: string;
+  numNest: number;
+  numReply: number;
 }
 
 export default function UserTable({ users }: { users: User[] }) {
@@ -43,9 +43,9 @@ export default function UserTable({ users }: { users: User[] }) {
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
               <TableCell>{user.status}</TableCell>
-              <TableCell>{user.created_at}</TableCell>
-              <TableCell>{user.num_nest}</TableCell>
-              <TableCell>{user.num_reply}</TableCell>
+              <TableCell>{user.createdAt}</TableCell>
+              <TableCell>{user.numNest}</TableCell>
+              <TableCell>{user.numReply}</TableCell>
             </TableRow>
           ))}
         </TableBody>
