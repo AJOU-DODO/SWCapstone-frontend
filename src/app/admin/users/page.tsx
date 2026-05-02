@@ -1,8 +1,12 @@
 import SearchBar from '@/components/admin/SearchBar';
 import UserTable from '@/components/admin/UserTable';
 import Pagination from '@/components/admin/Pagination';
+import UserSortSection from '@/components/admin/UserSortSection';
 
-export default async function Page({ searchParams,}: {searchParams: { page?: string };}) {
+export default async function Page({ searchParams,}: {searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) {
+  //정렬 옵션
+  const currentSort = await searchParams;
+
   //임의의 데이터. (테이블 확인을 위한) 추후 삭제될 부분.
   const users = [
     { id: "1", nickname: "어드민", email: "admin@gmail.com", role: "ADMIN", status: "ACTIVE", created_at: "2023-02-01", num_nest: 27, num_reply: 5},
@@ -20,9 +24,13 @@ export default async function Page({ searchParams,}: {searchParams: { page?: str
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
+    <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
       <div className="justify-between items-center">
         <SearchBar placeholder='유저 ID 혹은 유저 name 검색' /> 
+      </div>
+
+      <div>
+        <UserSortSection initialSort={currentSort} />
       </div>
 
       <div className="overflow-hidden">
