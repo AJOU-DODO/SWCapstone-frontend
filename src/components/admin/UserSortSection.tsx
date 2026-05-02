@@ -37,6 +37,7 @@ export default function UserSortSection() {
     <SortFilterGroup
       options={sortOptions}
       currentValue={currentSort}
+      currentOrder={currentOrder}
       onChange={handleSort}
     />
   );
