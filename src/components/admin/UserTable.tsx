@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/table"
 
 // 데이터는 변경될 수 있음
-interface User {
-  id: number;
+export interface User {
+  id: string;
   nickname: string;
   email: string;
   role: "USER" | "ADMIN" | "ADVERTISER";
-  status: "AVTIVE" | "BANNED";
+  status: "ACTIVE" | "BANNED";
   createdAt: string;
   numNest: number;
   numReply: number;

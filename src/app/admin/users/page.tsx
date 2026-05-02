@@ -1,5 +1,5 @@
 import SearchBar from '@/components/admin/SearchBar';
-import UserTable from '@/components/admin/UserTable';
+import UserTable, { User } from '@/components/admin/UserTable';
 import Pagination from '@/components/admin/Pagination';
 import UserSortSection from '@/components/admin/UserSortSection';
 
@@ -8,12 +8,48 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
   const currentSort = await searchParams;
 
   //임의의 데이터. (테이블 확인을 위한) 추후 삭제될 부분.
-  const users = [
-    { id: "1", nickname: "어드민", email: "admin@gmail.com", role: "ADMIN", status: "ACTIVE", createdAt: "2023-02-01", numNest: 27, numReply: 5},
-    { id: "2", nickname: "김도도", email: "kim@example.com", role: "USER", status: "ACTIVE", createdAt: "2023-02-01", numNest: 27, numReply: 5 },
-    { id: "3", nickname: "양아치", email: "badguy@example.com", role: "USER", status: "BANNED", createdAt: "2023-02-01", numNest: 27, numReply: 5 },
-    { id: "4", nickname: "광고주", email: "adv@example.com", role: "ADVERTISER", status: "ACTIVE", createdAt: "2023-02-01", numNest: 27, numReply: 5 },
-  ];
+  const users: User[] = [
+    { 
+      id: "1", 
+      nickname: "어드민", 
+      email: "admin@gmail.com", 
+      role: "ADMIN", 
+      status: "ACTIVE", 
+      createdAt: "2023-02-01", 
+      numNest: 27, 
+      numReply: 5 
+    },
+    { 
+    id: "2", 
+    nickname: "김도도", 
+    email: "kim@gmail.com", 
+    role: "USER", 
+    status: "ACTIVE", 
+    createdAt: "2023-02-01", 
+    numNest: 27, 
+    numReply: 5 
+    },
+    { 
+      id: "3", 
+      nickname: "양아치", 
+      email: "badguy@gmail.com", 
+      role: "ADMIN", 
+      status: "BANNED", 
+      createdAt: "2023-02-01", 
+      numNest: 27, 
+      numReply: 5 
+    },
+    { 
+    id: "4", 
+    nickname: "광고주", 
+    email: "adv@gmail.com", 
+    role: "ADVERTISER", 
+    status: "ACTIVE", 
+    createdAt: "2023-02-01", 
+    numNest: 27, 
+    numReply: 5 
+    },
+  ]
 
   //임의 데이터 (페이지네이션을 위한)
   const totalItems = 80; // 전체 유저 수
