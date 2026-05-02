@@ -1,7 +1,7 @@
 // src/app/admin/users/_components/UserSortSection.tsx
 "use client"
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 import SortFilterGroup from "@/components/admin/SortFilterGroup";
 
 interface UserSortSectionProps {
@@ -9,11 +9,10 @@ interface UserSortSectionProps {
 }
 
 export default function UserSortSection() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const { updateQuery, searchParams } = useUpdateQuery();
 
   const currentSort = searchParams.get("sort") || "id";
+  const currentOrder = searchParams.get("order") || "asc";
 
   //정렬 옵션
   const sortOptions = [
@@ -24,21 +23,14 @@ export default function UserSortSection() {
     { label: "댓글 수", value: "commentCount" },
   ];
 
+  //정렬 변경
   const handleSort = (newField: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (params.get("sort") === newField) {
-      const nextOrder = params.get("order") === "asc" ? "desc" : "asc";
-      params.set("order", nextOrder);
+    if (currentSort === newField) {
+      const nextOrder = currentOrder === "asc" ? "desc" : "asc";
+      updateQuery({ order: nextOrder });
     } else {
-      params.set("sort", newField);
-      params.set("order", "asc");
+      updateQuery({ sort: newField, order: "asc" });
     }
-
-    //옵션이 바뀌면 페이지는 1로 설정.
-    params.set("page", "1");
-
-    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
