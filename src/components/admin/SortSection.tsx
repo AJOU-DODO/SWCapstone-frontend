@@ -1,27 +1,23 @@
-// src/app/admin/users/_components/UserSortSection.tsx
 "use client"
 
 import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 import SortFilterGroup from "@/components/admin/SortFilterGroup";
 
-interface UserSortSectionProps {
-  initialSort: string;
+export interface SortOption {
+  label: string;
+  value: string;
 }
 
-export default function UserSortSection() {
+interface SortSectionProps {
+  options: SortOption[];
+  defaultSort: string;
+}
+
+export default function UserSortSection({ options, defaultSort}: SortSectionProps) {
   const { updateQuery, searchParams } = useUpdateQuery();
 
-  const currentSort = searchParams.get("sort") || "id";
+  const currentSort = searchParams.get("sort") || defaultSort;
   const currentOrder = searchParams.get("order") || "asc";
-
-  //정렬 옵션
-  const sortOptions = [
-    { label: "유저 ID", value: "id" },
-    { label: "가입 날짜", value: "createdAt" },
-    { label: "유저 유형", value: "role" },
-    { label: "게시글 수", value: "nestCount" },
-    { label: "댓글 수", value: "commentCount" },
-  ];
 
   //정렬 변경
   const handleSort = (newField: string) => {
@@ -35,7 +31,7 @@ export default function UserSortSection() {
 
   return (
     <SortFilterGroup
-      options={sortOptions}
+      options={options}
       currentValue={currentSort}
       currentOrder={currentOrder}
       onChange={handleSort}

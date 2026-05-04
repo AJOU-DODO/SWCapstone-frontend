@@ -1,7 +1,7 @@
 import SearchBar from '@/components/admin/SearchBar';
 import UserTable, { User } from '@/components/admin/UserTable';
 import Pagination from '@/components/admin/Pagination';
-import UserSortSection from '@/components/admin/UserSortSection';
+import SortSection from '@/components/admin/SortSection';
 
 export default async function Page({ searchParams,}: {searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) {
   //정렬 옵션
@@ -56,6 +56,15 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
   const itemsPerPage = 10; // 한 페이지당 보여줄 수
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+  //정렬 옵션
+  const sortOptions = [
+    { label: "유저 ID", value: "id" },
+    { label: "가입 날짜", value: "createdAt" },
+    { label: "유저 유형", value: "role" },
+    { label: "게시글 수", value: "nestCount" },
+    { label: "댓글 수", value: "commentCount" },
+  ];
+
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
       <div className="justify-between items-center">
@@ -63,7 +72,7 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
       </div>
 
       <div>
-        <UserSortSection/>
+        <SortSection options={sortOptions} defaultSort='id'/>
       </div>
 
       <div className="overflow-hidden">

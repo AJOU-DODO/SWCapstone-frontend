@@ -35,7 +35,6 @@ export default function NestTable({ nests }: { nests: Nest[] }) {
         <TableBody>
           {nests.map((nest) => (
             <TableRow key={nest.id} className="border-[#54513E]/50">
-              <TableCell className="font-medium">{nest.id}</TableCell>
               <TableCell>{nest.creatorNickname}</TableCell>
               <TableCell>{nest.content}</TableCell>
               <TableCell>{nest.createdAt}</TableCell>
