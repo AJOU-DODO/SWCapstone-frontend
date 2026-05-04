@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { BridgeInitialData, NestPayload } from "@/types";
 
 interface NestEditorState {
+  title: string;
   latitude: number | null;
   longitude: number | null;
   accessToken: string | null;
@@ -20,6 +21,7 @@ interface NestEditorState {
   setUnlockRadius: (radius: 150 | 10) => void;
   setContent: (content: string) => void;
   setSubmitting: (value: boolean) => void;
+  setTitle: (title: string) => void;
   setErrors: (errors: Partial<Record<keyof NestPayload, string>>) => void;
   clearErrors: () => void;
   getDraftPayload: () => NestPayload;
@@ -27,6 +29,7 @@ interface NestEditorState {
 }
 
 export const useNestEditorStore = create<NestEditorState>((set, get) => ({
+  title: "",
   latitude: null,
   longitude: null,
   accessToken: null,
@@ -55,12 +58,14 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   setUnlockRadius: (radius) => set({ unlockRadius: radius }),
   setContent: (content) => set({ content }),
   setSubmitting: (value) => set({ isSubmitting: value }),
+  setTitle: (title) => set({ title }),
   setErrors: (errors) => set({ errors }),
   clearErrors: () => set({ errors: {} }),
 
   getDraftPayload: () => {
     const state = get();
     return {
+      title: state.title,
       latitude: state.latitude,
       longitude: state.longitude,
       content: state.content || null,
@@ -93,6 +98,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
     }
 
     return {
+      title: state.title,
       latitude: state.latitude,
       longitude: state.longitude,
       content: state.content,

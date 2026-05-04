@@ -25,6 +25,7 @@ export function NestEditorClient() {
     setContent,
     setUnlockRadius,
     setCategoryIds,
+    setTitle,
     errors,
   } = useNestEditorStore();
 
@@ -78,6 +79,7 @@ export function NestEditorClient() {
   );
 
   const hasErrors = Object.keys(errors).length > 0;
+  setTitle("테스트");
 
   return (
     <div className="min-h-screen bg-[#FAF7E4] flex flex-col">

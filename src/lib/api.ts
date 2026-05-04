@@ -22,6 +22,7 @@ export async function fetchDrafts(
   accessToken: string,
 ): Promise<DraftListApiResponse> {
   const res = await fetch(`${BASE_URL}/api/v1/nests/drafts`, {
+    method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
   });
