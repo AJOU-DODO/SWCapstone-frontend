@@ -77,9 +77,9 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
     if (!state.latitude || !state.longitude) {
       errors.latitude = "위치 정보를 불러오는 중입니다.";
     }
-    if (state.imageUrls.length === 0) {
+    /*if (state.imageUrls.length === 0) {
       errors.imageUrls = "이미지를 1개 이상 업로드해주세요.";
-    }
+    }*/
     if (state.categoryIds.length === 0) {
       errors.categoryIds = "카테고리를 1개 이상 선택해주세요.";
     }

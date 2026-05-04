@@ -39,7 +39,7 @@ export async function publishNest(
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ data: payload }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error("게시물 발행에 실패했습니다.");
 }
