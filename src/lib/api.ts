@@ -1,4 +1,8 @@
-import type { CategoryApiResponse, NestPayload } from "@/types";
+import type {
+  CategoryApiResponse,
+  DraftListApiResponse,
+  NestPayload,
+} from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
 
@@ -11,6 +15,17 @@ export async function fetchCategories(
     cache: "no-store",
   });
   if (!res.ok) throw new Error("카테고리 목록을 불러오지 못했습니다.");
+  return res.json();
+}
+
+export async function fetchDrafts(
+  accessToken: string,
+): Promise<DraftListApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/drafts`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("임시저장 목록을 불러오지 못했습니다.");
   return res.json();
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useNestEditorStore } from "@/lib/store/nestEditorStore";
 import { saveDraft, publishNest } from "@/lib/api";
@@ -9,6 +9,8 @@ import { ImageUploader } from "./ImageUploader";
 import { CategorySelector } from "./CategorySelector";
 import { UnlockRadiusSelector } from "./UnlockRadiusSelector";
 import { ContentEditor } from "./ContentEditor";
+import { DraftListModal } from "./DraftListModal";
+import type { DraftItem } from "@/types";
 
 type ToastState = { type: "success" | "error"; message: string } | null;
 
@@ -20,10 +22,14 @@ export function NestEditorClient() {
     setSubmitting,
     getDraftPayload,
     getPublishPayload,
+    setContent,
+    setUnlockRadius,
+    setCategoryIds,
     errors,
   } = useNestEditorStore();
 
   const [toast, setToast] = useState<ToastState>(null);
+  const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
 
   const showToast = (type: "success" | "error", message: string) => {
     setToast({ type, message });
@@ -59,6 +65,18 @@ export function NestEditorClient() {
     }
   }, [isSubmitting, accessToken, getPublishPayload, setSubmitting]);
 
+  const handleLoadDraft = useCallback(
+    (draft: DraftItem) => {
+      setContent(draft.content ?? "");
+      setUnlockRadius(draft.unlockRadius);
+      setCategoryIds(draft.categoryIds ?? []);
+      useNestEditorStore.setState({ imageUrls: draft.imageUrls ?? [] });
+      setIsDraftModalOpen(false);
+      showToast("success", "임시저장 내용을 불러왔습니다.");
+    },
+    [setContent, setUnlockRadius, setCategoryIds],
+  );
+
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
@@ -79,6 +97,28 @@ export function NestEditorClient() {
           {toast.message}
         </div>
       )}
+
+      {/* 임시저장 목록 모달 */}
+      {isDraftModalOpen && accessToken && (
+        <DraftListModal
+          accessToken={accessToken}
+          open={isDraftModalOpen}
+          onClose={() => setIsDraftModalOpen(false)}
+          onLoad={handleLoadDraft}
+        />
+      )}
+
+      {/* 상단 헤더 */}
+      <div className="flex justify-end px-5 pt-4">
+        <button
+          type="button"
+          onClick={() => setIsDraftModalOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EDEAE0] text-[#5C5346] text-xs font-medium transition-all active:scale-95 hover:bg-[#E2DFD5]"
+        >
+          <Clock className="w-3.5 h-3.5" />
+          임시저장 목록
+        </button>
+      </div>
 
       <div className="flex-1 px-5 pt-5 pb-4 space-y-5">
         <section>
