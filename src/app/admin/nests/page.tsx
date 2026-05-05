@@ -1,5 +1,7 @@
 import NestTabButton from '@/components/admin/NestTabButton';
 import NestTable, { Nest } from '@/components/admin/NestTable';
+import ReportNestTable, { Report } from '@/components/admin/ReportNestTable';
+import ReplyTable, { Reply } from '@/components/admin/ReplyTable';
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
 
@@ -12,7 +14,7 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
     { 
       id: "1",
       creatorNickname: "김도도",
-      content: "여기 벚쫓이 너무 예...",
+      content: "여기 벚쫓이 너무 예쁘고 좋으네요 가나다라마바사 아자차카타파하",
       createdAt: "2023-02-01",
       likeCount: 37,
       replyCount: 5,
@@ -47,15 +49,27 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
     },
   ]
   
-  const report: Nest[] = [
+  const report: Report[] = [
     { 
       id: "1",
       creatorNickname: "김도도",
       content: "안물어봤다요다야이야이야오",
       createdAt: "2023-02-01",
-      likeCount: 37,
-      replyCount: 5,
-      reportCount: 14,
+      latestReportDate: "2023-02-01",
+      reportCount: 5,
+      reportReason: "욕설",
+    },
+  ]
+
+  const reply: Reply[] = [
+    { 
+      id: "1",
+      creatorNickname: "김도도",
+      content: "너는그게예쁘냐?눈이어떻게됐네ㅉ",
+      originContent: "여기 벚꽃이 너무 예쁘네요 다들 한번 구경오세요",
+      latestReportDate: "2023-02-01",
+      reportCount: 10,
+      reportReason: "욕설",
     },
   ]
 
@@ -64,11 +78,28 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
   const itemsPerPage = 10; // 한 페이지당 보여줄 수
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  //정렬옵션
-  const sortOptions = [
+  //전체 둥지 정렬 옵션
+  const nestSortOptions = [
     { label: "최신 순", value: "latest" },
     { label: "좋아요 순", value: "likeCount" },
     { label: "댓글 순", value: "replyCount" },
+    { label: "인기 순", value: "viewCount" },
+  ];
+
+  //신고 둥지 정렬 옵션
+  const reportSortOptions = [
+    { label: "최근 신고일", value: "latest" },
+    { label: "최초 신고일", value: "createdAt" },
+    { label: "신고 수", value: "reportCount" },
+    { label: "제재 유저", value: "userType" },
+  ];
+
+  //신고 댓글 정렬 옵션
+  const replySortOptions = [
+    { label: "최근 신고일", value: "latest" },
+    { label: "제재 유저", value: "userType" },
+    { label: "신고수", value: "reportCount" },
+    { label: "둥지", value: "nestId" },
   ];
 
   return (
@@ -78,16 +109,25 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
       </div>
 
       <div>
-        <SortSection options={sortOptions} defaultSort='latest'/>
+        <div>
+          {activeTab === 'all' && <SortSection options={nestSortOptions} defaultSort='latest'/>}
+          {activeTab === 'reported' && <SortSection options={reportSortOptions} defaultSort='latest'/>}
+          {activeTab === 'comments' && <SortSection options={replySortOptions} defaultSort='latest'/>}
+        </div>
       </div>
 
-      <div className="mt-4">
-        {activeTab === 'all' && <NestTable nests={nests}/>}
-        {activeTab === 'reported' && <NestTable nests={report}/>}
-        {activeTab === 'comments' && <div>신고된댓글</div>}
+      <div className='grid grid-cols-[1fr_1fr]'>
+        <div className="">
+          {activeTab === 'all' && <NestTable nests={nests}/>}
+          {activeTab === 'reported' && <ReportNestTable nests={report}/>}
+          {activeTab === 'comments' && <ReplyTable nests={reply}/>}
+        </div>
+        <div className='bg-white'>
+          페이지 컴포넌트
+        </div>
       </div>
 
-      <div className="mt-6 py-4 border-t">
+      <div className="py-4 border-t">
         <Pagination totalPages={totalPages}/>
       </div>
     </div>
