@@ -28,8 +28,8 @@ export function NestDetailClient({ nestId }: Props) {
   const [accessToken] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     try {
-      const parsed = JSON.parse(window.AndroidBridge?.getAccessToken() ?? "{}");
-      return parsed.accessToken ?? "";
+      const token = window.AndroidBridge?.getAccessToken();
+      return token ?? "";
     } catch {
       return "";
     }
