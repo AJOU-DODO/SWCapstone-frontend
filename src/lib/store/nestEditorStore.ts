@@ -91,6 +91,9 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
     if (!state.content.trim()) {
       errors.content = "본문을 작성해주세요.";
     }
+    if (!state.title.trim()) {
+      errors.title = "제목을 작성해주세요.";
+    }
 
     if (Object.keys(errors).length > 0) {
       set({ errors });

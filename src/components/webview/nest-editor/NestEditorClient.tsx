@@ -11,6 +11,7 @@ import { UnlockRadiusSelector } from "./UnlockRadiusSelector";
 import { ContentEditor } from "./ContentEditor";
 import { DraftListModal } from "./DraftListModal";
 import type { DraftItem } from "@/types";
+import { TitleInput } from "./TitleInput";
 
 type ToastState = { type: "success" | "error"; message: string } | null;
 
@@ -68,6 +69,7 @@ export function NestEditorClient() {
 
   const handleLoadDraft = useCallback(
     (draft: DraftItem) => {
+      setTitle(draft.title ?? "");
       setContent(draft.content ?? "");
       setUnlockRadius(draft.unlockRadius);
       setCategoryIds(draft.categoryIds ?? []);
@@ -75,11 +77,10 @@ export function NestEditorClient() {
       setIsDraftModalOpen(false);
       showToast("success", "임시저장 내용을 불러왔습니다.");
     },
-    [setContent, setUnlockRadius, setCategoryIds],
+    [setTitle, setContent, setUnlockRadius, setCategoryIds],
   );
 
   const hasErrors = Object.keys(errors).length > 0;
-  setTitle("테스트");
 
   return (
     <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
@@ -143,6 +144,10 @@ export function NestEditorClient() {
         </section>
 
         <div className="h-px bg-[#E0DDD3]" />
+
+        <section>
+          <TitleInput />
+        </section>
 
         <section>
           <ContentEditor />
