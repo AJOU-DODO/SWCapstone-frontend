@@ -23,19 +23,27 @@ export function NestDetailClient({ nestId }: Props) {
   const [localReaction, setLocalReaction] = useState<ReactionType | null>(null);
   const [likeOffset, setLikeOffset] = useState(0);
   const [dislikeOffset, setDislikeOffset] = useState(0);
+  const [accessToken, setAccessToken] = useState<string>("");
 
   //브릿지로 accesstoken 수신
-  const [accessToken] = useState<string>(() => {
-    if (typeof window === "undefined") return "";
-    try {
-      const token = window.AndroidBridge?.getAccessToken();
-      console.log(token, nestId);
-      return token ?? "";
-    } catch {
-      return "";
-    }
-  });
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.AndroidBridge) {
+      try {
+        const token = window.AndroidBridge.getAccessToken();
 
+        console.log("네이티브에서 꺼내온 토큰:", token);
+
+        if (token) {
+          setAccessToken(token);
+          localStorage.setItem("accessToken", token);
+        }
+      } catch (error) {
+        console.error("브릿지 데이터 가져오기 실패:", error);
+      }
+    } else {
+      console.log("안드로이드 브릿지가 아직 연결되지 않았습니다.");
+    }
+  }, []);
   // 둥지 상세 정보
   const { data: nestData, isLoading: isNestLoading } = useQuery({
     queryKey: ["nest", nestId],
