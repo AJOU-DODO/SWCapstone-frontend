@@ -1,4 +1,4 @@
-//전체 둥지 관리 테이블
+//신고된 둥지 관리 테이블
 import {
   Table,
   TableBody,
@@ -9,17 +9,17 @@ import {
 } from "@/components/ui/table"
 
 // 데이터는 변경될 수 있음
-export interface Nest {
+export interface Report {
   id: string;
   creatorNickname: string;
   content: string;
   createdAt: string;
-  likeCount: number;
-  replyCount: number;
+  latestReportDate: string;
   reportCount: number;
+  reportReason: string;
 }
 
-export default function NestTable({ nests }: { nests: Nest[] }) {
+export default function ReportNestTable({ nests }: { nests: Report[] }) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -27,10 +27,10 @@ export default function NestTable({ nests }: { nests: Nest[] }) {
           <TableRow className="border-[#54513E] hover:bg-transparent">
             <TableHead>작성자</TableHead>
             <TableHead>본문 내용</TableHead>
-            <TableHead>작성 날짜</TableHead>
-            <TableHead>좋아요 수</TableHead>
-            <TableHead>댓글 수 </TableHead>
+            <TableHead>최초 신고일</TableHead>
+            <TableHead>최근 신고일</TableHead>
             <TableHead>신고 수</TableHead>
+            <TableHead>신고 사유</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -39,9 +39,9 @@ export default function NestTable({ nests }: { nests: Nest[] }) {
               <TableCell>{nest.creatorNickname}</TableCell>
               <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
               <TableCell>{nest.createdAt}</TableCell>
-              <TableCell>{nest.likeCount}</TableCell>
-              <TableCell>{nest.replyCount}</TableCell>
+              <TableCell>{nest.latestReportDate}</TableCell>
               <TableCell>{nest.reportCount}</TableCell>
+              <TableCell>{nest.reportReason}</TableCell>
             </TableRow>
           ))}
         </TableBody>
