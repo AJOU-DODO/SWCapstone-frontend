@@ -6,9 +6,12 @@ declare global {
       getNestIds: () => string;
       getAccessToken: () => string;
       getLocation: () => string;
+      //nest-editor
       sendNestIdSelected: (nestId: number) => void;
       requestImageUpload: () => string;
       onCategorySelected?: (categoryIds: string) => void;
+      // nest-detail
+      getNestDetailId: () => string;
     };
     onInitialData?: (data: string) => void;
     onImageUploaded?: (imageUrl: string) => void;

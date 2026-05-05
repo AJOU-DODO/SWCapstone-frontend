@@ -46,3 +46,29 @@ export interface DraftListApiResponse {
   message: string | null;
   data: DraftItem[];
 }
+
+export interface NestDetail {
+  id: number;
+  title: string;
+  content: string;
+  unlockRadius: number;
+  viewCount: number;
+  createdAt: string;
+  creatorNickname: string;
+  creatorProfileImageUrl: string;
+  categoryNames: string[];
+  imageUrls: string[];
+  likeCount: number;
+  dislikeCount: number;
+  ad: boolean;
+  unlocked: boolean;
+}
+
+export interface NestDetailApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: NestDetail;
+}
+
+export type ReactionType = "LIKE" | "DISLIKE";
