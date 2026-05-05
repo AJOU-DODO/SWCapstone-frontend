@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { ThumbsUp, ThumbsDown, Hash, AlertCircle } from "lucide-react";
@@ -24,11 +24,12 @@ export function NestDetailClient({ nestId }: Props) {
   const [likeOffset, setLikeOffset] = useState(0);
   const [dislikeOffset, setDislikeOffset] = useState(0);
 
-  // 브릿지: accessToken 수신
+  //브릿지로 accesstoken 수신
   const [accessToken] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge?.getAccessToken();
+      console.log(token, nestId);
       return token ?? "";
     } catch {
       return "";
