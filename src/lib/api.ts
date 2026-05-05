@@ -92,7 +92,7 @@ export async function postReaction(
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ type: type }),
+    body: JSON.stringify({ type }),
   });
   if (!res.ok) throw new Error("반응 처리에 실패했습니다.");
 }

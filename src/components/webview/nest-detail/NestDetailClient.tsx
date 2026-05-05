@@ -53,6 +53,9 @@ export function NestDetailClient({ nestId }: Props) {
 
   const nest = nestData?.data;
 
+  console.log(nest?.imageUrls);
+  console.log(nest?.creatorProfileImageUrl);
+
   // 초기 reaction 상태 동기화
   const displayLikeCount = (nest?.likeCount ?? 0) + likeOffset;
   const displayDislikeCount = (nest?.dislikeCount ?? 0) + dislikeOffset;
