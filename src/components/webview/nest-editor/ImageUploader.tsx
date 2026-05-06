@@ -28,7 +28,7 @@ export function ImageUploader() {
           </span>
         </button>
 
-        {imageUrls.map((url) => (
+        {imageUrls.map((url, index) => (
           <div
             key={url}
             className="relative shrink-0 w-24 h-24 rounded-2xl overflow-hidden group"
@@ -42,7 +42,7 @@ export function ImageUploader() {
             />
             <button
               type="button"
-              onClick={() => removeImage(url)}
+              onClick={() => removeImage(index)}
               className="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <X className="w-3 h-3 text-white" />
