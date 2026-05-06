@@ -16,12 +16,13 @@ interface NestEditorState {
 
   setBridgeData: (data: BridgeInitialData) => void;
   addImage: (url: string) => void;
-  removeImage: (url: string) => void;
+  removeImage: (index: number) => void;
   setCategoryIds: (ids: number[]) => void;
   setUnlockRadius: (radius: 150 | 10) => void;
   setContent: (content: string) => void;
   setSubmitting: (value: boolean) => void;
   setTitle: (title: string) => void;
+  setImageUrls: (urls: string[]) => void;
   setErrors: (errors: Partial<Record<keyof NestPayload, string>>) => void;
   clearErrors: () => void;
   getDraftPayload: () => NestPayload;
@@ -51,14 +52,17 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
 
   addImage: (url) => set((state) => ({ imageUrls: [...state.imageUrls, url] })),
 
-  removeImage: (url) =>
-    set((state) => ({ imageUrls: state.imageUrls.filter((u) => u !== url) })),
+  removeImage: (index) =>
+    set((state) => ({
+      imageUrls: state.imageUrls.filter((_, i) => i !== index),
+    })),
 
   setCategoryIds: (ids) => set({ categoryIds: ids }),
   setUnlockRadius: (radius) => set({ unlockRadius: radius }),
   setContent: (content) => set({ content }),
   setSubmitting: (value) => set({ isSubmitting: value }),
   setTitle: (title) => set({ title }),
+  setImageUrls: (urls) => set({ imageUrls: urls }),
   setErrors: (errors) => set({ errors }),
   clearErrors: () => set({ errors: {} }),
 

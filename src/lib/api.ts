@@ -4,6 +4,7 @@ import type {
   NestDetailApiResponse,
   NestPayload,
   ReactionType,
+  PresignedUrlItem,
 } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -95,4 +96,42 @@ export async function postReaction(
     body: JSON.stringify({ type }),
   });
   if (!res.ok) throw new Error("반응 처리에 실패했습니다.");
+}
+
+// 이미지 업로드시 업로드용 url과, 이미지를 확인하는 url을 받아오는 함수
+export async function fetchPresignedUrls(
+  fileNames: string[],
+  accessToken: string,
+): Promise<PresignedUrlItem[]> {
+  const res = await fetch(`${BASE_URL}/api/v1/files/presigned-url/bulk`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(fileNames),
+  });
+  if (!res.ok) throw new Error("Presigned URL 발급에 실패했습니다.");
+  return res.json();
+}
+
+// 이미지를 s3에 업로드하는 함수
+export async function uploadImageToS3(
+  presignedUrl: string,
+  base64: string,
+): Promise<void> {
+  // base64 → binary 변환
+  const byteString = atob(base64.split(",")[1] ?? base64);
+  const byteArray = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    byteArray[i] = byteString.charCodeAt(i);
+  }
+  const blob = new Blob([byteArray], { type: "image/png" });
+
+  const res = await fetch(presignedUrl, {
+    method: "PUT",
+    headers: { "Content-Type": "image/png" },
+    body: blob,
+  });
+  if (!res.ok) throw new Error("S3 이미지 업로드에 실패했습니다.");
 }
