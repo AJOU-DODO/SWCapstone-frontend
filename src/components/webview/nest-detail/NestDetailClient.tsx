@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { ThumbsUp, ThumbsDown, Hash, AlertCircle } from "lucide-react";
+import { ImageSlider } from "./ImageSlider";
 import { fetchNestDetail, postReaction } from "@/lib/api";
 import type { ReactionType } from "@/types";
 
@@ -101,23 +102,7 @@ export function NestDetailClient({ nestId }: Props) {
     <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
       <div className="flex-1 overflow-y-auto pb-24">
         {/* 이미지 슬라이더 */}
-        {nest.imageUrls.length > 0 && (
-          <div className="relative w-full aspect-4/3 bg-[#EDEAE0] overflow-hidden">
-            <Image
-              src={nest.imageUrls[0]}
-              alt={nest.title}
-              fill
-              className="object-cover"
-              sizes="100vw"
-              priority
-            />
-            {nest.imageUrls.length > 1 && (
-              <div className="absolute bottom-3 right-3 bg-black/50 text-white text-[10px] px-2 py-1 rounded-full">
-                1 / {nest.imageUrls.length}
-              </div>
-            )}
-          </div>
-        )}
+        <ImageSlider imageUrls={nest.imageUrls} title={nest.title} />
 
         <div className="px-5 pt-4 space-y-4">
           {/* 카테고리 칩 + 작성자 */}
