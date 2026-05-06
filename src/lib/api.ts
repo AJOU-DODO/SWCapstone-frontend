@@ -122,6 +122,7 @@ export async function uploadImageToS3(
 ): Promise<void> {
   // base64 → binary 변환
   console.log(base64);
+  console.log(presignedUrl);
   const byteString = atob(base64.split(",")[1]);
   console.log(byteString);
 
