@@ -121,15 +121,17 @@ export async function uploadImageToS3(
   base64: string,
 ): Promise<void> {
   // base64 → binary 변환
-  console.log(base64);
-  console.log(presignedUrl);
   const byteString = atob(base64.split(",")[1]);
-  console.log(byteString);
+  const byteArray = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    byteArray[i] = byteString.charCodeAt(i);
+  }
+  const blob = new Blob([byteArray], { type: "image/png" });
 
   const res = await fetch(presignedUrl, {
     method: "PUT",
     headers: { "Content-Type": "image/png" },
-    body: byteString,
+    body: blob,
   });
   if (!res.ok) throw new Error("S3 이미지 업로드에 실패했습니다.");
 }
