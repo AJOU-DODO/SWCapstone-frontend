@@ -76,4 +76,11 @@ export interface PresignedUrlItem {
   fileUrl: string;
 }
 
+export interface PresignedUrlItemApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: PresignedUrlItem[];
+}
+
 export type ReactionType = "LIKE" | "DISLIKE";

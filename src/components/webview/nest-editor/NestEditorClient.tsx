@@ -69,18 +69,20 @@ export function NestEditorClient() {
         (_, index) => `image_${Date.now()}_${index}.png`,
       );
 
+      console.log(fileNames[0]);
+
       // presigned URL 발급
       const presignedItems = await fetchPresignedUrls(fileNames, accessToken);
 
       // 각 이미지를 S3에 병렬 업로드
       await Promise.all(
-        presignedItems.map((item, index) =>
+        presignedItems.data.map((item, index) =>
           uploadImageToS3(item.presignedUrl, imageUrls[index]),
         ),
       );
 
       // fileUrl 배열로 업데이트 후 발행
-      const fileUrls = presignedItems.map((item) => item.fileUrl);
+      const fileUrls = presignedItems.data.map((item) => item.fileUrl);
       await publishNest({ ...payload, imageUrls: fileUrls }, accessToken);
 
       showToast("success", "게시물이 발행되었습니다.");

@@ -4,7 +4,7 @@ import type {
   NestDetailApiResponse,
   NestPayload,
   ReactionType,
-  PresignedUrlItem,
+  PresignedUrlItemApiResponse,
 } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -102,7 +102,7 @@ export async function postReaction(
 export async function fetchPresignedUrls(
   fileNames: string[],
   accessToken: string,
-): Promise<PresignedUrlItem[]> {
+): Promise<PresignedUrlItemApiResponse> {
   const res = await fetch(`${BASE_URL}/api/v1/files/presigned-url/bulk`, {
     method: "POST",
     headers: {
