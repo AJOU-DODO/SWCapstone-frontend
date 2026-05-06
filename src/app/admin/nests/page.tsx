@@ -4,11 +4,13 @@ import ReportNestTable, { Report } from '@/components/admin/ReportNestTable';
 import ReplyTable, { Reply } from '@/components/admin/ReplyTable';
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
+import NestDetail from '@/components/admin/NestDetail/index';
 
 export default async function Page({ searchParams, }: {searchParams: Promise<{ tab?: string }>;}) {
   //게시글 관리 메뉴 파라미터
   const resolvedParams = await searchParams;
   const activeTab = resolvedParams.tab || 'all';
+  const selectedPostId = 1; // TODO: 반드시 데이터 값 바꾸기 (nestId랑 연결)
 
   const nests: Nest[] = [
     { 
@@ -122,9 +124,8 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
           {activeTab === 'reported' && <ReportNestTable nests={report}/>}
           {activeTab === 'comments' && <ReplyTable nests={reply}/>}
         </div>
-        <div className='bg-white'>
-          페이지 컴포넌트
-        </div>
+        
+        <NestDetail postId={selectedPostId}/>
       </div>
 
       <div className="py-4 border-t">
