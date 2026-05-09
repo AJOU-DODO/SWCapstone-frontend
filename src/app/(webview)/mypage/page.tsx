@@ -3,6 +3,7 @@
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useState, useEffect } from "react";
 import UserDetail from '@/components/webview/mypage/UserDetail';
+import MenuButtons from "@/components/webview/mypage/MenuButtons";
 
 export default function Page() {
   //const [accessToken, setAccessToken] = useState<string>("");
@@ -31,6 +32,7 @@ export default function Page() {
   return (
     <div>
       <UserDetail/>
+      <MenuButtons/>
     </div>
   );
 }
