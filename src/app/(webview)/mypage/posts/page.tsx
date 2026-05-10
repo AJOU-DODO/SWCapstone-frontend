@@ -3,6 +3,8 @@
 import MyPageHeader from '@/components/webview/mypage/MyPageHeader';
 import PostCardTap from '@/components/webview/mypage/Postcard/PostcardTab';
 import PostcardGrid from '@/components/webview/mypage/Postcard/PostcardGrid';
+import { fetchUserPostcards } from "@/lib/apiMypage";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { MOCK_USER_POSTCARDS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
 
@@ -11,8 +13,29 @@ import { useState, useEffect } from "react";
 export default function Page() {
   const [activeTab, setActiveTab] = useState<'mine' | 'received'>('mine');
 
-  const postcard = MOCK_USER_POSTCARDS.data.content;
+  //브릿지로 accesstoken 수신
+  const [accessToken] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const token = window.AndroidBridge.getAccessToken();
+      console.log(token, "엽서함");
+      return token ?? "";
+    } catch {
+      return "";
+    }
+  });
 
+  //유저 활동 정보
+  const { data: postcardData, isLoading: isStateLoading } = useQuery({
+    queryKey: ['userPostcard', accessToken],
+    queryFn: () => fetchUserPostcards(accessToken),
+    enabled: !!accessToken,
+  });
+
+  const postcard = MOCK_USER_POSTCARDS.data.content;
+  //const postcard = postcardData.data.content;
+
+  // mine 값 비교로 보여줄 엽서 필터링
   const displayList = postcard.filter(post => 
     activeTab === 'mine' ? post.mine === true : post.mine === false
   );

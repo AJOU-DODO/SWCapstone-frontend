@@ -5,6 +5,7 @@ import type {
   UserStatisticsApiResponse,
   UserDetailApiResponse,
   MyNestApiResponse,
+  MyPostcardApiResponse,
 } from "@/types/indexMypage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -45,5 +46,18 @@ export async function fetchUserNests(
     cache: "no-store",
   });
   if (!res.ok) throw new Error("유저 둥지 정보를 불러오지 못했습니다.");
+  return res.json();
+}
+
+// 유저의 엽서를 불러오는 함수
+export async function fetchUserPostcards(
+  accessToken: string,
+): Promise<MyPostcardApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("유저 엽서 정보를 불러오지 못했습니다.");
   return res.json();
 }
