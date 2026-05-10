@@ -58,3 +58,31 @@ export interface MyNestApiResponse {
   message: string | null;
   data: MyNestData;
 }
+
+//보유 엽서
+export interface MyPostcard {
+  id: number;
+  imageUrl: string;
+  content: string;
+  authorNickname: string;
+  reactionType: string;
+  createdAt: string;
+  mine: boolean;
+}
+
+export interface MyPostcardData {
+  content: MyPostcard[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+export interface MyPostcardApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: MyPostcardData;
+}

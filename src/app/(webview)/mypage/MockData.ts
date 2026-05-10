@@ -97,3 +97,93 @@ export const MOCK_USER_NESTS = {
         "empty": false
     }
 }
+
+// /api/v1/mypage/postcards
+export const MOCK_USER_POSTCARDS ={
+    "status": "SUCCESS",
+    "code": "200",
+    "message": null,
+    "data": {
+        "content": [
+          {
+            "id": 1,
+            "imageUrl": "/DODOLogo.png",
+            "content": "좋은 하루 보내세요.",
+            "authorNickname": "김도도",
+            "reactionType": "likes",
+            "createdAt": "2026-04-21T04:12:58.44246",
+            "mine": true
+          },
+          {
+            "id": 2,
+            "imageUrl": "/MockImage1.png",
+            "content": "좋은 하루 보내세요.",
+            "authorNickname": "김도도",
+            "reactionType": "likes",
+            "createdAt": "2026-04-21T04:12:58.44246",
+            "mine": true
+          },
+          {
+            "id": 3,
+            "imageUrl": "/MockImage2.png",
+            "content": "좋은 하루 보내세요.",
+            "authorNickname": "김도도",
+            "reactionType": "likes",
+            "createdAt": "2026-04-21T04:12:58.44246",
+            "mine": true
+          },
+          {
+            "id": 4,
+            "imageUrl": "/DODOLogo.png",
+            "content": "좋은 하루 보내세요.",
+            "authorNickname": "김도도",
+            "reactionType": "likes",
+            "createdAt": "2026-04-21T04:12:58.44246",
+            "mine": true
+          },
+          {
+            "id": 5,
+            "imageUrl": "/MockImage1.png",
+            "content": "좋은 하루 보내세요.",
+            "authorNickname": "테스트",
+            "reactionType": "likes",
+            "createdAt": "2026-04-21T04:12:58.44246",
+            "mine": false
+          },
+          {
+            "id": 6,
+            "imageUrl": "/MockImage2.png",
+            "content": "좋은 하루 보내세요.",
+            "authorNickname": "테스트",
+            "reactionType": "likes",
+            "createdAt": "2026-04-21T04:12:58.44246",
+            "mine": false
+          },
+        ],
+        "pageable": {
+            "pageNumber": 0,
+            "pageSize": 20,
+            "sort": {
+                "empty": false,
+                "sorted": true,
+                "unsorted": false
+            },
+            "offset": 0,
+            "paged": true,
+            "unpaged": false
+        },
+        "last": true,
+        "totalElements": 0,
+        "totalPages": 0,
+        "first": true,
+        "size": 20,
+        "number": 0,
+        "sort": {
+            "empty": false,
+            "sorted": true,
+            "unsorted": false
+        },
+        "numberOfElements": 0,
+        "empty": true
+    }
+}
