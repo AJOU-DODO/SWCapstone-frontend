@@ -1,15 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import type { MyNestData } from "@/types/indexMypage";
+
 import { MOCK_USER_NESTS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
+
+interface Props {
+  nestsData: MyNestData | undefined;
+}
 
 function formatDate(iso: string) {
   const d = new Date(iso);
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export default function MyNestList() {
+export default function MyNestList({ nestsData }: Props) {
   const nests = MOCK_USER_NESTS.data.content;
+  //const nests = nestsData.content;
   return (
     <section className="w-full mt-8 px-5 pb-20">
       <div className="flex justify-between items-center mb-4">

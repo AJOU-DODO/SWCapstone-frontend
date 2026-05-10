@@ -2,14 +2,17 @@
 
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { fetchUserStatistics, fetchUserDetail, fetchUserNests } from "@/lib/apiMypage";
 import UserDetail from '@/components/webview/mypage/UserDetail';
 import MenuButtons from "@/components/webview/mypage/MenuButtons";
 import MyNestList from "@/components/webview/mypage/MyNestList";
 
 export default function Page() {
-  //const [accessToken, setAccessToken] = useState<string>("");
+  const [accessToken, setAccessToken] = useState<string>("");
   
-  /*useEffect(() => {
+  //브릿지를 통한 accessToken 수신
+  useEffect(() => {
       if (typeof window !== "undefined" && window.AndroidBridge) {
         try {
           const token = window.AndroidBridge.getAccessToken();
@@ -28,13 +31,34 @@ export default function Page() {
       }
     }, []);
 
-  if(accessToken) console.log("성공");*/
+  if(accessToken) console.log("성공");
+
+  //유저 활동 정보
+  const { data: statsData, isLoading: isStateLoading } = useQuery({
+    queryKey: ['userStats', accessToken],
+    queryFn: () => fetchUserStatistics(accessToken),
+    enabled: !!accessToken,
+  });
+
+  //유저 정보
+  const { data: userData, isLoading: isDetailLoading} = useQuery({
+    queryKey: ['userDetail', accessToken],
+    queryFn: () => fetchUserDetail(accessToken),
+    enabled: !!accessToken,
+  });
+
+  //유저 정보
+  const { data: nestsData, isLoading: isNestLoading} = useQuery({
+    queryKey: ['userNests', accessToken],
+    queryFn: () => fetchUserNests(accessToken),
+    enabled: !!accessToken,
+  });
 
   return (
     <div>
-      <UserDetail/>
+      <UserDetail userStats={statsData?.data} userDetail={userData?.data}/>
       <MenuButtons/>
-      <MyNestList/>
+      <MyNestList nestsData={nestsData?.data}/>
     </div>
   );
 }

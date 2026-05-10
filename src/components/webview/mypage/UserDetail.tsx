@@ -1,8 +1,15 @@
 "use client";
 
+import type { UserStatistics, UserDetail} from "@/types/indexMypage";
+
 import { MOCK_USER_PROFILE, MOCK_USER_STATISTICS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
 
-export default function UserDetail() {
+interface Props {
+  userStats: UserStatistics | undefined;
+  userDetail: UserDetail | undefined;
+}
+
+export default function UserDetail({ userStats, userDetail }: Props) {
   const user = MOCK_USER_PROFILE.data;
   const statics = MOCK_USER_STATISTICS.data;
 
