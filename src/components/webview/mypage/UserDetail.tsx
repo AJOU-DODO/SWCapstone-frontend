@@ -1,6 +1,8 @@
 "use client";
 
 import type { UserStatistics, UserDetail} from "@/types/indexMypage";
+import { useState, useEffect } from "react";
+import ProfileEditModal from '@/components/webview/mypage/ProfileEditModal';
 
 import { MOCK_USER_PROFILE, MOCK_USER_STATISTICS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
 
@@ -12,6 +14,8 @@ interface Props {
 export default function UserDetail({ userStats, userDetail }: Props) {
   const user = MOCK_USER_PROFILE.data;
   const statics = MOCK_USER_STATISTICS.data;
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
     <div>
@@ -54,9 +58,18 @@ export default function UserDetail({ userStats, userDetail }: Props) {
         )}
         {/* 프로필 수정 버튼*/}
         <div className="w-[80vw] mx-auto">
-          <button className="mt-3 w-full py-2 border-[#54513E] border-2 text-[#54513E] rounded-xl font-medium active:scale-95 transition-transform">
+          <button 
+          onClick={() => setIsEditModalOpen(true)}
+          className="mt-3 w-full py-2 border-[#54513E] border-2 text-[#54513E] rounded-xl font-medium active:scale-95 transition-transform">
           프로필 수정하기
           </button>
+
+          {/* 프로필 수정시 팝업화면 */}
+          <ProfileEditModal 
+            isOpen={isEditModalOpen} 
+            onClose={() => setIsEditModalOpen(false)}
+            initialData={user}
+          />
         </div>
     </div>
   );

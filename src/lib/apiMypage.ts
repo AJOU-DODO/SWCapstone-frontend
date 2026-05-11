@@ -6,6 +6,7 @@ import type {
   UserDetailApiResponse,
   MyNestApiResponse,
   MyPostcardApiResponse,
+  ProfileEditPayload,
 } from "@/types/indexMypage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -60,4 +61,20 @@ export async function fetchUserPostcards(
   });
   if (!res.ok) throw new Error("유저 엽서 정보를 불러오지 못했습니다.");
   return res.json();
+}
+
+//유저 프로필 정보를 업데이트 하는 함수
+export async function patchUpdatdProfile(
+  payload: ProfileEditPayload,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/users/profile`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("프로필 수정에 실패했습니다.");
 }

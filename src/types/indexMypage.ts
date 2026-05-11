@@ -86,3 +86,10 @@ export interface MyPostcardApiResponse {
   message: string | null;
   data: MyPostcardData;
 }
+
+// 프로필 업데이트
+export interface ProfileEditPayload {
+  nickname: string,
+  profileImageUrl: string,
+  bio: string
+}
