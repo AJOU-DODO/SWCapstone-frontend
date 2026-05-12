@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Search, X, Hash, Check, Loader2 } from "lucide-react";
+import { Search, X, Hash, Check, Loader2, CheckCircle } from "lucide-react";
 import {
   fetchCategories,
   fetchUserInterests,
@@ -12,6 +12,7 @@ import type { Category } from "@/types";
 
 export default function CategoryClient() {
   const [query, setQuery] = useState("");
+  const [toast, setToast] = useState(false);
 
   //브릿지로 accesstoken 수신
   const [accessToken] = useState<string>(() => {
@@ -55,6 +56,10 @@ export default function CategoryClient() {
   // 관심 카테고리 설정
   const { mutate: saveInterests, isPending: isSaving } = useMutation({
     mutationFn: () => updateUserInterests(selectedIds, accessToken),
+    onSuccess: () => {
+      setToast(true);
+      setTimeout(() => setToast(false), 3000);
+    },
   });
 
   const categories = useMemo<Category[]>(
@@ -89,6 +94,13 @@ export default function CategoryClient() {
 
   return (
     <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
+      {/* 토스트 */}
+      {toast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#5C5346] text-white text-sm font-medium shadow-lg">
+          <CheckCircle className="w-4 h-4" />
+          카테고리 설정이 완료되었습니다.
+        </div>
+      )}
       {/* 검색 바 */}
       <div className="px-5 pt-5 pb-3">
         <div className="relative">
