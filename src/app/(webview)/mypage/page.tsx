@@ -12,7 +12,6 @@ import MyNestList from "@/components/webview/mypage/MyNestList";
 export default function Page() {
   const [accessToken, setAccessToken] = useState<string>("");
   const [Base64, setBase64] = useState<string>("");
-  const [addImage, setAddImage] = useState<string>("");
   
   
   //브릿지를 통한 accessToken 수신

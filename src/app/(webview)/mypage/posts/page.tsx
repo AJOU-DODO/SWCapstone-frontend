@@ -47,7 +47,7 @@ export default function Page() {
     <div>
       <MyPageHeader title='엽서함'/>
       <PostCardTap currentTab={activeTab} onTabChange={setActiveTab}/>
-      <PostcardGrid items={displayList} onItemClick={(item) => setSelectedPostcard(item)} />
+      <PostcardGrid items={displayList} activeTab={activeTab} onItemClick={(item) => setSelectedPostcard(item)} />
 
       <PostcardModal 
         isOpen={!!selectedPostcard} 
