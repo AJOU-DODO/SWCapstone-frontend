@@ -28,12 +28,25 @@ export default function Page() {
     }
   });
 
-  //유저 활동 정보
-  const { data: postcardData, isLoading: isStateLoading } = useQuery({
+  //엽서 리스트 정보
+  const { data: postcardData, isLoading: isStateLoading, refetch } = useQuery({
     queryKey: ['userPostcard', accessToken],
     queryFn: () => fetchUserPostcards(accessToken),
     enabled: !!accessToken,
   });
+
+  useEffect(() => {
+    // 안드로이드가 엽서작성완료 신호를 보낼 시 실행될 함수
+    const handleAndroidRefresh = () => {
+      refetch(); 
+    };
+
+    (window as any).refreshPostcards = handleAndroidRefresh;
+
+    return () => {
+      delete (window as any).refreshPostcards; // 컴포넌트 나갈 때 정리
+    };
+  }, [refetch]);
 
   const postcard = MOCK_USER_POSTCARDS.data.content;
   //const postcard = postcardData.data.content;
