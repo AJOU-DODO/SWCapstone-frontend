@@ -1,8 +1,12 @@
+"use client";
+
 import { X, Camera } from "lucide-react";
 import Image from 'next/image';
+import { useState } from "react";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
+  onSave: (nickname: string, bio: string) => Promise<void>;
   onClose: () => void;
   initialData: {
     nickname: string;
@@ -11,8 +15,20 @@ interface ProfileEditModalProps {
   };
 }
 
-export default function ProfileEditModal({ isOpen, onClose, initialData }: ProfileEditModalProps) {
+export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData }: ProfileEditModalProps) {
   if (!isOpen) return null;
+
+  const handleCameraClick = () => {
+    if (typeof window !== "undefined" && window.AndroidBridge?.requestImageUpload) {
+      window.AndroidBridge.requestImageUpload();
+    } else {
+      console.log("앱 브릿지를 찾을 수 없습니다.");
+    }
+  };
+
+  const [nickname, setNickname] = useState(initialData.nickname);
+  const [bio, setBio] = useState(initialData.bio);
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -36,7 +52,9 @@ export default function ProfileEditModal({ isOpen, onClose, initialData }: Profi
                 className="w-full h-full border-[#54513E] rounded-full object-cover border" 
                 alt="프로필"
               />
-              <button className="absolute bottom-0 right-0 p-2 bg-white border rounded-full shadow-sm hover:bg-gray-50">
+              <button 
+              onClick={handleCameraClick}
+              className="absolute bottom-0 right-0 p-2 bg-white border rounded-full shadow-sm hover:bg-gray-50">
                 <Camera size={16} className="text-gray-600" />
               </button>
             </div>
@@ -48,16 +66,18 @@ export default function ProfileEditModal({ isOpen, onClose, initialData }: Profi
               <label className="text-sm font-medium text-[#54513E]">닉네임</label>
               <input 
                 type="text" 
+                value={nickname} 
+                onChange={(e) => setNickname(e.target.value)}
                 className="w-full mt-1 p-2 border border-[#54513E] rounded-lg focus:ring-2 focus:ring-[#54513E] outline-none"
-                defaultValue={initialData.nickname}
               />
             </div>
             <div>
               <label className="text-sm font-medium text-[#54513E]">바이오</label>
               <textarea 
                 rows={3}
+                value={bio} 
+                onChange={(e) => setBio(e.target.value)}
                 className="w-full mt-1 p-2 border border-[#54513E] rounded-lg focus:ring-2 focus:ring-[#54513E] outline-none resize-none"
-                defaultValue={initialData.bio}
               />
             </div>
           </div>
@@ -65,7 +85,9 @@ export default function ProfileEditModal({ isOpen, onClose, initialData }: Profi
 
         {/* Footer */}
         <div className="p-4 border-t">
-          <button className="w-full py-3 bg-[#54513E] text-white rounded-xl font-bold hover:bg-gray-800 transition-colors">
+          <button 
+          onClick={() => onSave(nickname, bio)}
+          className="w-full py-3 bg-[#54513E] text-white rounded-xl font-bold hover:bg-gray-800 transition-colors">
             저장하기
           </button>
         </div>

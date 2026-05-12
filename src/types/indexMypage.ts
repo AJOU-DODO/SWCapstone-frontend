@@ -20,7 +20,7 @@ export interface UserDetail {
   email: string;
   nickname: string;
   profileImageUrl: string;
-  bid: string;
+  bio: string;
   onboraded: boolean;
 }
 

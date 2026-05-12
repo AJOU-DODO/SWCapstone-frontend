@@ -9,9 +9,10 @@ import { MOCK_USER_PROFILE, MOCK_USER_STATISTICS } from "@/app/(webview)/mypage/
 interface Props {
   userStats: UserStatistics | undefined;
   userDetail: UserDetail | undefined;
+  onSave: (nickname: string, bio: string) => Promise<void>;
 }
 
-export default function UserDetail({ userStats, userDetail }: Props) {
+export default function UserDetail({ userStats, userDetail, onSave }: Props) {
   const user = MOCK_USER_PROFILE.data;
   const statics = MOCK_USER_STATISTICS.data;
 
@@ -68,6 +69,7 @@ export default function UserDetail({ userStats, userDetail }: Props) {
           <ProfileEditModal 
             isOpen={isEditModalOpen} 
             onClose={() => setIsEditModalOpen(false)}
+            onSave={onSave}
             initialData={user}
           />
         </div>
