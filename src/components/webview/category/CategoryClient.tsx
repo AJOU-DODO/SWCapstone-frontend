@@ -211,12 +211,12 @@ export default function CategoryClient() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-3 bg-[#F7F4EC] border-t border-[#E0DDD3]">
+      <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-3 bg-[#F7F4EC] border-t border-[#E0DDD3] flex justify-center">
         <button
           type="button"
           onClick={handleComplete}
           disabled={isSaving}
-          className="h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-40 h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSaving ? (
             <Loader2 className="w-4 h-4 animate-spin mx-auto" />
