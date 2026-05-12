@@ -222,7 +222,7 @@ export default function CategoryClient() {
           <button
             type="button"
             onClick={handleComplete}
-            disabled={selectedIds.length === 0}
+            disabled={isSaving}
             className="h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSaving ? (
