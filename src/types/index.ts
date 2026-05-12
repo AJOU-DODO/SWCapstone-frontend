@@ -71,4 +71,16 @@ export interface NestDetailApiResponse {
   data: NestDetail;
 }
 
+export interface PresignedUrlItem {
+  presignedUrl: string;
+  fileUrl: string;
+}
+
+export interface PresignedUrlItemApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: PresignedUrlItem[];
+}
+
 export type ReactionType = "LIKE" | "DISLIKE";
