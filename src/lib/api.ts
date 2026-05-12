@@ -161,5 +161,6 @@ export async function updateUserInterests(
     },
     body: JSON.stringify({ categoryIds }),
   });
+  console.log("updateuserInterests 응답 status:", res.status);
   if (!res.ok) throw new Error("관심 카테고리 설정에 실패했습니다.");
 }

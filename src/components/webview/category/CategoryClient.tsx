@@ -37,7 +37,7 @@ export default function CategoryClient() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // 유저 관심 카테고리r수신
+  // 유저 관심 카테고리 수신
   const { data: interestsData, isLoading: isInterestsLoading } = useQuery({
     queryKey: ["userInterests"],
     queryFn: () => fetchUserInterests(accessToken),
@@ -57,8 +57,12 @@ export default function CategoryClient() {
   const { mutate: saveInterests, isPending: isSaving } = useMutation({
     mutationFn: () => updateUserInterests(selectedIds, accessToken),
     onSuccess: () => {
+      console.log("성공 - selectedIds:", selectedIds);
       setToast(true);
       setTimeout(() => setToast(false), 3000);
+    },
+    onError: (error) => {
+      console.error("실패:", error);
     },
   });
 
