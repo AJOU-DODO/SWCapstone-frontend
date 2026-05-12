@@ -135,3 +135,31 @@ export async function uploadImageToS3(
   });
   if (!res.ok) throw new Error("S3 이미지 업로드에 실패했습니다.");
 }
+
+// 유저의 관심 카테고리를 가져오는 함수
+export async function fetchUserInterests(
+  accessToken: string,
+): Promise<CategoryApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/users/interests`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("관심 카테고리를 불러오지 못했습니다.");
+  return res.json();
+}
+
+// 유저가 선택한 관심 카테고리를 일괄적으로 업데이트하는 함수.
+export async function updateUserInterests(
+  categoryIds: number[],
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/users/interests`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ categoryIds }),
+  });
+  if (!res.ok) throw new Error("관심 카테고리 설정에 실패했습니다.");
+}
