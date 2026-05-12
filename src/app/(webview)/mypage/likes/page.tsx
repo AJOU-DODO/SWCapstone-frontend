@@ -27,6 +27,10 @@ export default function Page() {
     enabled: !!accessToken,
   });
 
+  if (!accessToken || isNestLoading) {
+    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+  }
+
   return (
     <div>
       <MypageHeader title='좋아요 둥지'/>

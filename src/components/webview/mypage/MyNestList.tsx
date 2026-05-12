@@ -15,8 +15,9 @@ function formatDate(iso: string) {
 }
 
 export default function MyNestList({ nestsData }: Props) {
-  const nests = MOCK_USER_NESTS.data.content;
-  //const nests = nestsData.content;
+  //const nests = MOCK_USER_NESTS.data.content;
+  const nests = nestsData!.content;
+  
   return (
     <section className="w-full mt-8 px-5 pb-20">
       <div className="flex justify-between items-center mb-4">
@@ -57,7 +58,6 @@ export default function MyNestList({ nestsData }: Props) {
         ))}
       </div>
 
-      {/* 데이터가 없을 때 처리 (예시) */}
       {nests.length === 0 && (
         <div className="py-20 text-center text-gray-400 text-sm">
           아직 작성한 둥지가 없어요!

@@ -1,15 +1,20 @@
 
 import Link from "next/link";
 import { MOCK_USER_COMMENTS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
-import type { MyComment } from "@/types/indexMypage";
+import type { MyCommentsData } from "@/types/indexMypage";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export default function MyCommentList() {
-  const comment = MOCK_USER_COMMENTS.data.content;
+interface Props {
+  commentData: MyCommentsData | undefined;
+}
+
+export default function MyCommentList( { commentData }: Props ) {
+  //const comment = MOCK_USER_COMMENTS.data.content;
+  const comment = commentData!.content;
 
   return(
     <div className="flex flex-col gap-3">

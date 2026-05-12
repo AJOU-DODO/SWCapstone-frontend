@@ -20,12 +20,16 @@ export default function Page() {
     }
   });
 
-  //좋아요 누른 둥지 정보
-  const { data: nestsData, isLoading: isNestLoading} = useQuery({
+  //해금한 둥지 정보
+  const { data: nestsData, isLoading: isUnlockLoading} = useQuery({
     queryKey: ['userNests', accessToken],
     queryFn: () => fetchUnlockNests(accessToken),
     enabled: !!accessToken,
   });
+
+  if (!accessToken || isUnlockLoading) {
+    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+  }
 
   return (
     <div>

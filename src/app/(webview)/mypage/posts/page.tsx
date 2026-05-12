@@ -10,7 +10,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { MOCK_USER_POSTCARDS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<'mine' | 'received'>('mine');
@@ -29,7 +29,7 @@ export default function Page() {
   });
 
   //엽서 리스트 정보
-  const { data: postcardData, isLoading: isStateLoading, refetch } = useQuery({
+  const { data: postcardData, isLoading: isPostCardLoading, refetch } = useQuery({
     queryKey: ['userPostcard', accessToken],
     queryFn: () => fetchUserPostcards(accessToken),
     enabled: !!accessToken,
@@ -48,13 +48,17 @@ export default function Page() {
     };
   }, [refetch]);
 
-  const postcard = MOCK_USER_POSTCARDS.data.content;
-  //const postcard = postcardData.data.content;
+  //const postcard = MOCK_USER_POSTCARDS.data.content;
+  const displayList = useMemo(() => {
+    const postcards = postcardData?.data?.content || [];
+    return postcards.filter((post: any) => 
+      activeTab === 'mine' ? post.mine === true : post.mine === false
+    );
+  }, [postcardData, activeTab]);
 
-  // mine 값 비교로 보여줄 엽서 필터링
-  const displayList = postcard.filter(post => 
-    activeTab === 'mine' ? post.mine === true : post.mine === false
-  );
+  if (!accessToken || isPostCardLoading) {
+    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+  }
 
   return (
     <div>

@@ -64,9 +64,9 @@ export default function Page() {
     enabled: !!accessToken,
   });
 
-  /*if (!accessToken || isStatsLoading || isDetailLoading || isNestLoading) {
+  if (!accessToken || isStatsLoading || isDetailLoading || isNestLoading) {
     return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
-  }*/
+  }
 
   const updatedUserData = {
     ...userData, // 기존 닉네임, 바이오 등 유지

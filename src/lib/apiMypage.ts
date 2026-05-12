@@ -7,6 +7,7 @@ import type {
   MyNestApiResponse,
   MyPostcardApiResponse,
   ProfileEditPayload,
+  MyCommentsApiResponse,
 } from "@/types/indexMypage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -103,4 +104,17 @@ export async function patchUpdatdProfile(
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error("프로필 수정에 실패했습니다.");
+}
+
+// 유저가 작성한 댓글을 불러오는 함수
+export async function fetchMyComments(
+  accessToken: string,
+): Promise<MyCommentsApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/comments`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("작성 댓글 정보를 불러오지 못했습니다.");
+  return res.json();
 }
