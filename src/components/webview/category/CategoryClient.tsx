@@ -10,10 +10,6 @@ import {
 } from "@/lib/api";
 import type { Category } from "@/types";
 
-function finishPage() {
-  window.AndroidBridge?.finishCategoryPage?.();
-}
-
 export default function CategoryClient() {
   const [query, setQuery] = useState("");
 
@@ -59,9 +55,6 @@ export default function CategoryClient() {
   // 관심 카테고리 설정
   const { mutate: saveInterests, isPending: isSaving } = useMutation({
     mutationFn: () => updateUserInterests(selectedIds, accessToken),
-    onSuccess: () => {
-      finishPage();
-    },
   });
 
   const categories = useMemo<Category[]>(
@@ -93,10 +86,6 @@ export default function CategoryClient() {
   };
 
   const isLoading = isCategoriesLoading || isInterestsLoading;
-
-  const handleBack = () => {
-    finishPage();
-  };
 
   return (
     <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
@@ -211,27 +200,18 @@ export default function CategoryClient() {
 
       {/* 하단 버튼 */}
       <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-3 bg-[#F7F4EC] border-t border-[#E0DDD3]">
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={handleBack}
-            className="h-12 rounded-2xl border-2 border-[#C8C4B0] bg-transparent text-[#5C5346] text-sm font-semibold transition-all active:scale-95 hover:bg-[#EDE9DA]"
-          >
-            뒤로가기
-          </button>
-          <button
-            type="button"
-            onClick={handleComplete}
-            disabled={isSaving}
-            className="h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {isSaving ? (
-              <Loader2 className="w-4 h-4 animate-spin mx-auto" />
-            ) : (
-              "설정하기"
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleComplete}
+          disabled={isSaving}
+          className="h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {isSaving ? (
+            <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+          ) : (
+            "설정하기"
+          )}
+        </button>
       </div>
     </div>
   );
