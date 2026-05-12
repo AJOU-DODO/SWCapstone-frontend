@@ -108,8 +108,8 @@ export default function CategoryClient() {
     <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
       {/* 토스트 */}
       {toast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#5C5346] text-white text-sm font-medium shadow-lg">
-          <CheckCircle className="w-4 h-4" />
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#5C5346] text-white text-sm font-medium shadow-lg whitespace-nowrap">
+          <CheckCircle className="w-4 h-4 shrink-0" />
           카테고리 설정이 완료되었습니다.
         </div>
       )}
