@@ -4,7 +4,12 @@ import { useCallback, useState } from "react";
 import { Loader2, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useNestEditorStore } from "@/lib/store/nestEditorStore";
-import { saveDraft, publishNest } from "@/lib/api";
+import {
+  saveDraft,
+  publishNest,
+  fetchPresignedUrls,
+  uploadImageToS3,
+} from "@/lib/api";
 import { ImageUploader } from "./ImageUploader";
 import { CategorySelector } from "./CategorySelector";
 import { UnlockRadiusSelector } from "./UnlockRadiusSelector";
@@ -19,6 +24,7 @@ export function NestEditorClient() {
   useBridge();
   const {
     accessToken,
+    imageUrls,
     isSubmitting,
     setSubmitting,
     getDraftPayload,
@@ -58,14 +64,34 @@ export function NestEditorClient() {
     if (!payload) return;
     setSubmitting(true);
     try {
-      await publishNest(payload, accessToken);
+      // 발행 시점에 파일명 생성
+      const fileNames = imageUrls.map(
+        (_, index) => `image_${Date.now()}_${index}.png`,
+      );
+
+      console.log(fileNames[0]);
+
+      // presigned URL 발급
+      const presignedItems = await fetchPresignedUrls(fileNames, accessToken);
+
+      // 각 이미지를 S3에 병렬 업로드
+      await Promise.all(
+        presignedItems.data.map((item, index) =>
+          uploadImageToS3(item.presignedUrl, imageUrls[index]),
+        ),
+      );
+
+      // fileUrl 배열로 업데이트 후 발행
+      const fileUrls = presignedItems.data.map((item) => item.fileUrl);
+      await publishNest({ ...payload, imageUrls: fileUrls }, accessToken);
+
       showToast("success", "게시물이 발행되었습니다.");
     } catch {
       showToast("error", "발행에 실패했습니다.");
     } finally {
       setSubmitting(false);
     }
-  }, [isSubmitting, accessToken, getPublishPayload, setSubmitting]);
+  }, [isSubmitting, accessToken, imageUrls, getPublishPayload, setSubmitting]);
 
   const handleLoadDraft = useCallback(
     (draft: DraftItem) => {
