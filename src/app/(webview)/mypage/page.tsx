@@ -11,6 +11,7 @@ import MyNestList from "@/components/webview/mypage/MyNestList";
 export default function Page() {
   const [accessToken, setAccessToken] = useState<string>("");
   
+  
   //브릿지를 통한 accessToken 수신
   useEffect(() => {
       if (typeof window !== "undefined" && window.AndroidBridge) {
@@ -28,6 +29,10 @@ export default function Page() {
         }
       } else {
         console.log("안드로이드 브릿지가 아직 연결되지 않았습니다.");
+      }
+
+      window.onImageReceived = (Base64: String) => {
+        const base64Data = Base64;
       }
     }, []);
 
