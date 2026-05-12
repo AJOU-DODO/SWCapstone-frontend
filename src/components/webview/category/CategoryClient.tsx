@@ -2,7 +2,15 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Search, X, Hash, Check, Loader2, CheckCircle } from "lucide-react";
+import {
+  Search,
+  X,
+  Hash,
+  Check,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 import {
   fetchCategories,
   fetchUserInterests,
@@ -212,6 +220,14 @@ export default function CategoryClient() {
             </div>
           )}
         </section>
+        {selectedIds.length === 0 && (
+          <div className="bg-red-50 border border-red-100 rounded-2xl px-4 py-3 space-y-1">
+            <p className="text-xs text-red-500 flex items-center gap-1.5">
+              <AlertCircle className="w-3 h-3 shrink-0" />
+              최소 1개 이상의 카테고리를 설정해야 합니다.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 하단 버튼 */}
@@ -219,7 +235,7 @@ export default function CategoryClient() {
         <button
           type="button"
           onClick={handleComplete}
-          disabled={isSaving}
+          disabled={isSaving || selectedIds.length === 0}
           className="w-40 h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSaving ? (
