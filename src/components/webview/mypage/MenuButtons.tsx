@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const MENUS = [
   { id: 1, label: "좋아요 둥지", path: "/mypage/likes" },
-  { id: 2, label: "내 댓글", path: "/mycomments" },
+  { id: 2, label: "내 댓글", path: "/mypage/mycomments" },
   { id: 3, label: "엽서함", path: "/mypage/posts" },
   { id: 4, label: "해금한 둥지", path: "/mypage/unlocks" },
   { id: 5, label: "임시저장 글", path: "/drafts" },

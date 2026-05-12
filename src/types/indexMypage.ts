@@ -93,3 +93,30 @@ export interface ProfileEditPayload {
   profileImageUrl: string,
   bio: string
 }
+
+// 내 댓글
+export interface MyComment {
+  id: number,
+  nestId: number,
+  nestTitle: string,
+  content: string,
+  authorNickname: string,
+  createdAt: string
+}
+
+export interface MyCommentsData {
+  content: MyComment[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+export interface MyCommentsApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: MyCommentsData;
+}
