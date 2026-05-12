@@ -34,7 +34,7 @@ export default function Page() {
   if(accessToken) console.log("성공");
 
   //유저 활동 정보
-  const { data: statsData, isLoading: isStateLoading } = useQuery({
+  const { data: statsData, isLoading: isStatsLoading } = useQuery({
     queryKey: ['userStats', accessToken],
     queryFn: () => fetchUserStatistics(accessToken),
     enabled: !!accessToken,
@@ -47,12 +47,16 @@ export default function Page() {
     enabled: !!accessToken,
   });
 
-  //유저 정보
+  //유저 둥지 정보
   const { data: nestsData, isLoading: isNestLoading} = useQuery({
     queryKey: ['userNests', accessToken],
     queryFn: () => fetchUserNests(accessToken),
     enabled: !!accessToken,
   });
+
+  if (!accessToken || isStatsLoading || isDetailLoading || isNestLoading) {
+    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+  }
 
   return (
     <div>

@@ -29,7 +29,7 @@ export default function MyNestList({ nestsData }: Props) {
         {nests.map((nest) => (
           <Link
             key={nest.id}
-            href={`/mypage/nest/${nest.id}`} // 상세 페이지 경로
+            href={`/nests/${nest.id}`} // 상세 페이지 경로
             className="flex flex-row gap-5 p-4 w-[90vw] bg-white rounded-2xl border border-gray-100 shadow-sm active:bg-gray-50 active:scale-[0.98] transition-all"
           >
             {nest.thumbnailUrl && (
