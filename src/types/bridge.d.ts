@@ -3,13 +3,14 @@ import { NestSummary } from "@/app/(webview)/nests/page";
 declare global {
   interface Window {
     AndroidBridge: {
+      //common
       getNestIds: () => string;
       getAccessToken: () => string;
       getLocation: () => string;
+      onCategorySelected?: (categoryIds: string) => void;
       //nest-editor
       sendNestIdSelected: (nestId: number) => void;
       requestImageUpload: () => string;
-      onCategorySelected?: (categoryIds: string) => void;
       // nest-detail
       getNestDetailId: () => string;
     };
