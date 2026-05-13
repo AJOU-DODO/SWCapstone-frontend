@@ -51,7 +51,7 @@ export default function Page() {
   });
 
   //유저 정보
-  const { data: userData, isLoading: isDetailLoading} = useQuery({
+  const { data: userData, isLoading: isDetailLoading, refetch} = useQuery({
     queryKey: ['userDetail', accessToken],
     queryFn: () => fetchUserDetail(accessToken),
     enabled: !!accessToken,
@@ -70,7 +70,7 @@ export default function Page() {
 
   const updatedUserData = {
     ...userData, // 기존 닉네임, 바이오 등 유지
-    profileUrl: Base64 || userData?.data.profileImageUrl
+    profileImageUrl: Base64 || userData?.data.profileImageUrl
   };
 
   const handleSave = async (nickname: string, bio: string) => {
@@ -106,9 +106,13 @@ export default function Page() {
       
       console.log("프로필업데이트성공");
       // 성공 시 모달 닫기 로직 추가 
+
+      refetch();
+      return true;
     } catch (error) {
       console.error("수정 실패:", error);
       alert("프로필 수정 중 오류가 발생했습니다.");
+      return false;
     }
   };
 

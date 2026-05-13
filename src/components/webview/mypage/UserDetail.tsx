@@ -9,7 +9,7 @@ import { MOCK_USER_PROFILE, MOCK_USER_STATISTICS } from "@/app/(webview)/mypage/
 interface Props {
   userStats: UserStatistics | undefined;
   userDetail: UserDetail | undefined;
-  onSave: (nickname: string, bio: string) => Promise<void>;
+  onSave: (nickname: string, bio: string) => Promise<boolean>;
 }
 
 export default function UserDetail({ userStats, userDetail, onSave }: Props) {
@@ -17,6 +17,14 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
   //const statics = MOCK_USER_STATISTICS.data;
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleSaveSubmit = async (nickname: string, bio: string) => {
+    const success = await onSave(nickname, bio);
+
+    if (success) {
+      setIsEditModalOpen(false);
+    }
+  };
 
   return (
     <div>
@@ -69,7 +77,7 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
           <ProfileEditModal 
             isOpen={isEditModalOpen} 
             onClose={() => setIsEditModalOpen(false)}
-            onSave={onSave}
+            onSave={handleSaveSubmit}
             initialData={{
               nickname: userDetail!.nickname,
               profileImageUrl: userDetail!.profileImageUrl,
