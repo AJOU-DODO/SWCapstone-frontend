@@ -3,7 +3,7 @@
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { fetchUserStatistics, fetchUserDetail, fetchUserNests, patchUpdatdProfile } from "@/lib/apiMypage";
+import { fetchUserStatistics, fetchUserDetail, fetchUserNests, patchUpdatdProfile, fetchPresignedUrl } from "@/lib/apiMypage";
 import { fetchPresignedUrls, uploadImageToS3 } from "@/lib/api";
 import UserDetail from '@/components/webview/mypage/UserDetail';
 import MenuButtons from "@/components/webview/mypage/MenuButtons";
@@ -73,7 +73,6 @@ export default function Page() {
     profileUrl: Base64 || userData?.data.profileImageUrl
   };
 
-  // page.tsx
   const handleSave = async (nickname: string, bio: string) => {
     try {
       let finalImageUrl = userData?.data.profileImageUrl;
@@ -82,12 +81,12 @@ export default function Page() {
       // 파일네임 생성
       const fileName = `profile_${Date.now()}.png`;
 
-      // presigned URL 발급
-      const presignedItems = await fetchPresignedUrls([fileName], accessToken);
-      const { presignedUrl, fileUrl } = presignedItems.data[0];
-
       // S3에 이미지 업로드
-      await uploadImageToS3(presignedUrl, Base64);
+      const response = await fetchPresignedUrl(fileName, accessToken);
+
+      const { presignedUrl, fileUrl } = response.data;
+
+      await uploadImageToS3(presignedUrl, Base64)
 
       // 서버에 보낼 주소를 S3에서 받은 주소로 교체
       finalImageUrl = fileUrl;

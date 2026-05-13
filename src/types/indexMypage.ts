@@ -120,3 +120,15 @@ export interface MyCommentsApiResponse {
   message: string | null;
   data: MyCommentsData;
 }
+
+// S3에 이미지 업로드. presignedUrl, fileUrl
+export interface imageUrl{
+  presignedUrl: string;
+  fileUrl: string;
+}
+export interface ImageUrlApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: imageUrl;
+}

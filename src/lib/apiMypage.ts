@@ -8,6 +8,7 @@ import type {
   MyPostcardApiResponse,
   ProfileEditPayload,
   MyCommentsApiResponse,
+  ImageUrlApiResponse,
 } from "@/types/indexMypage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -116,5 +117,19 @@ export async function fetchMyComments(
     cache: "no-store",
   });
   if (!res.ok) throw new Error("작성 댓글 정보를 불러오지 못했습니다.");
+  return res.json();
+}
+
+//프로필 이미지를 S3에 업로드 (presignedUrl 받아오기)
+export async function fetchPresignedUrl(
+  fileName: string,
+  accessToken: string,
+): Promise<ImageUrlApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/files/presigned-url/profile?fileName=${encodeURIComponent(fileName)}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("이미지 업로드 실패");
   return res.json();
 }
