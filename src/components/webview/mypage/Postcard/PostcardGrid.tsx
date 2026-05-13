@@ -13,11 +13,11 @@ export default function PostcardGrid({ items, activeTab, onItemClick }: GridProp
   console.log("ActiveTap: ", activeTab);
 
   const handleCreatePostcard = () => {
-    /*if (window && window.requestCreatePostcard) {
-      window.android.openCreatePostcard();
+    if (window && window.requestPostcardMake) {
+      window.requestPostcardMake();
     } else {
       console.log("안드로이드 브릿지가 연결되지 않았습니다.");
-    }*/
+    }
    console.log("엽서 생성 요청");
   };
   return (

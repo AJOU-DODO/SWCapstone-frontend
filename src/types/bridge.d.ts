@@ -16,6 +16,9 @@ declare global {
     onInitialData?: (data: string) => void;
     onImageUploaded?: (imageUrl: string) => void;
     onImageReceived?: (base64Data: string) => void;
+
+    requestPostcardMake: () => void;
+    requestReload: () => void;
   }
 }
 

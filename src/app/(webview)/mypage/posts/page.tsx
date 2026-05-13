@@ -41,10 +41,10 @@ export default function Page() {
       refetch(); 
     };
 
-    (window as any).refreshPostcards = handleAndroidRefresh;
+    window.requestReload = handleAndroidRefresh;
 
     return () => {
-      delete (window as any).refreshPostcards; // 컴포넌트 나갈 때 정리
+      window.requestReload = () => {};
     };
   }, [refetch]);
 
