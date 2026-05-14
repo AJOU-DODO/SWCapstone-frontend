@@ -1,6 +1,5 @@
 
 import Link from "next/link";
-import { MOCK_USER_COMMENTS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
 import type { MyCommentsData } from "@/types/indexMypage";
 
 function formatDate(iso: string) {
@@ -13,7 +12,6 @@ interface Props {
 }
 
 export default function MyCommentList( { commentData }: Props ) {
-  //const comment = MOCK_USER_COMMENTS.data.content;
   const comment = commentData!.content;
 
   return(

@@ -3,8 +3,6 @@
 import Link from "next/link";
 import type { MyNestData } from "@/types/indexMypage";
 
-import { MOCK_USER_NESTS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
-
 interface Props {
   nestsData: MyNestData | undefined;
 }
@@ -15,7 +13,6 @@ function formatDate(iso: string) {
 }
 
 export default function MyNestList({ nestsData }: Props) {
-  //const nests = MOCK_USER_NESTS.data.content;
   const nests = nestsData!.content;
   
   return (

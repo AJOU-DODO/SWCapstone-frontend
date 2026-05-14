@@ -1,10 +1,8 @@
 "use client";
 
 import type { UserStatistics, UserDetail} from "@/types/indexMypage";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProfileEditModal from '@/components/webview/mypage/ProfileEditModal';
-
-import { MOCK_USER_PROFILE, MOCK_USER_STATISTICS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
 
 interface Props {
   userStats: UserStatistics | undefined;
@@ -13,8 +11,6 @@ interface Props {
 }
 
 export default function UserDetail({ userStats, userDetail, onSave }: Props) {
-  //const user = MOCK_USER_PROFILE.data;
-  //const statics = MOCK_USER_STATISTICS.data;
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 

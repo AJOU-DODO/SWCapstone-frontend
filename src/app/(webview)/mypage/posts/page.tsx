@@ -6,9 +6,7 @@ import PostcardGrid from '@/components/webview/mypage/Postcard/PostcardGrid';
 import PostcardModal from '@/components/webview/mypage/Postcard/PostcardModal';
 import { fetchUserPostcards } from "@/lib/apiMypage";
 import type { MyPostcard } from "@/types/indexMypage";
-import { useQuery, useMutation } from "@tanstack/react-query";
-
-import { MOCK_USER_POSTCARDS } from "@/app/(webview)/mypage/MockData"; // 임시 데이터 경로
+import { useQuery } from "@tanstack/react-query";
 
 import { useState, useEffect, useMemo } from "react";
 
@@ -48,7 +46,6 @@ export default function Page() {
     };
   }, [refetch]);
 
-  //const postcard = MOCK_USER_POSTCARDS.data.content;
   const displayList = useMemo(() => {
     const postcards = postcardData?.data?.content || [];
     return postcards.filter((post: any) => 

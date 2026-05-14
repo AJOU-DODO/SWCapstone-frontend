@@ -1,10 +1,9 @@
 "use client";
 
-import { useBridge } from "@/lib/hooks/useBridge";
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchUserStatistics, fetchUserDetail, fetchUserNests, patchUpdatdProfile, fetchPresignedUrl } from "@/lib/apiMypage";
-import { fetchPresignedUrls, uploadImageToS3 } from "@/lib/api";
+import { uploadImageToS3 } from "@/lib/api";
 import UserDetail from '@/components/webview/mypage/UserDetail';
 import MenuButtons from "@/components/webview/mypage/MenuButtons";
 import MyNestList from "@/components/webview/mypage/MyNestList";

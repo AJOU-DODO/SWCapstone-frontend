@@ -3,9 +3,9 @@
 import MyNestList from "@/components/webview/mypage/MyNestList";
 import MypageHeader from '@/components/webview/mypage/MyPageHeader';
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { fetchUnlockNests } from "@/lib/apiMypage";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Page() {
   //브릿지로 accesstoken 수신
