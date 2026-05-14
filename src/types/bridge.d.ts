@@ -13,6 +13,9 @@ declare global {
       requestImageUpload: () => string;
       // nest-detail
       getNestDetailId: () => string;
+
+      requestPostcardMake: () => void;
+      requestReload: () => void;
     };
     onInitialData?: (data: string) => void;
     onImageUploaded?: (imageUrl: string) => void;
