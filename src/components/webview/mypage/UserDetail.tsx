@@ -59,7 +59,7 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
         {userDetail?.bio && (
           <div className="px-4 py-2 rounded-lg w-full text-center">
             <p className="text-sm text-[#54513E] italic">
-              "{userDetail.bio}"
+              &quot;{userDetail.bio}&quot;
             </p>
           </div>
         )}
