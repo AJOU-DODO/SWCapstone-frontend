@@ -2,7 +2,7 @@
 
 import { X, Camera } from "lucide-react";
 import Image from 'next/image';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -28,6 +28,21 @@ export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData
 
   const [nickname, setNickname] = useState(initialData.nickname);
   const [bio, setBio] = useState(initialData.bio);
+  const [currentImg, setCurrentImg] = useState(initialData.profileImageUrl);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setCurrentImg(initialData.profileImageUrl);
+  }, [initialData.profileImageUrl]);
+
+  const handleSaveClick = async () => {
+    setIsSaving(true);
+    try {
+      await onSave(nickname, bio);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
 
   return (
@@ -47,8 +62,9 @@ export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData
           <div className="flex flex-col items-center">
             <div className="relative w-24 h-24">
               <Image 
-                src={initialData.profileImageUrl || "/default-profile.png"} 
+                src={currentImg} 
                 fill
+                unoptimized
                 className="w-full h-full border-[#54513E] rounded-full object-cover border" 
                 alt="프로필"
               />
@@ -86,9 +102,10 @@ export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData
         {/* Footer */}
         <div className="p-4 border-t">
           <button 
-          onClick={() => onSave(nickname, bio)}
-          className="w-full py-3 bg-[#54513E] text-white rounded-xl font-bold hover:bg-gray-800 transition-colors">
-            저장하기
+            disabled={isSaving}
+            onClick={handleSaveClick}
+            className="w-full py-3 bg-[#54513E] text-white rounded-xl font-bold hover:bg-gray-800 transition-colors">
+            {isSaving ? "저장 중..." : "저장하기"}
           </button>
         </div>
       </div>
