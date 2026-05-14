@@ -9,29 +9,22 @@ import MenuButtons from "@/components/webview/mypage/MenuButtons";
 import MyNestList from "@/components/webview/mypage/MyNestList";
 
 export default function Page() {
-  const [accessToken, setAccessToken] = useState<string>("");
   const [Base64, setBase64] = useState<string>("");
   
+  //브릿지로 accesstoken 수신
+  const [accessToken] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const token = window.AndroidBridge.getAccessToken();
+      console.log(token, "좋아요 둥지");
+      return token ?? "";
+    } catch {
+      return "";
+    }
+  });
   
   //브릿지를 통한 accessToken 수신
   useEffect(() => {
-      if (typeof window !== "undefined" && window.AndroidBridge) {
-        try {
-          const token = window.AndroidBridge.getAccessToken();
-  
-          console.log("네이티브에서 꺼내온 토큰:", token);
-  
-          if (token) {
-            setAccessToken(token);
-            localStorage.setItem("accessToken", token);
-          }
-        } catch (error) {
-          console.error("브릿지 데이터 가져오기 실패:", error);
-        }
-      } else {
-        console.log("안드로이드 브릿지가 아직 연결되지 않았습니다.");
-      }
-
       window.onImageReceived = (Base64: string) => {
         setBase64(Base64);
       }

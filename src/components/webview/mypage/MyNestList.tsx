@@ -13,7 +13,7 @@ function formatDate(iso: string) {
 }
 
 export default function MyNestList({ nestsData }: Props) {
-  const nests = nestsData!.content;
+  const nests = nestsData?.content || [];
   
   return (
     <section className="w-full mt-8 px-5 pb-20">

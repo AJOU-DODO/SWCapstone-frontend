@@ -40,7 +40,7 @@ export default function PostcardGrid({ items, activeTab, onItemClick }: GridProp
 }
 
 // components/PostcardItem.tsx
-function PostcardItem({ item, onClick }: { item: any, onClick: () => void }) {
+function PostcardItem({ item, onClick }: { item: MyPostcard, onClick: () => void }) {
   return (
     <div className="aspect-square relative overflow-hidden bg-[#FAF7E4]">
       <Image 

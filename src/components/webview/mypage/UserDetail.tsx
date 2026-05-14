@@ -75,9 +75,9 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
             onClose={() => setIsEditModalOpen(false)}
             onSave={handleSaveSubmit}
             initialData={{
-              nickname: userDetail!.nickname,
-              profileImageUrl: userDetail!.profileImageUrl,
-              bio: userDetail!.bio
+              nickname: userDetail?.nickname || "",
+              profileImageUrl: userDetail?.profileImageUrl || "",
+              bio: userDetail?.bio || ""
             }}
           />
         </div>

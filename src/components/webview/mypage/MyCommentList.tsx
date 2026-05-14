@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function MyCommentList( { commentData }: Props ) {
-  const comment = commentData!.content;
+  const comment = commentData?.content || [];
 
   return(
     <div className="flex flex-col gap-3">

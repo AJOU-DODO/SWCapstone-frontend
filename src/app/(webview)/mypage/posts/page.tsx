@@ -48,7 +48,7 @@ export default function Page() {
 
   const displayList = useMemo(() => {
     const postcards = postcardData?.data?.content || [];
-    return postcards.filter((post: any) => 
+    return postcards.filter((post: MyPostcard) => 
       activeTab === 'mine' ? post.mine === true : post.mine === false
     );
   }, [postcardData, activeTab]);
