@@ -2,6 +2,7 @@
 
 import type { UserStatistics, UserDetail} from "@/types/indexMypage";
 import { useState } from "react";
+import Image from 'next/image';
 import ProfileEditModal from '@/components/webview/mypage/ProfileEditModal';
 
 interface Props {
@@ -27,9 +28,10 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
       <div className="flex flex-rows width=device-width justify-between items-center pl-6 pr-6 pt-6">
         {/* 프로필 이미지 컨테이너 */}
         <div className="relative w-24 h-24 mb-4">
-          <img
-            src={userDetail?.profileImageUrl}
-            alt={userDetail?.nickname}
+          <Image
+            src={userDetail?.profileImageUrl || "/default-profile.png"}
+            alt={userDetail?.nickname || ""}
+            fill
             className="w-full h-full object-cover rounded-full border-2 border-[#54513E] shadow-md"
           />
         </div>

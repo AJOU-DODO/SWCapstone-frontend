@@ -16,6 +16,15 @@ interface ProfileEditModalProps {
 }
 
 export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData }: ProfileEditModalProps) {
+  const [nickname, setNickname] = useState(initialData.nickname || "");
+  const [bio, setBio] = useState(initialData.bio || "");
+  const [currentImg, setCurrentImg] = useState(initialData.profileImageUrl || "");
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setCurrentImg(initialData.profileImageUrl);
+  }, [initialData.profileImageUrl]);
+
   if (!isOpen) return null;
 
   const handleCameraClick = () => {
@@ -25,15 +34,6 @@ export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData
       console.log("앱 브릿지를 찾을 수 없습니다.");
     }
   };
-
-  const [nickname, setNickname] = useState(initialData.nickname);
-  const [bio, setBio] = useState(initialData.bio);
-  const [currentImg, setCurrentImg] = useState(initialData.profileImageUrl);
-  const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    setCurrentImg(initialData.profileImageUrl);
-  }, [initialData.profileImageUrl]);
 
   const handleSaveClick = async () => {
     setIsSaving(true);
