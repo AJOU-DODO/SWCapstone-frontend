@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import type { MyNestData } from "@/types/indexMypage";
+import Image from 'next/image';
+import { useEffect } from "react";
+import type { MyNestDetail } from "@/types/indexMypage";
+import { useInView } from "react-intersection-observer";
 
 interface Props {
-  nestsData: MyNestData | undefined;
+  nestsData: MyNestDetail[] | undefined;
+  fetchNextPage: () => void;
+  hasNextPage: boolean; 
+  isFetchingNextPage: boolean;
 }
 
 function formatDate(iso: string) {
@@ -12,8 +18,15 @@ function formatDate(iso: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export default function MyNestList({ nestsData }: Props) {
-  const nests = nestsData?.content || [];
+export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFetchingNextPage }: Props) {
+  const { ref, inView } = useInView();
+  const nests = nestsData || [];
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
   
   return (
     <section className="w-full mt-8 px-5 pb-20">
@@ -32,9 +45,10 @@ export default function MyNestList({ nestsData }: Props) {
           >
             {nest.thumbnailUrl && (
               <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-100">
-                <img
+                <Image
                   src={nest.thumbnailUrl}
                   alt="thumbnail"
+                  fill
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -53,6 +67,9 @@ export default function MyNestList({ nestsData }: Props) {
             </div>
           </Link>
         ))}
+        <div ref={ref} className="h-10">
+          {isFetchingNextPage && "로딩 중..."}
+        </div>
       </div>
 
       {nests.length === 0 && (

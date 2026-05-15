@@ -42,8 +42,9 @@ export async function fetchUserDetail(
 // 유저가 작성한 둥지를 불러오는 함수
 export async function fetchUserNests(
   accessToken: string,
+  page: number,
 ): Promise<MyNestApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/nests`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/nests?page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
