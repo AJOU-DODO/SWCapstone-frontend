@@ -71,13 +71,13 @@ export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFe
         <div ref={ref} className="flex justify-center items-center h-14">
           {isFetchingNextPage && <Spinner size="sm" />}
           {!isFetchingNextPage && !hasNextPage && nests.length > 0 && (
-            <p className="text-xs text-gray-400 mt-2">모든 둥지를 확인했어요!</p>
+            <p className="text-xs text-[#54513E] mt-2">모든 둥지를 확인했어요!</p>
           )}
         </div>
       </div>
 
       {nests.length === 0 && (
-        <div className="py-20 text-center text-gray-400 text-sm">
+        <div className="py-20 text-center text-[#54513E] text-sm">
           아직 둥지가 없어요!
         </div>
       )}

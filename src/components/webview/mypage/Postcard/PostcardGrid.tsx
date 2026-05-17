@@ -35,25 +35,26 @@ export default function PostcardGrid({ items, activeTab, onItemClick, fetchNextP
    console.log("엽서 생성 요청");
   };
   return (
-    <div className="grid grid-cols-3 gap-1">
-      {activeTab === 'mine' && (
-        <div 
-          onClick={handleCreatePostcard}
-          className="aspect-square flex flex-col items-center justify-center bg-gray-200 border-2 border-dashed border-[#54513E] cursor-pointer hover:bg-gray-100 transition-colors"
-        >
-          <ImagePlus size={24} color="#54513E" />
-          <span className="text-xs text-[#54513E] mt-1">엽서 만들기</span>
-        </div>
-      )}
+    <div>
+      <div className="grid grid-cols-3 gap-1">
+        {activeTab === 'mine' && (
+          <div 
+            onClick={handleCreatePostcard}
+            className="aspect-square flex flex-col items-center justify-center bg-gray-200 border-2 border-dashed border-[#54513E] cursor-pointer hover:bg-gray-100 transition-colors"
+          >
+            <ImagePlus size={24} color="#54513E" />
+            <span className="text-xs text-[#54513E] mt-1">엽서 만들기</span>
+          </div>
+        )}
 
-      {items.map((item) => (
-        <PostcardItem key={item.id} item={item} onClick={() => onItemClick(item)}/>
-      ))}
-
-      <div ref={ref} className="flex justify-center items-center h-14">
+        {items.map((item) => (
+          <PostcardItem key={item.id} item={item} onClick={() => onItemClick(item)}/>
+        ))}
+      </div>
+      <div ref={ref} className="flex w-full justify-center items-end h-14">
         {isFetchingNextPage && <Spinner size="sm" />}
         {!isFetchingNextPage && !hasNextPage && items.length > 0 && (
-          <p className="text-xs text-gray-400 mt-2">모든 엽서를 확인했어요!</p>
+          <p className="text-xs text-[#54513E] pb-2">모든 엽서를 확인했어요!</p>
         )}
       </div>
     </div>

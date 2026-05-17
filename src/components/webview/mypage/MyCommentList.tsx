@@ -54,7 +54,7 @@ export default function MyCommentList( { commentData, fetchNextPage, hasNextPage
         <div ref={ref} className="flex justify-center items-center h-14">
           {isFetchingNextPage && <Spinner size="sm" />}
           {!isFetchingNextPage && !hasNextPage && comments.length > 0 && (
-            <p className="text-xs text-gray-400 mt-2">모든 댓글을 확인했어요!</p>
+            <p className="text-xs text-[#54513E] mt-2">모든 댓글을 확인했어요!</p>
           )}
         </div>
       </div>
