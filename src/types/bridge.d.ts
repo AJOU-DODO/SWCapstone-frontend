@@ -15,11 +15,12 @@ declare global {
       getNestDetailId: () => string;
 
       requestPostcardMake: () => void;
-      requestReload: () => void;
     };
     onInitialData?: (data: string) => void;
     onImageUploaded?: (imageUrl: string) => void;
     onImageReceived?: (base64Data: string) => void;
+    
+    requestReload: () => void;
   }
 }
 

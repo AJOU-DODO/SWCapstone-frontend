@@ -39,10 +39,10 @@ export default function Page() {
       refetch(); 
     };
 
-    window.AndroidBridge.requestReload = handleAndroidRefresh;
+    window.requestReload = handleAndroidRefresh;
 
     return () => {
-      window.AndroidBridge.requestReload = () => {};
+      window.requestReload = () => {};
     };
   }, [refetch]);
 
