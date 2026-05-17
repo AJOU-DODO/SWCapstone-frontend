@@ -81,12 +81,17 @@ export async function fetchUnlockNests(
 // 유저의 엽서를 불러오는 함수
 export async function fetchUserPostcards(
   accessToken: string,
+  filter: string,
+  page: number,
 ): Promise<MyPostcardApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${accessToken}` },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${BASE_URL}/api/v1/mypage/postcards?filter=${filter}&page=${page}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+    },
+  );
   if (!res.ok) throw new Error("유저 엽서 정보를 불러오지 못했습니다.");
   return res.json();
 }
@@ -125,11 +130,14 @@ export async function fetchPresignedUrl(
   fileName: string,
   accessToken: string,
 ): Promise<ImageUrlApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/files/presigned-url/profile?fileName=${encodeURIComponent(fileName)}`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${accessToken}` },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${BASE_URL}/api/v1/files/presigned-url/profile?fileName=${encodeURIComponent(fileName)}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+    },
+  );
   if (!res.ok) throw new Error("이미지 업로드 실패");
   return res.json();
 }

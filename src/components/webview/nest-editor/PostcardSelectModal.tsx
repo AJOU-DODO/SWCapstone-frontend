@@ -33,7 +33,7 @@ export function PostcardSelectModal({
 
   const { data, isLoading } = useQuery({
     queryKey: ["userPostcard", accessToken],
-    queryFn: () => fetchUserPostcards(accessToken),
+    queryFn: () => fetchUserPostcards(accessToken, "CREATED_NOT_SHARED", 0),
     enabled: open && !!accessToken,
     staleTime: 0,
   });

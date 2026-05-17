@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { fetchUserPostcards } from "@/lib/apiMypage";
 import { exchangePostcard } from "@/lib/api";
 import { MyPostcard } from "@/types/indexMypage";
@@ -42,10 +42,22 @@ export default function Page() {
     data: postcardData,
     isLoading: isPostCardLoading,
     refetch,
-  } = useQuery({
-    queryKey: ["userPostcard", accessToken],
-    queryFn: () => fetchUserPostcards(accessToken),
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["userPostcard", accessToken, "CREATED_NOT_SHARED"],
+
+    queryFn: ({ pageParam = 0 }) => {
+      return fetchUserPostcards(accessToken, "CREATED_NOT_SHARED", pageParam);
+    },
+    initialPageParam: 0,
     enabled: !!accessToken,
+
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.last) return undefined;
+      return lastPage.data.number + 1;
+    },
   });
 
   useEffect(() => {
@@ -76,8 +88,9 @@ export default function Page() {
   });
 
   const displayList = useMemo(() => {
-    const postcards = postcardData?.data?.content || [];
-    return postcards.filter((post: MyPostcard) => post.mine === true);
+    return (
+      postcardData?.pages.flatMap((page) => page?.data?.content || []) || []
+    );
   }, [postcardData]);
 
   const handleItemClick = (item: MyPostcard) => {
@@ -111,6 +124,9 @@ export default function Page() {
         items={displayList}
         activeTab="mine"
         onItemClick={handleItemClick}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
       />
 
       {/* 교환 확인 모달 */}
