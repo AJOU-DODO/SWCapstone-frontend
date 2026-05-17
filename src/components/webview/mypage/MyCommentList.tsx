@@ -1,6 +1,8 @@
 
 import Link from "next/link";
 import type { MyComment } from "@/types/indexMypage";
+import { useInView } from "react-intersection-observer";
+import Spinner from "@/components/webview/Spinner";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -15,6 +17,8 @@ interface Props {
 }
 
 export default function MyCommentList( { commentData, fetchNextPage, hasNextPage, isFetchingNextPage }: Props ) {
+  const { ref, inView } = useInView();
+
   const comment = commentData || [];
 
   return(
@@ -39,6 +43,9 @@ export default function MyCommentList( { commentData, fetchNextPage, hasNextPage
             </div>
           </Link>
         ))}
+        <div ref={ref} className="flex justify-center items-center h-14">
+          {isFetchingNextPage && <Spinner size="sm" />}
+        </div>
       </div>
   )
 }

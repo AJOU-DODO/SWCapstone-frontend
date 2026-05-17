@@ -7,6 +7,7 @@ import { uploadImageToS3 } from "@/lib/api";
 import UserDetail from '@/components/webview/mypage/UserDetail';
 import MenuButtons from "@/components/webview/mypage/MenuButtons";
 import MyNestList from "@/components/webview/mypage/MyNestList";
+import Spinner from "@/components/webview/Spinner";
 
 export default function Page() {
   const [Base64, setBase64] = useState<string>("");
@@ -69,7 +70,11 @@ export default function Page() {
   const allNests = nestsData?.pages.flatMap((page) => page.data.content) || [];
 
   if (!accessToken || isStatsLoading || isDetailLoading || isNestLoading) {
-    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-white">
+        <Spinner size="lg" />
+      </div>
+  );
   }
 
   const updatedUserData = {

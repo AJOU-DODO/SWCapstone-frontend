@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useEffect } from "react";
 import type { MyNestDetail } from "@/types/indexMypage";
 import { useInView } from "react-intersection-observer";
+import Spinner from "@/components/webview/Spinner";
 
 interface Props {
   nestsData: MyNestDetail[] | undefined;
@@ -67,8 +68,8 @@ export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFe
             </div>
           </Link>
         ))}
-        <div ref={ref} className="h-10">
-          {isFetchingNextPage && "로딩 중..."}
+        <div ref={ref} className="flex justify-center items-center h-14">
+          {isFetchingNextPage && <Spinner size="sm" />}
         </div>
       </div>
 
