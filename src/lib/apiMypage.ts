@@ -85,8 +85,9 @@ export async function fetchUnlockNests(
 export async function fetchUserPostcards(
   accessToken: string,
   filter: string,
+  page: number,
 ): Promise<MyPostcardApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}?page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",

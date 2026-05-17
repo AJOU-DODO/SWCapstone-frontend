@@ -2,14 +2,28 @@
 import Image from 'next/image';
 import type { MyPostcard } from "@/types/indexMypage";
 import { ImagePlus, Images } from 'lucide-react';
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import Spinner from "@/components/webview/Spinner";
 
 interface GridProps {
   items: MyPostcard[];
   activeTab: 'mine' | 'sent' | 'received';
   onItemClick: (item: MyPostcard) => void; // 클릭 함수 타입 추가
+  fetchNextPage: () => void;
+  hasNextPage: boolean; 
+  isFetchingNextPage: boolean;
 }
 
-export default function PostcardGrid({ items, activeTab, onItemClick }: GridProps ) {
+export default function PostcardGrid({ items, activeTab, onItemClick, fetchNextPage, hasNextPage, isFetchingNextPage }: GridProps ) {
+  const { ref, inView } = useInView();
+  
+  useEffect(() => {
+      if (inView && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  
   console.log("ActiveTap: ", activeTab);
 
   const handleCreatePostcard = () => {
@@ -35,6 +49,13 @@ export default function PostcardGrid({ items, activeTab, onItemClick }: GridProp
       {items.map((item) => (
         <PostcardItem key={item.id} item={item} onClick={() => onItemClick(item)}/>
       ))}
+
+      <div ref={ref} className="flex justify-center items-center h-14">
+        {isFetchingNextPage && <Spinner size="sm" />}
+        {!isFetchingNextPage && !hasNextPage && items.length > 0 && (
+          <p className="text-xs text-gray-400 mt-2">모든 엽서를 확인했어요!</p>
+        )}
+      </div>
     </div>
   );
 }

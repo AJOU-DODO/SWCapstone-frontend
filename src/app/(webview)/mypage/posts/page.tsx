@@ -7,7 +7,7 @@ import PostcardModal from '@/components/webview/mypage/Postcard/PostcardModal';
 import Spinner from "@/components/webview/Spinner";
 import { fetchUserPostcards } from "@/lib/apiMypage";
 import type { MyPostcard } from "@/types/indexMypage";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { useState, useEffect, useMemo } from "react";
 
@@ -35,10 +35,26 @@ export default function Page() {
   });
 
   //엽서 리스트 정보
-  const { data: postcardData, isLoading: isPostCardLoading, refetch } = useQuery({
+  const { 
+    data: postcardData, 
+    isLoading: isPostCardLoading, 
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['userPostcard', accessToken, activeTab], 
-    queryFn: () => fetchUserPostcards(accessToken, getFilter(activeTab)),
+    
+    queryFn: ({ pageParam = 0 }) => {
+      return fetchUserPostcards(accessToken, getFilter(activeTab), pageParam);
+    },
+    initialPageParam: 0,
     enabled: !!accessToken,
+    
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.last) return undefined;
+      return lastPage.data.number + 1;
+    }
   });
 
   useEffect(() => {
@@ -55,7 +71,7 @@ export default function Page() {
   }, [refetch]);
 
   const displayList = useMemo(() => {
-    return postcardData?.data?.content || [];
+    return postcardData?.pages.flatMap((page) => page?.data?.content || []) || [];
   }, [postcardData]);
 
   if (!accessToken) {
@@ -76,7 +92,7 @@ export default function Page() {
           <Spinner size="md" />
         </div>
       ) : (
-        <PostcardGrid items={displayList} activeTab={activeTab} onItemClick={(item) => setSelectedPostcard(item)} />
+        <PostcardGrid items={displayList} activeTab={activeTab} onItemClick={(item) => setSelectedPostcard(item)} fetchNextPage={fetchNextPage} hasNextPage={hasNextPage} isFetchingNextPage={isFetchingNextPage} />
       )}
 
       <PostcardModal 
