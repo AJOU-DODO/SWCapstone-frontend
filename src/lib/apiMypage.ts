@@ -87,7 +87,7 @@ export async function fetchUserPostcards(
   filter: string,
   page: number,
 ): Promise<MyPostcardApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}?page=${page}`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}&page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
