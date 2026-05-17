@@ -70,6 +70,9 @@ export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFe
         ))}
         <div ref={ref} className="flex justify-center items-center h-14">
           {isFetchingNextPage && <Spinner size="sm" />}
+          {!isFetchingNextPage && !hasNextPage && nests.length > 0 && (
+            <p className="text-xs text-gray-400 mt-2">모든 댓글을 확인했어요!</p>
+          )}
         </div>
       </div>
 

@@ -19,11 +19,11 @@ interface Props {
 export default function MyCommentList( { commentData, fetchNextPage, hasNextPage, isFetchingNextPage }: Props ) {
   const { ref, inView } = useInView();
 
-  const comment = commentData || [];
+  const comments = commentData || [];
 
   return(
     <div className="flex flex-col gap-3">
-        {comment.map((comment) => (
+        {comments.map((comment) => (
           <Link
             key={comment.id}
             href={`/nests/${comment.nestId}`} // 상세 페이지 경로
@@ -45,6 +45,9 @@ export default function MyCommentList( { commentData, fetchNextPage, hasNextPage
         ))}
         <div ref={ref} className="flex justify-center items-center h-14">
           {isFetchingNextPage && <Spinner size="sm" />}
+          {!isFetchingNextPage && !hasNextPage && comments.length > 0 && (
+            <p className="text-xs text-gray-400 mt-2">모든 둥지를 확인했어요!</p>
+          )}
         </div>
       </div>
   )
