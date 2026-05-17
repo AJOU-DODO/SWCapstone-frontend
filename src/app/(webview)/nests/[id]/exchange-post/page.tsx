@@ -31,7 +31,6 @@ export default function Page() {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge.getAccessToken();
-      console.log(token, "엽서함");
       return token ?? "";
     } catch {
       return "";
@@ -65,7 +64,10 @@ export default function Page() {
 
   // 엽서 교환 mutation
   const { mutate: exchange, isPending: isExchanging } = useMutation({
-    mutationFn: () => exchangePostcard(id, selectedPostcard!.id, accessToken),
+    mutationFn: () => {
+      if (!selectedPostcard) throw new Error("선택된 엽서가 없습니다.");
+      return exchangePostcard(id, selectedPostcard!.id, accessToken);
+    },
     onSuccess: (data) => {
       setConfirmOpen(false);
       setExchangedPostcard(data.data);
