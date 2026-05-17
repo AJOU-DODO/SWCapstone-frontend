@@ -19,6 +19,7 @@ export interface NestPayload {
   unlockRadius: 10 | 150;
   categoryIds: number[] | null;
   imageUrls: string[] | null;
+  postcardId: number | null;
 }
 
 export interface BridgeInitialData {
