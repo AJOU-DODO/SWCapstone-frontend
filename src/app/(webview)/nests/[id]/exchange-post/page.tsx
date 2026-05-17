@@ -63,14 +63,14 @@ export default function Page() {
   useEffect(() => {
     // 안드로이드가 엽서작성완료 신호를 보낼 시 실행될 함수
     if (typeof window !== "undefined" && window.AndroidBridge) {
-      window.AndroidBridge.requestReload = () => {
+      window.requestReload = () => {
         // 리로드 시 실행할 로직
         refetch();
       };
     }
 
     return () => {
-      window.AndroidBridge.requestReload = () => {};
+      window.requestReload = () => {};
     };
   }, [refetch]);
 
