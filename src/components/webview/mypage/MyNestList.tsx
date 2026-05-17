@@ -45,7 +45,7 @@ export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFe
             className="flex flex-row gap-5 p-4 w-[90vw] bg-white rounded-2xl border border-gray-100 shadow-sm active:bg-gray-50 active:scale-[0.98] transition-all"
           >
             {nest.thumbnailUrl && (
-              <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-100">
+              <div className="flex-shrink-0 w-16 h-16 rounded-xl relative overflow-hidden bg-gray-100">
                 <Image
                   src={nest.thumbnailUrl}
                   alt="thumbnail"

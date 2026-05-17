@@ -38,7 +38,7 @@ export default function PostcardModal({ isOpen, onClose, postcardData }: Postcar
         </button>
 
         {/* 엽서 이미지 영역 */}
-        <div className="relative aspect-[4/3] w-full bg-gray-100">
+        <div className="relative relative aspect-[4/3] w-full bg-gray-100">
           <Image 
             src={postcardData.imageUrl} 
             alt={postcardData.content}
