@@ -1,7 +1,9 @@
+"use client";
 
 import Link from "next/link";
 import type { MyComment } from "@/types/indexMypage";
 import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 import Spinner from "@/components/webview/Spinner";
 
 function formatDate(iso: string) {
@@ -20,6 +22,12 @@ export default function MyCommentList( { commentData, fetchNextPage, hasNextPage
   const { ref, inView } = useInView();
 
   const comments = commentData || [];
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage(); 
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return(
     <div className="flex flex-col gap-3">
@@ -46,7 +54,7 @@ export default function MyCommentList( { commentData, fetchNextPage, hasNextPage
         <div ref={ref} className="flex justify-center items-center h-14">
           {isFetchingNextPage && <Spinner size="sm" />}
           {!isFetchingNextPage && !hasNextPage && comments.length > 0 && (
-            <p className="text-xs text-gray-400 mt-2">모든 둥지를 확인했어요!</p>
+            <p className="text-xs text-gray-400 mt-2">모든 댓글을 확인했어요!</p>
           )}
         </div>
       </div>
