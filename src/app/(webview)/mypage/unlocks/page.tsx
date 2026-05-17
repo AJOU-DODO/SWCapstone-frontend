@@ -2,6 +2,7 @@
 
 import MyNestList from "@/components/webview/mypage/MyNestList";
 import MypageHeader from '@/components/webview/mypage/MyPageHeader';
+import Spinner from "@/components/webview/Spinner";
 
 import { useState } from "react";
 import { fetchUnlockNests } from "@/lib/apiMypage";
@@ -13,7 +14,6 @@ export default function Page() {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge.getAccessToken();
-      console.log(token, "해금한 둥지");
       return token ?? "";
     } catch {
       return "";
@@ -41,7 +41,11 @@ export default function Page() {
   const allNests = nestsData?.pages.flatMap((page) => page.data.content) || [];
 
   if (!accessToken || isUnlockLoading) {
-    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+    return (
+          <div className="flex justify-center items-center h-screen bg-white">
+            <Spinner size="lg" />
+          </div>
+      );
   }
 
   return (

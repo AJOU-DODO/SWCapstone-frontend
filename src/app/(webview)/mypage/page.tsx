@@ -17,7 +17,6 @@ export default function Page() {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge.getAccessToken();
-      console.log(token, "마이페이지");
       return token ?? "";
     } catch {
       return "";
@@ -112,8 +111,6 @@ export default function Page() {
 
       // PATCH API 호출 
       await patchUpdatdProfile(payload, accessToken);
-      
-      console.log("프로필업데이트성공");
 
       refetch();
       return true;

@@ -13,7 +13,6 @@ export default function Page() {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge.getAccessToken();
-      console.log(token, "내 댓글");
       return token ?? "";
     } catch {
       return "";
