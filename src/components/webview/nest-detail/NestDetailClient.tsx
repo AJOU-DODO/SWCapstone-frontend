@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ThumbsUp, ThumbsDown, Hash, AlertCircle } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Hash, AlertCircle, Mail } from "lucide-react";
 import { ImageSlider } from "./ImageSlider";
+import { PostcardModal } from "./PostcardModal";
 import { fetchNestDetail, postReaction } from "@/lib/api";
 import type { ReactionType } from "@/types";
 
@@ -19,11 +21,13 @@ interface Props {
 
 export function NestDetailClient({ nestId }: Props) {
   const [reportOpen, setReportOpen] = useState(false);
+  const [postcardModalOpen, setPostcardModalOpen] = useState(false);
 
   // 낙관적 업데이트를 위한 로컬 reaction 상태
   const [localReaction, setLocalReaction] = useState<ReactionType | null>(null);
   const [likeOffset, setLikeOffset] = useState(0);
   const [dislikeOffset, setDislikeOffset] = useState(0);
+  const [isReactionInitialized, setIsReactionInitialized] = useState(false);
 
   //브릿지로 accesstoken 수신
   const [accessToken] = useState<string>(() => {
@@ -45,10 +49,18 @@ export function NestDetailClient({ nestId }: Props) {
 
   const nest = nestData?.data;
 
-  console.log(nest?.imageUrls);
-  console.log(nest?.creatorProfileImageUrl);
+  // YES 버튼 클릭 시 이동할 페이지
+  const router = useRouter();
+  const handlePostcardConfirm = () => {
+    setPostcardModalOpen(false);
+    router.push(`/nests/${nestId}/exchange-post`);
+  };
 
-  // 초기 reaction 상태 동기화
+  // 초기 reaction 상태 확인 및 동기화
+  if (nest && !isReactionInitialized) {
+    setLocalReaction(nest.myReaction ?? null);
+    setIsReactionInitialized(true);
+  }
   const displayLikeCount = (nest?.likeCount ?? 0) + likeOffset;
   const displayDislikeCount = (nest?.dislikeCount ?? 0) + dislikeOffset;
 
@@ -92,8 +104,21 @@ export function NestDetailClient({ nestId }: Props) {
   return (
     <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
       <div className="flex-1 overflow-y-auto pb-24">
-        {/* 이미지 슬라이더 */}
-        <ImageSlider imageUrls={nest.imageUrls} title={nest.title} />
+        {/* 이미지 + 편지 버튼 */}
+        <div className="relative">
+          <ImageSlider imageUrls={nest.imageUrls} title={nest.title} />
+
+          {/* 엽서가 있을 때만 편지 버튼 활성화 */}
+          {nest.hasPostcard && (
+            <button
+              type="button"
+              onClick={() => setPostcardModalOpen(true)}
+              className="absolute top-3 left-3 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all active:scale-95 hover:bg-white"
+            >
+              <Mail className="w-4 h-4 text-[#5C5346]" />
+            </button>
+          )}
+        </div>
 
         <div className="px-5 pt-4 space-y-4">
           {/* 카테고리 칩 + 작성자 */}
@@ -193,6 +218,14 @@ export function NestDetailClient({ nestId }: Props) {
               </button>
             </div>
           </div>
+
+          {/* 엽서 모달 */}
+          <PostcardModal
+            open={postcardModalOpen}
+            accessToken={accessToken}
+            onClose={() => setPostcardModalOpen(false)}
+            onConfirm={handlePostcardConfirm}
+          />
 
           {/* 구분선 */}
           <div className="h-px bg-[#E0DDD3]" />

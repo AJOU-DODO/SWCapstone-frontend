@@ -1,5 +1,5 @@
 // 엽서 표시 컴포넌트 (3개씩 표시)
-import Image from 'next/image';
+import Image from "next/image";
 import type { MyPostcard } from "@/types/indexMypage";
 import { ImagePlus, Images } from 'lucide-react';
 import { useEffect } from "react";
@@ -32,7 +32,7 @@ export default function PostcardGrid({ items, activeTab, onItemClick, fetchNextP
     } else {
       console.log("안드로이드 브릿지가 연결되지 않았습니다.");
     }
-   console.log("엽서 생성 요청");
+    console.log("엽서 생성 요청");
   };
   return (
     <div>
@@ -62,12 +62,18 @@ export default function PostcardGrid({ items, activeTab, onItemClick, fetchNextP
 }
 
 // components/PostcardItem.tsx
-function PostcardItem({ item, onClick }: { item: MyPostcard, onClick: () => void }) {
+function PostcardItem({
+  item,
+  onClick,
+}: {
+  item: MyPostcard;
+  onClick: () => void;
+}) {
   return (
     <div className="aspect-square relative overflow-hidden bg-[#FAF7E4]">
-      <Image 
+      <Image
         onClick={onClick}
-        src={item.imageUrl} 
+        src={item.imageUrl}
         alt="엽서 이미지"
         fill
         className="object-cover"

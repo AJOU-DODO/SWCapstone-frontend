@@ -131,11 +131,14 @@ export async function fetchPresignedUrl(
   fileName: string,
   accessToken: string,
 ): Promise<ImageUrlApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/files/presigned-url/profile?fileName=${encodeURIComponent(fileName)}`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${accessToken}` },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${BASE_URL}/api/v1/files/presigned-url/profile?fileName=${encodeURIComponent(fileName)}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+    },
+  );
   if (!res.ok) throw new Error("이미지 업로드 실패");
   return res.json();
 }

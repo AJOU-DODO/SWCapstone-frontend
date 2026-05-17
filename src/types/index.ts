@@ -19,6 +19,7 @@ export interface NestPayload {
   unlockRadius: 10 | 150;
   categoryIds: number[] | null;
   imageUrls: string[] | null;
+  postcardId: number | null;
 }
 
 export interface BridgeInitialData {
@@ -60,6 +61,9 @@ export interface NestDetail {
   imageUrls: string[];
   likeCount: number;
   dislikeCount: number;
+  myReaction: ReactionType | null;
+  hasPostcard: boolean;
+  postcardId: number | null;
   ad: boolean;
   unlocked: boolean;
 }
@@ -84,3 +88,36 @@ export interface PresignedUrlItemApiResponse {
 }
 
 export type ReactionType = "LIKE" | "DISLIKE";
+
+export interface ExchangeCheck {
+  canExchange: boolean;
+  remainingCount: number;
+  reason: string | null;
+}
+
+export interface ExchangeCheckApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: ExchangeCheck;
+}
+
+export interface ExchangedPostcard {
+  id: number;
+  originalAuthorId: number;
+  originalAuthorNickname: string;
+  imageUrl: string;
+  content: string;
+  createdAt: string;
+  reactionType: string | null;
+  shared: boolean;
+  exchanged: boolean;
+  mine: boolean;
+}
+
+export interface ExchangeApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: ExchangedPostcard;
+}

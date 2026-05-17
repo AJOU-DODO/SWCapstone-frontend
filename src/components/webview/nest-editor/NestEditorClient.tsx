@@ -13,6 +13,7 @@ import {
 import { ImageUploader } from "./ImageUploader";
 import { CategorySelector } from "./CategorySelector";
 import { UnlockRadiusSelector } from "./UnlockRadiusSelector";
+import { PostcardSelector } from "./PostcardSelector";
 import { ContentEditor } from "./ContentEditor";
 import { DraftListModal } from "./DraftListModal";
 import type { DraftItem } from "@/types";
@@ -167,6 +168,12 @@ export function NestEditorClient() {
 
         <section className="space-y-3">
           <UnlockRadiusSelector />
+        </section>
+
+        <div className="h-px bg-[#E0DDD3]" />
+        {/* 엽서 섹션 추가 */}
+        <section>
+          <PostcardSelector />
         </section>
 
         <div className="h-px bg-[#E0DDD3]" />
