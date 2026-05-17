@@ -2,6 +2,8 @@ import type {
   CategoryApiResponse,
   DraftListApiResponse,
   NestDetailApiResponse,
+  ExchangeApiResponse,
+  ExchangeCheckApiResponse,
   NestPayload,
   ReactionType,
   PresignedUrlItemApiResponse,
@@ -87,14 +89,15 @@ export async function postReaction(
   type: ReactionType,
   accessToken: string,
 ): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/v1/nests/${id}/reaction`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetch(
+    `${BASE_URL}/api/v1/nests/${id}/reaction?type=${type}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     },
-    body: JSON.stringify({ type }),
-  });
+  );
   if (!res.ok) throw new Error("반응 처리에 실패했습니다.");
 }
 
@@ -162,4 +165,32 @@ export async function updateUserInterests(
     body: JSON.stringify({ categoryIds }),
   });
   if (!res.ok) throw new Error("관심 카테고리 설정에 실패했습니다.");
+}
+
+export async function fetchExchangeCheck(
+  accessToken: string,
+): Promise<ExchangeCheckApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/postcards/exchange-check`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("교환 가능 여부를 불러오지 못했습니다.");
+  return res.json();
+}
+
+export async function exchangePostcard(
+  nestId: string,
+  myPostcardId: number,
+  accessToken: string,
+): Promise<ExchangeApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/${nestId}/exchange`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ myPostcardId }),
+  });
+  if (!res.ok) throw new Error("엽서 교환에 실패했습니다.");
+  return res.json();
 }

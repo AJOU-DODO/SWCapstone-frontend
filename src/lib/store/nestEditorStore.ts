@@ -11,6 +11,8 @@ interface NestEditorState {
   categoryIds: number[];
   unlockRadius: 150 | 10;
   content: string;
+  postcardId: number | null;
+  postcardTitle: string | null;
   isSubmitting: boolean;
   errors: Partial<Record<keyof NestPayload, string>>;
 
@@ -23,6 +25,8 @@ interface NestEditorState {
   setSubmitting: (value: boolean) => void;
   setTitle: (title: string) => void;
   setImageUrls: (urls: string[]) => void;
+  setPostcard: (id: number, title: string) => void;
+  clearPostcard: () => void;
   setErrors: (errors: Partial<Record<keyof NestPayload, string>>) => void;
   clearErrors: () => void;
   getDraftPayload: () => NestPayload;
@@ -39,6 +43,8 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   categoryIds: [],
   unlockRadius: 10,
   content: "",
+  postcardId: null,
+  postcardTitle: null,
   isSubmitting: false,
   errors: {},
 
@@ -63,6 +69,8 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   setSubmitting: (value) => set({ isSubmitting: value }),
   setTitle: (title) => set({ title }),
   setImageUrls: (urls) => set({ imageUrls: urls }),
+  setPostcard: (id, title) => set({ postcardId: id, postcardTitle: title }),
+  clearPostcard: () => set({ postcardId: null, postcardTitle: null }),
   setErrors: (errors) => set({ errors }),
   clearErrors: () => set({ errors: {} }),
 
@@ -76,6 +84,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
       unlockRadius: state.unlockRadius,
       categoryIds: state.categoryIds.length > 0 ? state.categoryIds : null,
       imageUrls: state.imageUrls.length > 0 ? state.imageUrls : null,
+      postcardId: state.postcardId,
     };
   },
 
@@ -112,6 +121,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
       unlockRadius: state.unlockRadius,
       categoryIds: state.categoryIds,
       imageUrls: state.imageUrls,
+      postcardId: state.postcardId,
     };
   },
 }));
