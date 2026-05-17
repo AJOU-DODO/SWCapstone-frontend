@@ -5,7 +5,7 @@ import { ImagePlus, Images } from 'lucide-react';
 
 interface GridProps {
   items: MyPostcard[];
-  activeTab: 'mine' | 'received';
+  activeTab: 'mine' | 'sent' | 'received';
   onItemClick: (item: MyPostcard) => void; // 클릭 함수 타입 추가
 }
 

@@ -84,8 +84,9 @@ export async function fetchUnlockNests(
 // 유저의 엽서를 불러오는 함수
 export async function fetchUserPostcards(
   accessToken: string,
+  filter: string,
 ): Promise<MyPostcardApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
