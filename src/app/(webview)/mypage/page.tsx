@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { fetchUserStatistics, fetchUserDetail, fetchUserNests, patchUpdatdProfile, fetchPresignedUrl } from "@/lib/apiMypage";
 import { uploadImageToS3 } from "@/lib/api";
 import UserDetail from '@/components/webview/mypage/UserDetail';
 import MenuButtons from "@/components/webview/mypage/MenuButtons";
 import MyNestList from "@/components/webview/mypage/MyNestList";
+import Spinner from "@/components/webview/Spinner";
 
 export default function Page() {
   const [Base64, setBase64] = useState<string>("");
@@ -16,14 +17,12 @@ export default function Page() {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge.getAccessToken();
-      console.log(token, "좋아요 둥지");
       return token ?? "";
     } catch {
       return "";
     }
   });
   
-  //브릿지를 통한 accessToken 수신
   useEffect(() => {
       window.onImageReceived = (Base64: string) => {
         setBase64(Base64);
@@ -50,14 +49,31 @@ export default function Page() {
   });
 
   //유저 둥지 정보
-  const { data: nestsData, isLoading: isNestLoading} = useQuery({
+  const { 
+    data: nestsData, 
+    isLoading: isNestLoading,
+    fetchNextPage,      // 다음 페이지를 불러오는 함수
+    hasNextPage,        // 다음 페이지가 있는지 여부 (last 기반)
+    isFetchingNextPage  // 추가 페이지를 로딩 중인지 여부
+  } = useInfiniteQuery({
     queryKey: ['userNests', accessToken],
-    queryFn: () => fetchUserNests(accessToken),
+    queryFn: ({ pageParam = 0 }) => fetchUserNests(accessToken, pageParam), 
     enabled: !!accessToken,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.last) return undefined;
+      return lastPage.data.number + 1;
+    },
   });
 
+  const allNests = nestsData?.pages.flatMap((page) => page.data.content) || [];
+
   if (!accessToken || isStatsLoading || isDetailLoading || isNestLoading) {
-    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-white">
+        <Spinner size="lg" />
+      </div>
+  );
   }
 
   const updatedUserData = {
@@ -95,9 +111,6 @@ export default function Page() {
 
       // PATCH API 호출 
       await patchUpdatdProfile(payload, accessToken);
-      
-      console.log("프로필업데이트성공");
-      // 성공 시 모달 닫기 로직 추가 
 
       refetch();
       return true;
@@ -112,7 +125,7 @@ export default function Page() {
     <div>
       <UserDetail userStats={statsData?.data} userDetail={updatedUserData?.data} onSave={handleSave}/>
       <MenuButtons/>
-      <MyNestList nestsData={nestsData?.data}/>
+      <MyNestList nestsData={allNests} fetchNextPage={fetchNextPage} hasNextPage={hasNextPage} isFetchingNextPage={isFetchingNextPage}/>
     </div>
   );
 }

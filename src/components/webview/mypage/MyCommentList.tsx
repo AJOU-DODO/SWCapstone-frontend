@@ -1,6 +1,10 @@
+"use client";
 
 import Link from "next/link";
-import type { MyCommentsData } from "@/types/indexMypage";
+import type { MyComment } from "@/types/indexMypage";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
+import Spinner from "@/components/webview/Spinner";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -8,15 +12,26 @@ function formatDate(iso: string) {
 }
 
 interface Props {
-  commentData: MyCommentsData | undefined;
+  commentData: MyComment[] | undefined;
+  fetchNextPage: () => void;
+  hasNextPage: boolean; 
+  isFetchingNextPage: boolean;
 }
 
-export default function MyCommentList( { commentData }: Props ) {
-  const comment = commentData?.content || [];
+export default function MyCommentList( { commentData, fetchNextPage, hasNextPage, isFetchingNextPage }: Props ) {
+  const { ref, inView } = useInView();
+
+  const comments = commentData || [];
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage(); 
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return(
     <div className="flex flex-col gap-3">
-        {comment.map((comment) => (
+        {comments.map((comment) => (
           <Link
             key={comment.id}
             href={`/nests/${comment.nestId}`} // 상세 페이지 경로
@@ -36,6 +51,12 @@ export default function MyCommentList( { commentData }: Props ) {
             </div>
           </Link>
         ))}
+        <div ref={ref} className="flex justify-center items-center h-14">
+          {isFetchingNextPage && <Spinner size="sm" />}
+          {!isFetchingNextPage && !hasNextPage && comments.length > 0 && (
+            <p className="text-xs text-[#54513E] mt-2">모든 댓글을 확인했어요!</p>
+          )}
+        </div>
       </div>
   )
 }

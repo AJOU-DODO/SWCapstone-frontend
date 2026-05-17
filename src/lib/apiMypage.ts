@@ -42,8 +42,9 @@ export async function fetchUserDetail(
 // 유저가 작성한 둥지를 불러오는 함수
 export async function fetchUserNests(
   accessToken: string,
+  page: number,
 ): Promise<MyNestApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/nests`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/nests?page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
@@ -55,8 +56,9 @@ export async function fetchUserNests(
 // 유저가 좋아요 누른 둥지를 불러오는 함수
 export async function fetchLikesNests(
   accessToken: string,
+  page: number,
 ): Promise<MyNestApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/likes`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/likes?page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
@@ -68,8 +70,9 @@ export async function fetchLikesNests(
 // 유저가 해금한 둥지를 불러오는 함수
 export async function fetchUnlockNests(
   accessToken: string,
+  page: number,
 ): Promise<MyNestApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/unlocks`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/unlocks?page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
@@ -84,14 +87,11 @@ export async function fetchUserPostcards(
   filter: string,
   page: number,
 ): Promise<MyPostcardApiResponse> {
-  const res = await fetch(
-    `${BASE_URL}/api/v1/mypage/postcards?filter=${filter}&page=${page}`,
-    {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-      cache: "no-store",
-    },
-  );
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}&page=${page}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
   if (!res.ok) throw new Error("유저 엽서 정보를 불러오지 못했습니다.");
   return res.json();
 }
@@ -115,8 +115,9 @@ export async function patchUpdatdProfile(
 // 유저가 작성한 댓글을 불러오는 함수
 export async function fetchMyComments(
   accessToken: string,
+  page: number,
 ): Promise<MyCommentsApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/comments`, {
+  const res = await fetch(`${BASE_URL}/api/v1/mypage/comments?page=${page}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",

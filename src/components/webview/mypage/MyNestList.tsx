@@ -1,10 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import type { MyNestData } from "@/types/indexMypage";
+import Image from 'next/image';
+import { useEffect } from "react";
+import type { MyNestDetail } from "@/types/indexMypage";
+import { useInView } from "react-intersection-observer";
+import Spinner from "@/components/webview/Spinner";
 
 interface Props {
-  nestsData: MyNestData | undefined;
+  nestsData: MyNestDetail[] | undefined;
+  fetchNextPage: () => void;
+  hasNextPage: boolean; 
+  isFetchingNextPage: boolean;
 }
 
 function formatDate(iso: string) {
@@ -12,8 +19,15 @@ function formatDate(iso: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export default function MyNestList({ nestsData }: Props) {
-  const nests = nestsData?.content || [];
+export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFetchingNextPage }: Props) {
+  const { ref, inView } = useInView();
+  const nests = nestsData || [];
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
   
   return (
     <section className="w-full mt-8 px-5 pb-20">
@@ -31,10 +45,11 @@ export default function MyNestList({ nestsData }: Props) {
             className="flex flex-row gap-5 p-4 w-[90vw] bg-white rounded-2xl border border-gray-100 shadow-sm active:bg-gray-50 active:scale-[0.98] transition-all"
           >
             {nest.thumbnailUrl && (
-              <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-100">
-                <img
+              <div className="flex-shrink-0 w-16 h-16 rounded-xl relative overflow-hidden bg-gray-100">
+                <Image
                   src={nest.thumbnailUrl}
                   alt="thumbnail"
+                  fill
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -53,11 +68,17 @@ export default function MyNestList({ nestsData }: Props) {
             </div>
           </Link>
         ))}
+        <div ref={ref} className="flex justify-center items-center h-14">
+          {isFetchingNextPage && <Spinner size="sm" />}
+          {!isFetchingNextPage && !hasNextPage && nests.length > 0 && (
+            <p className="text-xs text-[#54513E] mt-2">모든 둥지를 확인했어요!</p>
+          )}
+        </div>
       </div>
 
       {nests.length === 0 && (
-        <div className="py-20 text-center text-gray-400 text-sm">
-          아직 작성한 둥지가 없어요!
+        <div className="py-20 text-center text-[#54513E] text-sm">
+          아직 둥지가 없어요!
         </div>
       )}
     </section>
