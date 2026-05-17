@@ -61,6 +61,7 @@ export interface NestDetail {
   imageUrls: string[];
   likeCount: number;
   dislikeCount: number;
+  myReaction: ReactionType | null;
   hasPostcard: boolean;
   postcardId: number | null;
   ad: boolean;

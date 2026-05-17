@@ -27,6 +27,7 @@ export function NestDetailClient({ nestId }: Props) {
   const [localReaction, setLocalReaction] = useState<ReactionType | null>(null);
   const [likeOffset, setLikeOffset] = useState(0);
   const [dislikeOffset, setDislikeOffset] = useState(0);
+  const [isReactionInitialized, setIsReactionInitialized] = useState(false);
 
   //브릿지로 accesstoken 수신
   const [accessToken] = useState<string>(() => {
@@ -48,17 +49,18 @@ export function NestDetailClient({ nestId }: Props) {
 
   const nest = nestData?.data;
 
-  console.log(nest?.imageUrls);
-  console.log(nest?.creatorProfileImageUrl);
-
-  // YES 버튼 클릭 시 이동할 페이지 — 추후 주소 및 props 확정 후 수정
+  // YES 버튼 클릭 시 이동할 페이지
   const router = useRouter();
   const handlePostcardConfirm = () => {
     setPostcardModalOpen(false);
     router.push(`/nests/${nestId}/exchange-post`);
   };
 
-  // 초기 reaction 상태 동기화
+  // 초기 reaction 상태 확인 및 동기화
+  if (nest && !isReactionInitialized) {
+    setLocalReaction(nest.myReaction ?? null);
+    setIsReactionInitialized(true);
+  }
   const displayLikeCount = (nest?.likeCount ?? 0) + likeOffset;
   const displayDislikeCount = (nest?.dislikeCount ?? 0) + dislikeOffset;
 
