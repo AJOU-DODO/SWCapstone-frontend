@@ -89,14 +89,15 @@ export async function postReaction(
   type: ReactionType,
   accessToken: string,
 ): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/v1/nests/${id}/reaction`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetch(
+    `${BASE_URL}/api/v1/nests/${id}/reaction?type=${type}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     },
-    body: JSON.stringify({ type }),
-  });
+  );
   if (!res.ok) throw new Error("반응 처리에 실패했습니다.");
 }
 
