@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import type { MyCommentsData } from "@/types/indexMypage";
+import type { MyComment } from "@/types/indexMypage";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -8,11 +8,14 @@ function formatDate(iso: string) {
 }
 
 interface Props {
-  commentData: MyCommentsData | undefined;
+  commentData: MyComment[] | undefined;
+  fetchNextPage: () => void;
+  hasNextPage: boolean; 
+  isFetchingNextPage: boolean;
 }
 
-export default function MyCommentList( { commentData }: Props ) {
-  const comment = commentData?.content || [];
+export default function MyCommentList( { commentData, fetchNextPage, hasNextPage, isFetchingNextPage }: Props ) {
+  const comment = commentData || [];
 
   return(
     <div className="flex flex-col gap-3">

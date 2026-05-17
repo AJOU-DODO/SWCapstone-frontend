@@ -74,7 +74,7 @@ export default function MyNestList({ nestsData, fetchNextPage, hasNextPage, isFe
 
       {nests.length === 0 && (
         <div className="py-20 text-center text-gray-400 text-sm">
-          아직 작성한 둥지가 없어요!
+          아직 둥지가 없어요!
         </div>
       )}
     </section>
