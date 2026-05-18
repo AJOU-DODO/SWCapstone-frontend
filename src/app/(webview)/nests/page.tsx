@@ -4,6 +4,7 @@ import FeedHeader from "@/components/webview/FeedHeader";
 import PostCard from "@/components/webview/PostCard";
 import UnlockModal from "@/components/webview/UnlockModal";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export interface ApiResponse {
   status: string;
@@ -17,19 +18,30 @@ export interface NestSummary {
   content: string;
   thumbnailUrl?: string;
   likeCount: number;
+  distance: number;
   categoryNames: string[];
+  hasPostcard: boolean;
+  postcardId: number;
   ad: boolean;
   unlocked: boolean;
 }
 
 export default function Page() {
+  const router = useRouter();
   const [nestIds, setNestIds] = useState<number[]>([]);
   const [accessToken, setAccessToken] = useState<string>("");
   const [nestSummaries, setNestSummaries] = useState<NestSummary[]>([]);
   const [selectedNest, setSelectedNest] = useState<NestSummary | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   const handleNestClick = (nest: NestSummary) => {
-    setSelectedNest(nest);
+    if (nest.unlocked) {
+      // 이미 해금된 둥지 -> 상세 페이지로 바로 이동
+      router.push(`/nests/${nest.id}`);
+    } else {
+      // 미해금 둥지 -> UnlockModal 표시
+      setSelectedNest(nest);
+    }
   };
 
   const handleConfirmNest = () => {
@@ -56,14 +68,12 @@ export default function Page() {
 
         if (token) {
           setAccessToken(token);
-          localStorage.setItem("accessToken", token);
         }
 
         // ID 배열이 정상적으로 들어왔다면 파싱 후 저장
         if (idsString) {
           const ids = JSON.parse(idsString);
           setNestIds(ids);
-          localStorage.setItem("nestIds", JSON.stringify(ids));
         }
       } catch (error) {
         console.error("브릿지 데이터 가져오기 실패:", error);
@@ -98,11 +108,22 @@ export default function Page() {
         console.log(results);
       } catch (error) {
         console.error("조회 실패:", error);
+      } finally {
+        setIsReady(true);
       }
     }
 
     fetchNestSummaries(nestIds);
   }, [nestIds, accessToken]);
+
+  // 데이터 로딩 전 빈 화면 대신 배경색 유지
+  if (!isReady) {
+    return (
+      <div className="bg-[#FAF7E4] min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-[#3C5A3E] border-t-transparent animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#FAF7E4] min-h-screen font-sans selection:bg-[#3C5A3E]/10">
