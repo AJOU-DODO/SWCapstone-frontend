@@ -79,8 +79,9 @@ export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData
           {/* 닉네임과 바이오 수정 */}
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-[#54513E]">닉네임</label>
+              <label htmlFor="nickname" className="text-sm font-medium text-[#54513E]">닉네임</label>
               <input 
+                id="nickname"
                 type="text" 
                 value={nickname} 
                 onChange={(e) => setNickname(e.target.value)}
@@ -88,8 +89,9 @@ export default function ProfileEditModal({ isOpen, onClose, onSave,  initialData
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#54513E]">바이오</label>
+              <label htmlFor="bio" className="text-sm font-medium text-[#54513E]">바이오</label>
               <textarea 
+                id="bio"
                 rows={3}
                 value={bio} 
                 onChange={(e) => setBio(e.target.value)}
