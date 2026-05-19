@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Lock, LockOpen, ThumbsUp, Hash } from "lucide-react";
+import { Lock, LockOpen, ThumbsUp, Hash, Mail } from "lucide-react";
 import Image from "next/image";
 import { NestSummary } from "@/app/(webview)/nests/page";
 
@@ -38,6 +38,12 @@ export default function PostCard({ post, selectNest }: PostCardProps) {
           {!post.unlocked && (
             <div className="absolute inset-0 flex items-center justify-center">
               <Lock size={32} className="text-white/60" />
+            </div>
+          )}
+          {/* 엽서가 있을 때만 엽서 아이콘 활성화 */}
+          {post.hasPostcard && (
+            <div className="absolute top-3 left-3 z-10 w-9 h-9 rounded-full bg-white flex items-center justify-center">
+              <Mail className="w-4 h-4 text-[#3C5A3E]" />
             </div>
           )}
         </div>
