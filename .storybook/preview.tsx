@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/nextjs-vite'
 
-// @ts-expect-error
+// @ts-expect-error 라이브러리 타입 미지원
 import "@/app/globals.css";
 
 const preview: Preview = {

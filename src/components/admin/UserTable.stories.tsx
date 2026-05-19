@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import UserTable from '@/components/admin/UserTable'; // 👈 실제 UserTable 경로로 맞춰주세요!
+import UserTable from '@/components/admin/UserTable';
 
 const meta: Meta<typeof UserTable> = {
   title: 'Admin/UserTable', // 스토리북 왼쪽 메뉴에 표시될 이름
@@ -13,7 +13,6 @@ const meta: Meta<typeof UserTable> = {
 export default meta;
 type Story = StoryObj<typeof UserTable>;
 
-// 1. 데이터가 정상적으로 들어왔을 때의 화면
 export const Default: Story = {
   args: {
     users: [
@@ -24,7 +23,6 @@ export const Default: Story = {
   },
 };
 
-// 2. 💡 우리가 원했던 예외 처리! 데이터가 0명일 때의 방어 화면
 export const Empty: Story = {
   args: {
     users: [],
