@@ -19,7 +19,12 @@ export interface Report {
   reportReason: string;
 }
 
-export default function ReportNestTable({ nests }: { nests: Report[] }) {
+interface TableProps {
+  reports: Report[];
+  onRowClick: (id: string | number) => void;
+}
+
+export default function ReportNestTable({ reports, onRowClick }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -34,15 +39,21 @@ export default function ReportNestTable({ nests }: { nests: Report[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {nests.map((nest) => (
-            <TableRow key={nest.id} className="border-[#54513E]/50">
-              <TableCell>{nest.creatorNickname}</TableCell>
-              <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
-              <TableCell>{nest.createdAt}</TableCell>
-              <TableCell>{nest.latestReportDate}</TableCell>
-              <TableCell>{nest.reportCount}</TableCell>
-              <TableCell>{nest.reportReason}</TableCell>
-            </TableRow>
+          {reports.map((report) => (
+            <TableRow 
+              key={report.id} 
+              onClick={(e) => {
+                  e.stopPropagation();
+                  onRowClick(report.id);
+                }}
+              className="border-[#54513E]/50">
+                <TableCell>{report.creatorNickname}</TableCell>
+                <TableCell className="max-w-[150px] truncate">{report.content}</TableCell>
+                <TableCell>{report.createdAt}</TableCell>
+                <TableCell>{report.latestReportDate}</TableCell>
+                <TableCell>{report.reportCount}</TableCell>
+                <TableCell>{report.reportReason}</TableCell>
+              </TableRow>
           ))}
         </TableBody>
       </Table>

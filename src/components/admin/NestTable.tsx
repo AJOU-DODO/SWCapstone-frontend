@@ -19,7 +19,12 @@ export interface Nest {
   reportCount: number;
 }
 
-export default function NestTable({ nests }: { nests: Nest[] }) {
+interface TableProps {
+  nests: Nest[];
+  onRowClick: (id: string | number) => void;
+}
+
+export default function NestTable({ nests, onRowClick }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -35,13 +40,19 @@ export default function NestTable({ nests }: { nests: Nest[] }) {
         </TableHeader>
         <TableBody>
           {nests.map((nest) => (
-            <TableRow key={nest.id} className="border-[#54513E]/50">
-              <TableCell>{nest.creatorNickname}</TableCell>
-              <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
-              <TableCell>{nest.createdAt}</TableCell>
-              <TableCell>{nest.likeCount}</TableCell>
-              <TableCell>{nest.replyCount}</TableCell>
-              <TableCell>{nest.reportCount}</TableCell>
+            <TableRow 
+              key={nest.id} 
+              onClick={(e) => {
+                e.stopPropagation();
+                onRowClick(nest.id);
+              }}
+              className="border-[#54513E]/50">
+                <TableCell>{nest.creatorNickname}</TableCell>
+                <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
+                <TableCell>{nest.createdAt}</TableCell>
+                <TableCell>{nest.likeCount}</TableCell>
+                <TableCell>{nest.replyCount}</TableCell>
+                <TableCell>{nest.reportCount}</TableCell>
             </TableRow>
           ))}
         </TableBody>
