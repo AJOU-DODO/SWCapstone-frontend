@@ -112,7 +112,7 @@ export default function Page() {
 
   return (
     <div className="bg-[#FAF7E4] min-h-screen font-sans selection:bg-[#3C5A3E]/10">
-      <div className="max-w-md mx-auto px-6 py-12">
+      <div className="max-w-md mx-auto px-6">
         <FeedHeader />
 
         {/* 정렬 버튼 */}
@@ -136,7 +136,7 @@ export default function Page() {
         <div className="flex flex-col">
           {isLoading
             ? // 스켈레톤 UI - 전체 화면 대신 카드 자리에만 표시
-              Array.from({ length: nestIds.length }).map((_, i) => (
+              Array.from({ length: 2 }).map((_, i) => (
                 <div
                   key={i}
                   className="bg-white rounded-[2rem] p-5 border border-[#F0EBE0] mb-6 animate-pulse"
