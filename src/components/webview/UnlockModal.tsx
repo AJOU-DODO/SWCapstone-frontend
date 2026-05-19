@@ -1,6 +1,7 @@
 import { NestSummary } from "@/app/(webview)/nests/page";
 import { Lock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import Image from "next/image";
 
 interface UnlockModalProps {
   nest: NestSummary;
@@ -22,22 +23,21 @@ export default function UnlockModal({
         <div className="flex flex-col">
           {/* Post Preview Area */}
           <div className="bg-[#FAF7E4] rounded-2xl p-4 border border-[#F0EBE0] mb-5">
-            {nest.thumbnailUrl ? (
-              <div
-                className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br mb-2 flex items-center justify-center overflow-hidden relative`}
-                style={{ backgroundImage: `url(${nest.thumbnailUrl})` }}
-              >
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-lg" />
-                <Lock size={20} className="text-black/40" />
-              </div>
-            ) : (
-              <div
-                className={`w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-rose-100 to-teal-100 flex items-center justify-center relative`}
-              >
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-lg" />
+            <div className="w-full aspect-4/3 rounded-xl overflow-hidden relative bg-linear-to-br from-rose-100 to-teal-100 mb-2">
+              {nest.thumbnailUrl && (
+                <Image
+                  src={nest.thumbnailUrl}
+                  alt="둥지 썸네일"
+                  fill
+                  className="object-cover blur-lg scale-110"
+                  sizes="280px"
+                />
+              )}
+              {/* 한가운데 lock 아이콘 */}
+              <div className="absolute inset-0 flex items-center justify-center">
                 <Lock size={20} className="text-black/40 relative z-10" />
               </div>
-            )}
+            </div>
             <p className="text-[#4A4A4A] text-[13px] leading-relaxed line-clamp-2 text-center font-medium">
               {nest.content}
             </p>
