@@ -4,6 +4,8 @@ import React from "react";
 import { Lock, LockOpen, ThumbsUp, Hash, Mail } from "lucide-react";
 import Image from "next/image";
 import { NestSummary } from "@/app/(webview)/nests/page";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export type PostType = "image" | "text";
 
@@ -14,6 +16,12 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, selectNest }: PostCardProps) {
+  const router = useRouter();
+  useEffect(() => {
+    if (post.unlocked) {
+      router.prefetch(`/nests/${post.id}`);
+    }
+  });
   return (
     <div
       onClick={selectNest}
