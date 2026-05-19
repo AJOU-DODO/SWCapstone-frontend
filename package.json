@@ -9,7 +9,7 @@
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_157ae11fd04013f"
+    "chromatic": "npx chromatic"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.96.2",
