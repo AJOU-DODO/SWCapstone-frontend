@@ -13,16 +13,17 @@ interface PostCardProps {
   post: NestSummary;
   key?: React.Key;
   selectNest: () => void;
+  index: number;
 }
 
-export default function PostCard({ post, selectNest }: PostCardProps) {
+export default function PostCard({ post, selectNest, index }: PostCardProps) {
   const router = useRouter();
   useEffect(() => {
     // 이미 해금된 게시물의 경우, 게시물의 상세 페이지를 prefetch
     if (post.unlocked) {
       router.prefetch(`/nests/${post.id}`);
     }
-  });
+  }, [post.id, post.unlocked, router]);
   return (
     <div
       onClick={selectNest}
@@ -40,7 +41,7 @@ export default function PostCard({ post, selectNest }: PostCardProps) {
                 post.unlocked ? "" : "blur-lg scale-110"
               }`}
               sizes="(max-width: 768px) 100vw, 448px"
-              priority
+              priority={index === 0}
             />
           )}
           {/* 미해금 상태에서만 자물쇠 아이콘 */}

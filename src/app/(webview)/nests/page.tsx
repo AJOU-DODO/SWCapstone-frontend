@@ -146,11 +146,12 @@ export default function Page() {
                   <div className="h-4 bg-[#F0EBE0] rounded-full w-1/2" />
                 </div>
               ))
-            : nestSummaries.map((nestSummary) => (
+            : nestSummaries.map((nestSummary, index) => (
                 <PostCard
                   key={nestSummary.id}
                   post={nestSummary}
                   selectNest={() => handleNestClick(nestSummary)}
+                  index={index}
                 />
               ))}
         </div>
