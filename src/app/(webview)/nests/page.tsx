@@ -70,7 +70,6 @@ export default function Page() {
         setIsLoading(true);
         return;
       }
-      setIsLoading(false);
       const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?ids=${nestIds.join(",")}&sort=${sortType}`;
       try {
         const response = await fetch(url, {
@@ -83,7 +82,7 @@ export default function Page() {
       } catch (error) {
         console.error("조회 실패:", error);
       } finally {
-        setIsLoading(true);
+        setIsLoading(false);
       }
     }
     fetchNestSummaries();
@@ -138,7 +137,7 @@ export default function Page() {
         <div className="flex flex-col">
           {isLoading
             ? // 스켈레톤 UI - 전체 화면 대신 카드 자리에만 표시
-              Array.from({ length: 3 }).map((_, i) => (
+              Array.from({ length: nestIds.length }).map((_, i) => (
                 <div
                   key={i}
                   className="bg-white rounded-[2rem] p-5 border border-[#F0EBE0] mb-6 animate-pulse"
