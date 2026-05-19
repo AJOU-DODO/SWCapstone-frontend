@@ -43,13 +43,12 @@ export function NestImageScrollSlider({ imageUrls }: Props) {
         ))}
       </div>
 
-      {/* 2. 🌟 하단 미니 썸네일 리스트 */}
+      {/* 하단 미니 썸네일 리스트 */}
       {imageUrls.length > 1 && (
         <div className="flex flex-row gap-2 overflow-x-auto py-1">
           {imageUrls.map((url, i) => (
             <div 
               key={i} 
-              // 🌟 클릭 시 scrollToImage 함수를 실행해 상단 메인을 움직입니다.
               onClick={() => scrollToImage(i)}
               className="w-11 h-11 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-300 bg-gray-100 hover:border-[#54513E] cursor-pointer transition-all active:scale-95"
             >
