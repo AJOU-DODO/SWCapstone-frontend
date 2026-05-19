@@ -61,13 +61,12 @@ export default function Page() {
 
   const [nestSummaries, setNestSummaries] = useState<NestSummary[]>([]);
   const [selectedNest, setSelectedNest] = useState<NestSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState<SortType>("createdAt,desc");
 
   useEffect(() => {
     async function fetchNestSummaries() {
       if (!accessToken || nestIds.length === 0) {
-        setIsLoading(true);
         return;
       }
       const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?ids=${nestIds.join(",")}&sort=${sortType}`;

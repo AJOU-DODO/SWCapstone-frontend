@@ -18,6 +18,7 @@ interface PostCardProps {
 export default function PostCard({ post, selectNest }: PostCardProps) {
   const router = useRouter();
   useEffect(() => {
+    // 이미 해금된 게시물의 경우, 게시물의 상세 페이지를 prefetch
     if (post.unlocked) {
       router.prefetch(`/nests/${post.id}`);
     }
