@@ -1,16 +1,21 @@
+"use client";
+
+import { useState, use } from "react";
+
 import NestTabButton from '@/components/admin/NestTabButton';
 import NestTable, { Nest } from '@/components/admin/NestTable';
 import ReportNestTable, { Report } from '@/components/admin/ReportNestTable';
-import ReplyTable, { Reply } from '@/components/admin/ReplyTable';
+import ReplyTable, { Comments } from '@/components/admin/ReplyTable';
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
 import NestDetail from '@/components/admin/NestDetail/index';
 
-export default async function Page({ searchParams, }: {searchParams: Promise<{ tab?: string }>;}) {
+export default function Page({ searchParams, }: {searchParams: Promise<{ tab?: string }>;}) {
+
+  const [selectedPostId, setSelectedPostId] = useState<string | number | null>(null);
   //게시글 관리 메뉴 파라미터
-  const resolvedParams = await searchParams;
+  const resolvedParams = use(searchParams);
   const activeTab = resolvedParams.tab || 'all';
-  const selectedPostId = 1; // TODO: 반드시 데이터 값 바꾸기 (nestId랑 연결)
 
   const nests: Nest[] = [
     { 
@@ -63,7 +68,7 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
     },
   ]
 
-  const reply: Reply[] = [
+  const reply: Comments[] = [
     { 
       id: "1",
       creatorNickname: "김도도",
@@ -105,7 +110,9 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
   ];
 
   return (
-    <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
+    <div 
+      onClick={() => setSelectedPostId(null)}
+      className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
       <div>
         <NestTabButton/>
       </div>
@@ -120,12 +127,24 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
 
       <div className='w-full h-full grid grid-cols-[1fr_1fr] min-h-0 overflow-hidden'>
         <div className="">
-          {activeTab === 'all' && <NestTable nests={nests}/>}
-          {activeTab === 'reported' && <ReportNestTable nests={report}/>}
-          {activeTab === 'comments' && <ReplyTable nests={reply}/>}
+          {activeTab === 'all' && <NestTable nests={nests} onRowClick={setSelectedPostId}/>}
+          {activeTab === 'reported' && <ReportNestTable reports={report} onRowClick={setSelectedPostId}/>}
+          {activeTab === 'comments' && <ReplyTable comments={reply} onRowClick={setSelectedPostId}/>}
         </div>
         
-        <NestDetail postId={selectedPostId}/>
+        {selectedPostId ? (
+          <NestDetail postId={selectedPostId}/>
+        ) : (
+          // 클릭하지 않았을 시 보여주는 대기 영역
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-300 p-8 select-none text-center">
+            <div className="text-3xl mb-3">🔍</div>
+            <p className="text-xs font-bold text-gray-500 mb-1">선택된 항목이 없습니다</p>
+            <p className="text-[11px] text-gray-400">
+              상세 내용을 확인하시려면 <br />
+              왼쪽 테이블에서 원하는 행을 클릭해 주세요.
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="py-4 border-t">

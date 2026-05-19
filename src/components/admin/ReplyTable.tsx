@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table"
 
 // 데이터는 변경될 수 있음
-export interface Reply {
+export interface Comments {
   id: string;
   creatorNickname: string;
   content: string;
@@ -19,7 +19,12 @@ export interface Reply {
   reportReason: string;
 }
 
-export default function ReportNestTable({ nests }: { nests: Reply[] }) {
+interface TableProps {
+  comments: Comments[];
+  onRowClick: (id: string | number) => void;
+}
+
+export default function ReportNestTable({ comments, onRowClick }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -34,14 +39,20 @@ export default function ReportNestTable({ nests }: { nests: Reply[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {nests.map((nest) => (
-            <TableRow key={nest.id} className="border-[#54513E]/50">
-              <TableCell>{nest.creatorNickname}</TableCell>
-              <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
-              <TableCell className="max-w-[150px] truncate">{nest.originContent}</TableCell>
-              <TableCell>{nest.latestReportDate}</TableCell>
-              <TableCell>{nest.reportCount}</TableCell>
-              <TableCell>{nest.reportReason}</TableCell>
+          {comments.map((comment) => (
+            <TableRow 
+              key={comment.id} 
+              onClick={(e) => {
+                  e.stopPropagation();
+                  onRowClick(comment.id);
+                }}
+              className="border-[#54513E]/50">
+                <TableCell>{comment.creatorNickname}</TableCell>
+                <TableCell className="max-w-[150px] truncate">{comment.content}</TableCell>
+                <TableCell className="max-w-[150px] truncate">{comment.originContent}</TableCell>
+                <TableCell>{comment.latestReportDate}</TableCell>
+                <TableCell>{comment.reportCount}</TableCell>
+                <TableCell>{comment.reportReason}</TableCell>
             </TableRow>
           ))}
         </TableBody>
