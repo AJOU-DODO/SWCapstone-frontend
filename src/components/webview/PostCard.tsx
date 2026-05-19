@@ -63,17 +63,26 @@ export default function PostCard({ post, selectNest }: PostCardProps) {
         </p>
       </div>
 
-      {/* Bottom Lock Indicator */}
+      {/* Bottom Indicator */}
       <div className="mt-4 pt-4 border-t border-[#F8F5F0] flex justify-between items-center">
-        <span className="text-[0.75rem] text-[#A09B8E] font-semibold uppercase tracking-wider">
-          {post.unlocked ? "Unlocked" : "Locked"}
-        </span>
-        <div className="bg-[#FAF7E4] px-3 py-1 rounded-full border border-[#F0EBE0]">
-          {post.unlocked ? (
-            <LockOpen size={12} className="text-[#3C5A3E]" />
-          ) : (
-            <Lock size={12} className="text-[#A09B8E]" />
-          )}
+        {/* 좋아요 */}
+        <div className="flex items-center gap-1.5 text-[#A09B8E]">
+          <ThumbsUp size={13} />
+          <span className="text-xs font-medium">{post.likeCount}</span>
+        </div>
+
+        {/* 잠금 상태 */}
+        <div className="flex items-center gap-2">
+          <span className="text-[0.75rem] text-[#A09B8E] font-semibold uppercase tracking-wider">
+            {post.unlocked ? "Unlocked" : "Locked"}
+          </span>
+          <div className="bg-[#FAF7E4] px-3 py-1 rounded-full border border-[#F0EBE0]">
+            {post.unlocked ? (
+              <LockOpen size={12} className="text-[#3C5A3E]" />
+            ) : (
+              <Lock size={12} className="text-[#A09B8E]" />
+            )}
+          </div>
         </div>
       </div>
     </div>
