@@ -10,7 +10,7 @@ interface ReportChipProps {
   isOpen?: boolean;
 }
 
-export default function ReportInfo ({ nestId }: { nestId: any }) {
+export default function ReportInfo ({ nestId }: { nestId: number }) {
   const [showOtherDetails, setShowOtherDetails] = useState(false);
 
   //임시 데이터

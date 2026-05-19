@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen min-w-[1200px] overflow-x-auto overflow-y-hidden overflow-hidden"> 
+    <div className="flex h-screen min-w-[1200px] overflow-x-auto overflow-y-hidden"> 
       {/* 왼쪽 영역 (로고 + 메뉴) */}
       <aside className="w-64 flex flex-col gap-3 items-center">
         <Header /> 

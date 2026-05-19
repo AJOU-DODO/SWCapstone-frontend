@@ -24,7 +24,7 @@ interface TableProps {
   onRowClick: (id: string | number) => void;
 }
 
-export default function ReportNestTable({ comments, onRowClick }: TableProps) {
+export default function ReplyTable({ comments, onRowClick }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>

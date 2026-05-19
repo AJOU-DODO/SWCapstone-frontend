@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function DetailHeader ({ nestId }: { nestId: any }) {
+export default function DetailHeader ({ nestId }: { nestId: number }) {
 
   return (
   <div className="flex flex-row justify-between items-start md:items-end gap-4 p-4 border-b bg-[#E8E4CD] w-full">

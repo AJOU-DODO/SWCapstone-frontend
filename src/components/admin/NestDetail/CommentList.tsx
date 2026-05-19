@@ -8,7 +8,7 @@ interface CommentItemProps {
   isSubComment?: boolean;
 }
 
-export default function CommentList ({ nestId }: { nestId: any }) {
+export default function CommentList ({ nestId }: { nestId: number }) {
   const dummyComments = [
     {
       commentId: 456,

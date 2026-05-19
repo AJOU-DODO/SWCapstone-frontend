@@ -13,7 +13,7 @@ interface SortSectionProps {
   defaultSort: string;
 }
 
-export default function UserSortSection({ options, defaultSort}: SortSectionProps) {
+export default function SortSection({ options, defaultSort}: SortSectionProps) {
   const { updateQuery, searchParams } = useUpdateQuery();
 
   const currentSort = searchParams.get("sort") || defaultSort;
