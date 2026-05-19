@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/nextjs-vite'
 
-// @ts-ignore
+// @ts-expect-error
 import "@/app/globals.css";
 
 const preview: Preview = {

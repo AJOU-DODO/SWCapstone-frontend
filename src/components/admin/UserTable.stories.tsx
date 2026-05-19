@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import UserTable from '@/components/admin/UserTable'; // 👈 실제 UserTable 경로로 맞춰주세요!
 
 const meta: Meta<typeof UserTable> = {
