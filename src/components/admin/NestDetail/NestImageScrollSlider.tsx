@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 
 interface Props {
   imageUrls: string[];
@@ -27,16 +28,17 @@ export function NestImageScrollSlider({ imageUrls }: Props) {
     <div className="flex flex-col gap-3 my-4">
       <div 
         ref={scrollContainerRef}
-        className="w-full h-[300px] bg-[#EDEAE0] rounded-xl border border-[#54513E]/20 overflow-x-auto flex flex-row snap-x snap-mandatory scroll-smooth scrollbar-none"
+        className="w-full h-[300px] bg-[#EDEAE0] relative rounded-xl border border-[#54513E]/20 overflow-x-auto flex flex-row snap-x snap-mandatory scroll-smooth scrollbar-none"
       >
         {imageUrls.map((url, i) => (
           <div 
             key={i} 
             className="flex-[0_0_100%] h-full relative snap-center p-4"
           >
-            <img
+            <Image
               src={url}
               alt={`본문 이미지 ${i + 1}`}
+              fill
               className="w-full h-full object-contain rounded-lg select-none"
             />
           </div>

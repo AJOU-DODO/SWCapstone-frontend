@@ -1,7 +1,7 @@
 import { NestImageScrollSlider } from "./NestImageScrollSlider";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 
-export default function NestBody ({ nestId }: { nestId: any }) {
+export default function NestBody ({ nestId }: { nestId: number }) {
   const dummyNestData = {
     title: "title 수정 테스트 1",
     content: "오늘 날씨가 너무 좋아서 숲속으로 산책을 다녀왔어요! 🌳 대피소 근처에서 이쁜 새들도 많이 봤는데 공유합니다. 다들 좋은 하루 보내세요!",
@@ -37,7 +37,7 @@ export default function NestBody ({ nestId }: { nestId: any }) {
       )}
 
       {/* 둥지 본문 텍스트 영역 */}
-      <div className="text-b text-gray-800 leading-relaxed whitespace-pre-wrap">
+      <div className="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
         {dummyNestData.title}
       </div>
       <div className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
