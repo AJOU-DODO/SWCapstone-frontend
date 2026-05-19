@@ -28,11 +28,64 @@ export interface NestSummary {
 
 export default function Page() {
   const router = useRouter();
-  const [nestIds, setNestIds] = useState<number[]>([]);
-  const [accessToken, setAccessToken] = useState<string>("");
+
+  // useEffect 대신 useState initializer로 동기적으로 가져옴
+  const [accessToken] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      return window.AndroidBridge.getAccessToken() ?? "";
+    } catch (error) {
+      console.log("accessToken을 가져오지 못했습니다.", error);
+      return "";
+    }
+  });
+
+  const [nestIds] = useState<number[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const idsString = window.AndroidBridge.getNestIds();
+      return idsString ? JSON.parse(idsString) : [];
+    } catch (error) {
+      console.log("둥지의 id를 가져오지 못했습니다.", error);
+      return [];
+    }
+  });
+
   const [nestSummaries, setNestSummaries] = useState<NestSummary[]>([]);
   const [selectedNest, setSelectedNest] = useState<NestSummary | null>(null);
   const [isReady, setIsReady] = useState(false);
+
+  const fetchNestSummaries = async () => {
+    if (!accessToken || nestIds.length === 0) {
+      setIsReady(true);
+      return;
+    }
+    setIsReady(false);
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?ids=${nestIds.join(",")}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const results = await response.json();
+      setNestSummaries(results.data);
+      console.log(results);
+    } catch (error) {
+      console.error("조회 실패:", error);
+    } finally {
+      setIsReady(true);
+    }
+  };
+
+  useEffect(() => {
+    fetchNestSummaries();
+  });
 
   const handleNestClick = (nest: NestSummary) => {
     if (nest.unlocked) {
@@ -56,65 +109,6 @@ export default function Page() {
       window.AndroidBridge.sendNestIdSelected(nest.id);
     }
   };
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.AndroidBridge) {
-      try {
-        const token = window.AndroidBridge.getAccessToken();
-        const idsString = window.AndroidBridge.getNestIds();
-
-        console.log("네이티브에서 꺼내온 토큰:", token);
-        console.log("네이티브에서 꺼내온 IDs:", idsString);
-
-        if (token) {
-          setAccessToken(token);
-        }
-
-        // ID 배열이 정상적으로 들어왔다면 파싱 후 저장
-        if (idsString) {
-          const ids = JSON.parse(idsString);
-          setNestIds(ids);
-        }
-      } catch (error) {
-        console.error("브릿지 데이터 가져오기 실패:", error);
-      }
-    } else {
-      console.log("안드로이드 브릿지가 아직 연결되지 않았습니다.");
-    }
-  }, []);
-
-  useEffect(() => {
-    async function fetchNestSummaries(idList: number[]) {
-      const params = new URLSearchParams();
-
-      idList.forEach((id) => {
-        params.append("ids", id.toString());
-      });
-
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?${params.toString()}`;
-
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        const results = await response.json();
-        setNestSummaries(results.data);
-        console.log(results);
-      } catch (error) {
-        console.error("조회 실패:", error);
-      } finally {
-        setIsReady(true);
-      }
-    }
-
-    fetchNestSummaries(nestIds);
-  }, [nestIds, accessToken]);
 
   // 데이터 로딩 전 빈 화면 대신 배경색 유지
   if (!isReady) {
