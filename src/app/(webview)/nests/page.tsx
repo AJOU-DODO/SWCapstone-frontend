@@ -61,16 +61,16 @@ export default function Page() {
 
   const [nestSummaries, setNestSummaries] = useState<NestSummary[]>([]);
   const [selectedNest, setSelectedNest] = useState<NestSummary | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [sortType, setSortType] = useState<SortType>("createdAt,desc");
 
   useEffect(() => {
     async function fetchNestSummaries() {
       if (!accessToken || nestIds.length === 0) {
-        setIsReady(true);
+        setIsLoading(true);
         return;
       }
-      setIsReady(false);
+      setIsLoading(false);
       const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?ids=${nestIds.join(",")}&sort=${sortType}`;
       try {
         const response = await fetch(url, {
@@ -83,7 +83,7 @@ export default function Page() {
       } catch (error) {
         console.error("조회 실패:", error);
       } finally {
-        setIsReady(true);
+        setIsLoading(true);
       }
     }
     fetchNestSummaries();
@@ -112,15 +112,6 @@ export default function Page() {
     }
   };
 
-  // 데이터 로딩 전 빈 화면 대신 배경색 유지
-  if (!isReady) {
-    return (
-      <div className="bg-[#FAF7E4] min-h-screen flex items-center justify-center">
-        <div className="w-6 h-6 rounded-full border-2 border-[#3C5A3E] border-t-transparent animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="bg-[#FAF7E4] min-h-screen font-sans selection:bg-[#3C5A3E]/10">
       <div className="max-w-md mx-auto px-6 py-12">
@@ -145,13 +136,25 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col">
-          {nestSummaries.map((nestSummary) => (
-            <PostCard
-              key={nestSummary.id}
-              post={nestSummary}
-              selectNest={() => handleNestClick(nestSummary)}
-            />
-          ))}
+          {isLoading
+            ? // 스켈레톤 UI - 전체 화면 대신 카드 자리에만 표시
+              Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-[2rem] p-5 border border-[#F0EBE0] mb-6 animate-pulse"
+                >
+                  <div className="w-full aspect-video rounded-2xl bg-[#F0EBE0] mb-4" />
+                  <div className="h-4 bg-[#F0EBE0] rounded-full w-3/4 mb-2" />
+                  <div className="h-4 bg-[#F0EBE0] rounded-full w-1/2" />
+                </div>
+              ))
+            : nestSummaries.map((nestSummary) => (
+                <PostCard
+                  key={nestSummary.id}
+                  post={nestSummary}
+                  selectNest={() => handleNestClick(nestSummary)}
+                />
+              ))}
         </div>
       </div>
 
