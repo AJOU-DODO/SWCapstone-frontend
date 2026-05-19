@@ -118,7 +118,7 @@ export default async function Page({ searchParams, }: {searchParams: Promise<{ t
         </div>
       </div>
 
-      <div className='grid grid-cols-[1fr_1fr]'>
+      <div className='w-full h-full grid grid-cols-[1fr_1fr]'>
         <div className="">
           {activeTab === 'all' && <NestTable nests={nests}/>}
           {activeTab === 'reported' && <ReportNestTable nests={report}/>}
