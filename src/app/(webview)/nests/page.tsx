@@ -26,6 +26,14 @@ export interface NestSummary {
   unlocked: boolean;
 }
 
+type SortType = "createdAt,desc" | "likeCount,desc" | "viewCount,desc";
+
+const SORT_OPTIONS: { label: string; value: SortType }[] = [
+  { label: "최신순", value: "createdAt,desc" },
+  { label: "좋아요순", value: "likeCount,desc" },
+  { label: "조회수순", value: "viewCount,desc" },
+];
+
 export default function Page() {
   const router = useRouter();
 
@@ -54,38 +62,32 @@ export default function Page() {
   const [nestSummaries, setNestSummaries] = useState<NestSummary[]>([]);
   const [selectedNest, setSelectedNest] = useState<NestSummary | null>(null);
   const [isReady, setIsReady] = useState(false);
-
-  const fetchNestSummaries = async () => {
-    if (!accessToken || nestIds.length === 0) {
-      setIsReady(true);
-      return;
-    }
-    setIsReady(false);
-    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?ids=${nestIds.join(",")}`;
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) throw new Error("Network response was not ok");
-
-      const results = await response.json();
-      setNestSummaries(results.data);
-      console.log(results);
-    } catch (error) {
-      console.error("조회 실패:", error);
-    } finally {
-      setIsReady(true);
-    }
-  };
+  const [sortType, setSortType] = useState<SortType>("createdAt,desc");
 
   useEffect(() => {
+    async function fetchNestSummaries() {
+      if (!accessToken || nestIds.length === 0) {
+        setIsReady(true);
+        return;
+      }
+      setIsReady(false);
+      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/nests/summaries?ids=${nestIds.join(",")}&sort=${sortType}`;
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!response.ok) throw new Error("Network response was not ok");
+        const results = await response.json();
+        setNestSummaries(results.data);
+      } catch (error) {
+        console.error("조회 실패:", error);
+      } finally {
+        setIsReady(true);
+      }
+    }
     fetchNestSummaries();
-  });
+  }, [sortType, accessToken, nestIds]);
 
   const handleNestClick = (nest: NestSummary) => {
     if (nest.unlocked) {
@@ -124,6 +126,24 @@ export default function Page() {
       <div className="max-w-md mx-auto px-6 py-12">
         <FeedHeader />
 
+        {/* 정렬 버튼 */}
+        <div className="flex gap-2 mb-6">
+          {SORT_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setSortType(option.value)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all active:scale-95 ${
+                sortType === option.value
+                  ? "bg-[#3C5A3E] text-white"
+                  : "bg-white border border-[#F0EBE0] text-[#8E8A7E]"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
         <div className="flex flex-col">
           {nestSummaries.map((nestSummary) => (
             <PostCard
@@ -134,6 +154,7 @@ export default function Page() {
           ))}
         </div>
       </div>
+
       {selectedNest && (
         <UnlockModal
           nest={selectedNest}
