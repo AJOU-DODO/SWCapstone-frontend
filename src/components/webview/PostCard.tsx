@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Lock, LockOpen } from "lucide-react";
+import { Lock, LockOpen, ThumbsUp, Hash } from "lucide-react";
 import Image from "next/image";
 import { NestSummary } from "@/app/(webview)/nests/page";
 
@@ -41,6 +41,21 @@ export default function PostCard({ post, selectNest }: PostCardProps) {
             </div>
           )}
         </div>
+
+        {/* 카테고리 칩 */}
+        {post.categoryNames.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {post.categoryNames.map((name) => (
+              <span
+                key={name}
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#F0EBE0] text-[#5C5346] text-[11px] font-medium rounded-full"
+              >
+                <Hash size={10} />
+                {name}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* 본문 */}
         <p className="text-[#4A4A4A] text-[0.95rem] leading-relaxed line-clamp-2 font-medium">
