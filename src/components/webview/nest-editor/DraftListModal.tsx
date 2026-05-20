@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useNestEditorStore } from "@/lib/store/nestEditorStore";
 import { fetchDrafts } from "@/lib/api";
 import type { DraftItem } from "@/types";
 
@@ -32,6 +33,7 @@ function formatCoord(lat: number, lng: number) {
 export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [warning, setWarning] = useState(false);
+  const { setLoadedDraftId } = useNestEditorStore();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["drafts"],
@@ -54,6 +56,7 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
     }
     const draft = drafts.find((d) => d.id === selectedId);
     if (draft) {
+      setLoadedDraftId(draft.id);
       onLoad(draft);
       setSelectedId(null);
       setWarning(false);

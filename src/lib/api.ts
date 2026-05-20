@@ -57,7 +57,7 @@ export async function saveDraft(
 export async function publishNest(
   payload: NestPayload,
   accessToken: string,
-): Promise<void> {
+): Promise<{ id: number }> {
   const res = await fetch(`${BASE_URL}/api/v1/nests`, {
     method: "POST",
     headers: {
@@ -67,6 +67,8 @@ export async function publishNest(
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error("게시물 발행에 실패했습니다.");
+  const data = await res.json();
+  return data.data;
 }
 
 // 특정 id의 둥지의 상세정보를 가져오는 함수
