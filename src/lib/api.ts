@@ -232,5 +232,5 @@ export async function publishDraft(
   });
   if (!res.ok) throw new Error("임시저장 발행에 실패했습니다.");
   const data = await res.json();
-  return data.data.id; // 발행된 둥지 id 반환
+  return data.data;
 }
