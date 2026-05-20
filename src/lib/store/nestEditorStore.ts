@@ -15,6 +15,7 @@ interface NestEditorState {
   postcardTitle: string | null;
   isSubmitting: boolean;
   errors: Partial<Record<keyof NestPayload, string>>;
+  loadedDraftId: number | null;
 
   setBridgeData: (data: BridgeInitialData) => void;
   addImage: (url: string) => void;
@@ -29,6 +30,7 @@ interface NestEditorState {
   clearPostcard: () => void;
   setErrors: (errors: Partial<Record<keyof NestPayload, string>>) => void;
   clearErrors: () => void;
+  setLoadedDraftId: (id: number | null) => void;
   getDraftPayload: () => NestPayload;
   getPublishPayload: () => NestPayload | null;
 }
@@ -47,6 +49,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   postcardTitle: null,
   isSubmitting: false,
   errors: {},
+  loadedDraftId: null,
 
   setBridgeData: (data) =>
     set({
@@ -73,6 +76,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   clearPostcard: () => set({ postcardId: null, postcardTitle: null }),
   setErrors: (errors) => set({ errors }),
   clearErrors: () => set({ errors: {} }),
+  setLoadedDraftId: (id) => set({ loadedDraftId: id }),
 
   getDraftPayload: () => {
     const state = get();
