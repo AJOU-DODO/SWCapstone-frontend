@@ -86,13 +86,8 @@ export function NestEditorClient() {
     if (isSubmitting || !accessToken || loadedDraftId === null) return;
     setSubmitting(true);
     try {
-      const fileUrls = await uploadImages();
       const payload = getDraftPayload();
-      await updateDraft(
-        loadedDraftId,
-        { ...payload, imageUrls: fileUrls },
-        accessToken,
-      );
+      await updateDraft(loadedDraftId, payload, accessToken);
       showToast("success", "임시저장 글이 수정되었습니다.");
     } catch {
       showToast("error", "수정에 실패했습니다.");
@@ -105,7 +100,6 @@ export function NestEditorClient() {
     loadedDraftId,
     getDraftPayload,
     setSubmitting,
-    uploadImages,
   ]);
 
   // 일반 발행 handle
