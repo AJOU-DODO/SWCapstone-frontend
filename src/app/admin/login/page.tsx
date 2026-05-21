@@ -9,7 +9,9 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     setIsLoading(true);
     const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_IP || 'http://localhost:8080';
-    window.location.href = `${SERVER_URL}/oauth2/authorization/google`;
+    const CALLBACK_URL = encodeURIComponent(window.location.origin + "/admin/login/callback");
+
+    window.location.href = `${SERVER_URL}/oauth2/authorization/google?redirect_uri=${CALLBACK_URL}`;
   };
 
   return (
