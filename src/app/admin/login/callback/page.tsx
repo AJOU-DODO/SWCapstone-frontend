@@ -25,12 +25,12 @@ export default function LoginCallbackPage() {
       const onboarded = searchParams.get('onboarded'); // 필요 시 전역 상태나 세션스토리지에 보관 가능
 
       if (accessToken) {
-        // 💡 억세스 토큰 세팅 (우선 테스트용으로 하루 보관, 나중에 30분 만료인 1800초로 수정 가능)
-        const accessMaxAge = 60 * 60 * 24; 
+        // 30분
+        const accessMaxAge = 60 * 30; 
         document.cookie = `accessToken=${accessToken}; path=/; max-age=${accessMaxAge}; SameSite=Lax; Secure`;
 
         if (refreshToken) {
-          // 💡 리프레시 토큰 세팅 (7일 보관)
+          // 임시. 7일로 설정.
           const refreshMaxAge = 60 * 60 * 24 * 7;
           document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${refreshMaxAge}; SameSite=Lax; Secure`;
         }
