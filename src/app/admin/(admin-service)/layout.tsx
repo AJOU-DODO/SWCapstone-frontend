@@ -1,6 +1,7 @@
 import "../../globals.css";
-import NavigationBar from "@/components/admin/layout/NavigationBar";
 import Header from "@/components/admin/layout/Header";
+import NavigationBar from "@/components/admin/layout/NavigationBar";
+import LogoutButton from "@/components/admin/layout/LogoutButton";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <aside className="w-64 flex flex-col gap-3 items-center">
         <Header /> 
         <NavigationBar />
+        <LogoutButton />
       </aside>
 
       {/* 오른쪽 영역 (기능 페이지) */}
