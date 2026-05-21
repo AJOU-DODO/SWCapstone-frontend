@@ -1,0 +1,63 @@
+// src/app/admin/login/callback/page.tsx
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+export default function LoginCallbackPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const processed = useRef(false);
+
+  useEffect(() => {
+    if (processed.current) return;
+
+    const status = searchParams.get('status');
+    if (!status) return;
+
+    if (processed.current) return;
+    processed.current = true;
+
+    if (status === 'SUCCESS') {
+      const accessToken = searchParams.get('accessToken');
+      const refreshToken = searchParams.get('refreshToken');
+      const role = searchParams.get('role');
+      const onboarded = searchParams.get('onboarded'); // 필요 시 전역 상태나 세션스토리지에 보관 가능
+
+      if (accessToken) {
+        // 💡 억세스 토큰 세팅 (우선 테스트용으로 하루 보관, 나중에 30분 만료인 1800초로 수정 가능)
+        const accessMaxAge = 60 * 60 * 24; 
+        document.cookie = `accessToken=${accessToken}; path=/; max-age=${accessMaxAge}; SameSite=Lax; Secure`;
+
+        if (refreshToken) {
+          // 💡 리프레시 토큰 세팅 (7일 보관)
+          const refreshMaxAge = 60 * 60 * 24 * 7;
+          document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${refreshMaxAge}; SameSite=Lax; Secure`;
+        }
+
+        router.replace('/admin/users');
+      }
+    } else {
+      const code = searchParams.get('code');
+      const rawReason = searchParams.get('reason') || '알 수 없는 오류가 발생했습니다.';
+      
+      const reason = decodeURIComponent(rawReason);
+
+      alert(`로그인 실패 [${code}]: ${reason}`);
+      
+      router.replace('/admin/login');
+    }
+  }, [searchParams, router]);
+
+  return (
+    <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#E8E4CD] gap-4">
+      <svg className="h-10 w-10 animate-spin text-[#2B6340]" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      </svg>
+      <p className="text-sm font-semibold text-[#2B6340] animate-pulse">
+        로그인 인증 정보를 확인 중입니다...
+      </p>
+    </div>
+  );
+}
