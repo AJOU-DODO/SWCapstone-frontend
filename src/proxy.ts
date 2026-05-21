@@ -15,6 +15,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (!accessToken && !refreshToken) {
+    return NextResponse.redirect(new URL('/admin/login', request.url))
+  }
+
   // 액세스 토큰 없고 리프레시 토큰 있으면 갱신 시도
   if (!accessToken && refreshToken) {
     try {
@@ -44,9 +48,12 @@ export async function proxy(request: NextRequest) {
           secure: true,
         })
         return response
+      } else {
+        return NextResponse.redirect(new URL('/admin/login', request.url))
       }
     } catch {
       // 갱신 실패 시 로그인 페이지로
+      return NextResponse.redirect(new URL('/admin/login', request.url))
     }
   }
 

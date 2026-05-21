@@ -25,6 +25,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const accessMaxAge = 60 + 30;
+const refreshMaxAge = 60 * 60 * 24 * 7;
+
 // 토큰 만료 시 토큰 갱신 후 재시도
 api.interceptors.response.use(
   (response) => response,
@@ -48,8 +51,8 @@ api.interceptors.response.use(
 
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data.data;
 
-        setCookie('accessToken', newAccessToken, 60 * 30);       // 30분
-        setCookie('refreshToken', newRefreshToken, 60 * 60 * 24 * 7); // 7일
+        setCookie('accessToken', newAccessToken, accessMaxAge);       // 30분
+        setCookie('refreshToken', newRefreshToken, refreshMaxAge); // 7일
 
         // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
