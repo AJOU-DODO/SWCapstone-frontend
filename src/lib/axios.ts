@@ -25,7 +25,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-const accessMaxAge = 60 + 30;
+const accessMaxAge = 60 * 30;
 const refreshMaxAge = 60 * 60 * 24 * 7;
 
 // 토큰 만료 시 토큰 갱신 후 재시도
