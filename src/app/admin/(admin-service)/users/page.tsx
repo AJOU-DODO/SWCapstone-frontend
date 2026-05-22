@@ -1,5 +1,5 @@
 import SearchBar from '@/components/admin/SearchBar';
-import UserTable, { User } from '@/components/admin/UserTable';
+import UserTable, { User } from '@/components/admin/tables/UserTable';
 import Pagination from '@/components/admin/Pagination';
 import SortSection from '@/components/admin/SortSection';
 

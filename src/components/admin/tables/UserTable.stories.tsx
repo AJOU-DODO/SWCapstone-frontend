@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import UserTable from '@/components/admin/UserTable';
+import UserTable from '@/components/admin/tables/UserTable';
 
 const meta: Meta<typeof UserTable> = {
   title: 'Admin/UserTable', // 스토리북 왼쪽 메뉴에 표시될 이름
