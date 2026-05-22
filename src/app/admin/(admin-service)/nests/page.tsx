@@ -3,9 +3,9 @@
 import { useState, use } from "react";
 
 import NestTabButton from '@/components/admin/NestTabButton';
-import NestTable, { Nest } from '@/components/admin/NestTable';
-import ReportNestTable, { Report } from '@/components/admin/ReportNestTable';
-import ReplyTable, { Comments } from '@/components/admin/ReplyTable';
+import NestTable, { Nest } from '@/components/admin/tables/NestTable';
+import ReportNestTable, { Report } from '@/components/admin/tables/ReportNestTable';
+import ReplyTable, { Comments } from '@/components/admin/tables/ReplyTable';
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
 import NestDetail from '@/components/admin/NestDetail/index';
