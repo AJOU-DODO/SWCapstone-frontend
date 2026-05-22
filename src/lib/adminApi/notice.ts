@@ -1,5 +1,5 @@
 import api from '../axios'; 
-import { Notice, NoticePayload } from '@/types/indexAdmin';
+import { NoticeDetailApiResponse, NoticePayload } from '@/types/indexAdmin';
 
 export type NoticeCategory = 'UPDATE' | 'EVENT' | 'POLICY';
 
@@ -35,3 +35,19 @@ export const getNotices = async () => {
   const { data } = await api.get('/api/v1/admin/notices');
   return data;
 };
+
+const BASE_URL = process.env.NEXT_PUBLIC_SERVER_IP ?? "";
+
+// 공지사항 세부 정보를 불러오는 함수
+export async function getNoticeDetail(
+  accessToken: string,
+  noticeId: number
+): Promise<NoticeDetailApiResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/admin/notices/${noticeId}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("공지사항을 불러오지 못했습니다.");
+  return res.json();
+}

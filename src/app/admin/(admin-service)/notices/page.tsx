@@ -41,7 +41,7 @@ export default function Page() {
       </div>
 
       <div className="overflow-hidden">
-        <NoticeTable notices={notices} onRowClick={setSelectedNoticeId} />
+        <NoticeTable notices={notices} onRowClick={(id) => router.push(`/admin/notices/${id}`)} />
       </div>
 
       <div className="flex justify-end items-center">

@@ -48,7 +48,7 @@ export default function NoticeTable({ notices, onRowClick }: TableProps) {
                 <TableCell className="max-w-[150px] truncate">{notice.title}</TableCell>
                 <TableCell>{formatDate(notice.createdAt)}</TableCell>
                 <TableCell>{formatDate(notice.updatedAt)}</TableCell>
-                <TableCell>{notice.isPublished ? 'O' : 'X'}</TableCell>
+                <TableCell>{notice.published ? 'O' : 'X'}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -5,18 +5,29 @@ import { useRouter } from 'next/navigation';
 import { createNotice } from '@/lib/adminApi/notice';
 import { SelectBox } from "@/components/admin/SelectBox";
 
-export default function NoticeWritePage() {
+interface NoticeEditorProps {
+  mode: 'create' | 'edit'; // 💡 '발행'인지 '수정'인지 구분하는 모드
+  initialData?: {          // 💡 수정일 경우 여기에 기존 데이터를 넘겨줌
+    title: string;
+    content: string;
+    category: string;
+  };
+}
+
+export default function NoticeWritePage({ mode, initialData }: NoticeEditorProps) {
   const router = useRouter();
   
-  const [category, setCategory] = useState<'UPDATE' | 'EVENT' | 'POLICY'>('UPDATE');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [category, setCategory] = useState<'UPDATE' | 'EVENT' | 'POLICY'>((initialData?.category as 'UPDATE' | 'EVENT' | 'POLICY') ?? 'UPDATE');
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [content, setContent] = useState(initialData?.content ?? "");
+
+  const submitText = mode === 'create' ? '발행하기' : '수정하기';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newDraft = await createNotice({ category, title, content });
     console.log({ category, title, content });
-    router.back()
+    router.push(`/admin/notices/${newDraft.data.id}`)
   };
 
   return (
@@ -79,7 +90,7 @@ export default function NoticeWritePage() {
             type="submit"
             className="px-5 py-2.5 bg-[#2B6340] text-white rounded-md hover:bg-[#1e462d] font-medium"
           >
-            임시저장
+            {submitText}
           </button>
         </div>
       </form>
