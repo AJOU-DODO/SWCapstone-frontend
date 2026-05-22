@@ -5,7 +5,7 @@ export interface Notice {
   categoryDescription: string;
   title: string;
   content: string;
-  isPublished: boolean;
+  published: boolean;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -33,4 +33,24 @@ export interface NoticePayload {
   category: "UPDATE" | "EVENT" | "POLICY";
   title: string;
   content: string;
+}
+
+// 공지사항 세부정보
+export interface NoticeDetail {
+  id: number;
+  category: "UPDATE" | "EVENT" | "POLICY";
+  categoryDescription: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  published: boolean;
+}
+
+export interface NoticeDetailApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: NoticeDetail;
 }
