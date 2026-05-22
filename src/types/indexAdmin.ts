@@ -10,3 +10,27 @@ export interface Notice {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+export interface NoticeData {
+  content: Notice[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+export interface NoticeApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: NoticeData;
+}
+
+// 공지사항 발행 데이터
+export interface NoticePayload {
+  category: "UPDATE" | "EVENT" | "POLICY";
+  title: string;
+  content: string;
+}

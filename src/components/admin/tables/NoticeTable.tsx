@@ -10,6 +10,10 @@ import {
 
 import { Notice } from '@/types/indexAdmin';
 
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
 
 interface TableProps {
   notices: Notice[];
@@ -42,8 +46,8 @@ export default function NoticeTable({ notices, onRowClick }: TableProps) {
                 <TableCell>{notice.id}</TableCell>
                 <TableCell>{notice.categoryDescription}</TableCell>
                 <TableCell className="max-w-[150px] truncate">{notice.title}</TableCell>
-                <TableCell>{notice.createdAt}</TableCell>
-                <TableCell>{notice.updatedAt}</TableCell>
+                <TableCell>{formatDate(notice.createdAt)}</TableCell>
+                <TableCell>{formatDate(notice.updatedAt)}</TableCell>
                 <TableCell>{notice.isPublished ? 'O' : 'X'}</TableCell>
             </TableRow>
           ))}
