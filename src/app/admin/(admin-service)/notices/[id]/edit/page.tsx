@@ -1,4 +1,4 @@
-import NoticeEditor from '@/components/admin/NoticeEditor';
+import NoticeEditor from '@/components/admin/notice/NoticeEditor';
 import { getNoticeDetail } from '@/lib/adminApi/notice';
 import { cookies } from 'next/headers';
 

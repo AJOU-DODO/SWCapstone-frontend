@@ -31,8 +31,8 @@ export const publishNotice = async (noticeId: number) => {
 };
 
 // 공지사항 전체 목록 조회
-export const getNotices = async () => {
-  const { data } = await api.get('/api/v1/admin/notices');
+export const getNotices = async (params?: { isPublished?: boolean }) => {
+  const { data } = await api.get('/api/v1/admin/notices', { params });
   return data;
 };
 

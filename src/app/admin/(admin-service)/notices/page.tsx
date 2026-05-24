@@ -6,21 +6,38 @@ import { useRouter } from 'next/navigation';
 import SearchBar from '@/components/admin/SearchBar';
 import Pagination from '@/components/admin/Pagination';
 import NoticeTable from '@/components/admin/tables/NoticeTable';
+import NoticeTab from '@/components/admin/notice/NoticeTab';
 import { Notice } from '@/types/indexAdmin';
 import { getNotices } from '@/lib/adminApi/notice';
+import { useSearchParams } from 'next/navigation';
 
-export default function Page() {
+interface PageProps {
+  searchParams: Promise<{ status?: string }>; 
+}
+
+export default  function Page() {
   const [selectedNoticeId, setSelectedNoticeId] = useState<string | number | null>(null);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const searchParams = useSearchParams();
   const router = useRouter();
+
+  const filterStatus = searchParams.get('status') ?? 'ALL';
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
+        const params: { isPublished?: boolean } = {};
+
+        if (filterStatus === 'PUBLISHED') {
+          params.isPublished = true;
+        } else if (filterStatus === 'DRAFT') {
+          params.isPublished = false;
+        }
+
         setLoading(true);
-        const data = await getNotices();
+        const data = await getNotices(params);
         setNotices(data.data.content);
       } catch (error) {
         console.error('공지사항 목록 로딩 실패:', error);
@@ -31,13 +48,15 @@ export default function Page() {
     };
 
     fetchNotices();
-  }, []);
+  }, [filterStatus]);
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
+    <div className="grid grid-rows-[auto_auto_1fr_auto_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
       <div className="justify-between items-center">
         <SearchBar placeholder='공지사항 검색' /> 
       </div>
+
+      <NoticeTab/>
 
       <div className="overflow-hidden">
         <NoticeTable notices={notices} onRowClick={(id) => router.push(`/admin/notices/${id}`)} />
