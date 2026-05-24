@@ -16,19 +16,22 @@ interface PageProps {
 }
 
 export default  function Page() {
-  const [selectedNoticeId, setSelectedNoticeId] = useState<string | number | null>(null);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const filterStatus = searchParams.get('status') ?? 'ALL';
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const params: { isPublished?: boolean } = {};
+        const params: { isPublished?: boolean; page: number } = {
+          page: currentPage - 1
+        };
 
         if (filterStatus === 'PUBLISHED') {
           params.isPublished = true;
@@ -39,6 +42,8 @@ export default  function Page() {
         setLoading(true);
         const data = await getNotices(params);
         setNotices(data.data.content);
+        setTotalPages(data.data.totalPages || 1);
+        console.log(data.data.totalPages);
       } catch (error) {
         console.error('공지사항 목록 로딩 실패:', error);
         alert('목록을 불러오는 중 오류가 발생했습니다.');
@@ -48,7 +53,7 @@ export default  function Page() {
     };
 
     fetchNotices();
-  }, [filterStatus]);
+  }, [filterStatus, currentPage]);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
@@ -58,8 +63,8 @@ export default  function Page() {
 
       <NoticeTab/>
 
-      <div className="overflow-hidden">
-        <NoticeTable notices={notices} onRowClick={(id) => router.push(`/admin/notices/${id}`)} />
+      <div className="w-full h-full min-h-0 overflow-y-auto">
+        <NoticeTable notices={notices} onRowClick={(id) => router.push(`/admin/notices/${id}?${searchParams.toString()}`)} />
       </div>
 
       <div className="flex justify-end items-center">
@@ -71,7 +76,7 @@ export default  function Page() {
       </div>
     
       <div className="mt-6 py-4 border-t">
-        <Pagination totalPages={10}/>
+        <Pagination totalPages={totalPages}/>
       </div>
     </div>
   );
