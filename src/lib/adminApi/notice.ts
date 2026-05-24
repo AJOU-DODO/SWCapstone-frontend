@@ -12,7 +12,7 @@ export const createNotice = async (body: NoticePayload ) => {
 // 공지사항 수정
 export const updateNotice = async (
   noticeId: number,
-  body: NoticeCategory
+  body: NoticePayload
 ) => {
   const { data } = await api.put(`/api/v1/admin/notices/${noticeId}`, body);
   return data;

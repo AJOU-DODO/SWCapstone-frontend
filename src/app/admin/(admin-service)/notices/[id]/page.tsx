@@ -28,7 +28,7 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
             {!isPublished ? (
               <>
                 <Link 
-                  href={`/admin/notice/${id}/edit`}
+                  href={`/admin/notices/${id}/edit`}
                   className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
                 >
                   수정하기
