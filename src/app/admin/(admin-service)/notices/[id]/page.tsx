@@ -1,6 +1,10 @@
-import { getNoticeDetail } from '@/lib/adminApi/notice';
+import { getNoticeDetail, publishNotice } from '@/lib/adminApi/notice';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import PublishButton from '@/components/admin/notice/PublishButton';
+import DeleteButton from '@/components/admin/notice/DeleteButton';
+
 
 export default async function NoticeDetailPage({ params }: { params: Promise<{ id: number }> }) {
   
@@ -33,21 +37,18 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
                 >
                   수정하기
                 </Link>
-                <button className="px-4 py-2 text-sm font-bold text-white bg-[#2B6340] rounded-full hover:bg-[#204a30]">
-                  최종 발행하기
-                </button>
+                <DeleteButton id={id} />
+                <PublishButton id={id} />
               </>
             ) : (
               <>
               <Link 
-                  href={`/admin/notice/${id}/edit`}
-                  className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
+                href={`/admin/notices/${id}/edit`}
+                className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
                 >
-                  수정하기
-                </Link>
-              <button className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-full hover:bg-red-700">
-                삭제하기
-              </button>
+                수정하기
+              </Link>
+              <DeleteButton id={id} />
               </>
             )}
           </div>

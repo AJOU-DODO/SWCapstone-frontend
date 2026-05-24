@@ -35,22 +35,26 @@ export default function NoticeTable({ notices, onRowClick }: TableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {notices.map((notice) => (
-            <TableRow 
-              key={notice.id} 
-              onClick={(e) => {
-                e.stopPropagation();
-                onRowClick(notice.id);
-              }}
-              className="border-[#54513E]/50">
-                <TableCell>{notice.id}</TableCell>
-                <TableCell>{notice.categoryDescription}</TableCell>
-                <TableCell className="max-w-[150px] truncate">{notice.title}</TableCell>
-                <TableCell>{formatDate(notice.createdAt)}</TableCell>
-                <TableCell>{formatDate(notice.updatedAt)}</TableCell>
-                <TableCell>{notice.published ? 'O' : 'X'}</TableCell>
-            </TableRow>
-          ))}
+          {notices.map((notice) => {
+            const deletedStyle = notice.deletedAt ? 'line-through text-gray-400' : '';
+            
+            return (
+              <TableRow 
+                key={notice.id} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRowClick(notice.id);
+                }}
+                className="border-[#54513E]/50">
+                  <TableCell className={deletedStyle}>{notice.id}</TableCell>
+                  <TableCell className={deletedStyle}>{notice.categoryDescription}</TableCell>
+                  <TableCell className={`max-w-[150px] truncate ${deletedStyle}`}>{notice.title}</TableCell>
+                  <TableCell className={deletedStyle}>{formatDate(notice.createdAt)}</TableCell>
+                  <TableCell className={deletedStyle}>{formatDate(notice.updatedAt)}</TableCell>
+                  <TableCell className={deletedStyle}>{notice.published ? 'O' : 'X'}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>
