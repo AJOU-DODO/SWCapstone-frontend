@@ -1,11 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { deleteNotice } from '@/lib/adminApi/notice';
 
 export default function PublishButton({ id }: { id: number }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -16,7 +17,14 @@ export default function PublishButton({ id }: { id: number }) {
     try {
       await deleteNotice(id);
       setIsModalOpen(false);
-      router.push('/admin/notices');
+
+      const currentQueries = searchParams.toString();
+
+      if (currentQueries) {
+        router.push(`/admin/notices?${currentQueries}`);
+      } else {
+        router.push('/admin/notices');
+      }
     } catch (error) {
       console.error(error);
       alert('삭제 중 오류가 발생했습니다.');

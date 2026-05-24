@@ -4,12 +4,24 @@ import { cookies } from 'next/headers';
 import PublishButton from '@/components/admin/notice/PublishButton';
 import DeleteButton from '@/components/admin/notice/DeleteButton';
 
+interface PageProps {
+  params: Promise<{ id: number }>;
+  searchParams: Promise<{ status?: string; page?: string }>; 
+}
 
-export default async function NoticeDetailPage({ params }: { params: Promise<{ id: number }> }) {
+export default async function NoticeDetailPage({ params, searchParams }: PageProps) {
   
   const { id } = await params;
+  const sParams = await searchParams;
+
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
+
+  const queryString = new URLSearchParams(
+    Object.entries(sParams).filter(([_, v]) => v !== undefined) as string[][]
+  ).toString();
+
+  const listUrl = queryString ? `/admin/notices?${queryString}` : '/admin/notices';
 
   try {
     const notice = await getNoticeDetail(accessToken!, id);
@@ -20,7 +32,7 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
         
         <div className="flex justify-between items-center border-b pb-4">
           <Link 
-            href="/admin/notices" 
+            href={listUrl} 
             className="text-sm font-semibold text-[#54513E] hover:text-black flex items-center gap-1"
           >
             ← 목록으로
