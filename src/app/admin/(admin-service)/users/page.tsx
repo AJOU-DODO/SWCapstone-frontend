@@ -10,31 +10,39 @@ import { User } from '@/types/indexAdmin';
 import { useEffect, useState } from "react";
 import { useSearchParams } from 'next/navigation';
 
-export default function Page({ searchParams,}: {searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) {
-  //정렬 옵션
+export default function Page() {
   const [users, setUsers] = useState<User[]>([]);
+  const searchParams = useSearchParams();
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const sort = searchParams.get('sort') || 'createdAt,desc';
 
   //정렬 옵션
   const sortOptions = [
     { label: "유저 ID", value: "id" },
-    { label: "가입 날짜", value: "createdAt" },
+    { label: "닉네임", value: "nickname" },
     { label: "유저 유형", value: "role" },
     { label: "게시글 수", value: "nestCount" },
     { label: "댓글 수", value: "commentCount" },
   ];
 
   useEffect(() => {
-    const fetchNotices = async () => {
+    const fetchUsers = async () => {
       try {
-        const data = await getUsers();
+        const params: { sort?: string; page: number } = {
+          sort: sort,
+          page: currentPage - 1
+        };
+
+        const data = await getUsers(params);
         setUsers(data.data.content);
       } catch (error) {
         console.error('유저 목록 로딩 실패:', error);
       } 
     };
 
-    fetchNotices();
-  }, []);
+    fetchUsers();
+  }, [searchParams]);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">

@@ -16,23 +16,24 @@ interface SortSectionProps {
 export default function SortSection({ options, defaultSort}: SortSectionProps) {
   const { updateQuery, searchParams } = useUpdateQuery();
 
-  const currentSort = searchParams.get("sort") || defaultSort;
-  const currentOrder = searchParams.get("order") || "asc";
+  const rawSort = searchParams.get("sort") || defaultSort;
+
+  const [currentField, currentOrder] = rawSort.includes(",") ? rawSort.split(",") : [rawSort, "asc"];
 
   //정렬 변경
   const handleSort = (newField: string) => {
-    if (currentSort === newField) {
+    if (currentField === newField) {
       const nextOrder = currentOrder === "asc" ? "desc" : "asc";
-      updateQuery({ order: nextOrder });
+      updateQuery({ sort: `${newField},${nextOrder}` });
     } else {
-      updateQuery({ sort: newField, order: "asc" });
+      updateQuery({ sort: `${newField},desc` });
     }
   };
 
   return (
     <SortFilterGroup
       options={options}
-      currentValue={currentSort}
+      currentValue={currentField}
       currentOrder={currentOrder}
       onChange={handleSort}
     />
