@@ -44,7 +44,7 @@ export interface NoticeDetail {
   content: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt: string;
+  deletedAt: string | null;
   published: boolean;
 }
 

@@ -35,7 +35,6 @@ export default function NoticeEditor({ mode, initialData }: NoticeEditorProps) {
 
     e.preventDefault();
     const newDraft = await updateNotice( initialData.id, { category, title, content });
-    console.log({ category, title, content });
     router.push(`/admin/notices/${initialData.id}`)
   };
 
