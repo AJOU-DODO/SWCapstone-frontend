@@ -1,7 +1,6 @@
-import { getNoticeDetail, publishNotice } from '@/lib/adminApi/notice';
+import { getNoticeDetail } from '@/lib/adminApi/notice';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import PublishButton from '@/components/admin/notice/PublishButton';
 import DeleteButton from '@/components/admin/notice/DeleteButton';
 
@@ -29,26 +28,30 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
           
           <div className="flex gap-2">
             {/* 임시저장 글과 발행 글의 버튼을 다르게 처리 */}
-            {!isPublished ? (
+            {notice.data.deletedAt === null && (
               <>
-                <Link 
-                  href={`/admin/notices/${id}/edit`}
-                  className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
-                >
-                  수정하기
-                </Link>
-                <DeleteButton id={id} />
-                <PublishButton id={id} />
-              </>
-            ) : (
-              <>
-              <Link 
-                href={`/admin/notices/${id}/edit`}
-                className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
-                >
-                수정하기
-              </Link>
-              <DeleteButton id={id} />
+                {!isPublished ? (
+                  <>
+                    <Link 
+                      href={`/admin/notices/${id}/edit`}
+                      className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
+                    >
+                      수정하기
+                    </Link>
+                    <DeleteButton id={id} />
+                    <PublishButton id={id} />
+                  </>
+                ) : (
+                  <>
+                    <Link 
+                      href={`/admin/notices/${id}/edit`}
+                      className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
+                    >
+                      수정하기
+                    </Link>
+                    <DeleteButton id={id} />
+                  </>
+                )}
               </>
             )}
           </div>
@@ -66,10 +69,27 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
                 임시저장 초안
               </span>
             )}
+
+            {notice.data.deletedAt !== null && (
+              <span className="px-3 py-1 text-xs font-bold bg-red-100 text-red-700 rounded-full">
+                삭제됨
+              </span>
+            )}
             
-            <span className="text-xs text-gray-400">
-              {notice.data.category} | {new Date(notice.data.createdAt).toLocaleDateString()}
+            <span className='px-3 py-1 text-xs font-bold bg-[#54513E] text-white rounded-full'>
+              {notice.data.category}
             </span>
+            <span className="text-xs text-gray-400">
+              생성 • {new Date(notice.data.createdAt).toLocaleDateString()}
+            </span>
+            <span className="text-xs text-gray-400">
+              | 수정 • {new Date(notice.data.updatedAt).toLocaleDateString()}
+            </span>
+            {notice.data.deletedAt !== null && (
+              <span className="text-xs text-gray-400">
+                 | 삭제 • {new Date(notice.data.deletedAt).toLocaleDateString()}
+              </span>
+            )}
           </div>
 
           <h1 className="text-2xl font-bold text-gray-800">{notice.data.title}</h1>
