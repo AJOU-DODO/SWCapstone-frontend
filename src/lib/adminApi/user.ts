@@ -2,8 +2,8 @@ import api from '../axios';
 import { UserSanctionedPayload, AddWhitelistPayload } from '@/types/indexAdmin';
 
 // 전체 유저 목록 조회
-export const getUsers = async () => {
-  const { data } = await api.get('/api/v1/admin/users');
+export const getUsers = async (params?: { sort?: string; page: number }) => {
+  const { data } = await api.get('/api/v1/admin/users', { params });
   return data;
 };
 
