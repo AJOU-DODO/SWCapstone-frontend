@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter } from 'next/navigation';
 
 import SearchBar from '@/components/admin/SearchBar';
@@ -11,11 +11,7 @@ import { Notice } from '@/types/indexAdmin';
 import { getNotices } from '@/lib/adminApi/notice';
 import { useSearchParams } from 'next/navigation';
 
-interface PageProps {
-  searchParams: Promise<{ status?: string }>; 
-}
-
-export default  function Page() {
+function NoticeListContent() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
@@ -79,5 +75,13 @@ export default  function Page() {
         <Pagination totalPages={totalPages}/>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">목록을 로딩 중입니다...</div>}>
+      <NoticeListContent />
+    </Suspense>
   );
 }

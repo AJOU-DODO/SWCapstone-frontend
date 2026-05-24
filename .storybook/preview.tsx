@@ -1,9 +1,16 @@
 import type { Preview } from '@storybook/nextjs-vite'
+import { initialize, mswLoader } from 'msw-storybook-addon';
+import api from '../src/lib/axios'; 
 
 // @ts-expect-error 라이브러리 타입 미지원
 import "@/app/globals.css";
 
+initialize();
+api.defaults.baseURL = '';
+api.defaults.adapter = 'fetch';
+
 const preview: Preview = {
+  loaders: [mswLoader],
   parameters: {
     controls: {
       matchers: {
