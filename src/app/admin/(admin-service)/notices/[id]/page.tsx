@@ -23,95 +23,9 @@ export default async function NoticeDetailPage({ params, searchParams }: PagePro
 
   const listUrl = queryString ? `/admin/notices?${queryString}` : '/admin/notices';
 
-  try {
-    const notice = await getNoticeDetail(accessToken!, id);
-    const isPublished = notice.data.published; 
-
-    return (
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
-        
-        <div className="flex justify-between items-center border-b pb-4">
-          <Link 
-            href={listUrl} 
-            className="text-sm font-semibold text-[#54513E] hover:text-black flex items-center gap-1"
-          >
-            ← 목록으로
-          </Link>
-          
-          <div className="flex gap-2">
-            {/* 임시저장 글과 발행 글의 버튼을 다르게 처리 */}
-            {notice.data.deletedAt === null && (
-              <>
-                {!isPublished ? (
-                  <>
-                    <Link 
-                      href={`/admin/notices/${id}/edit`}
-                      className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
-                    >
-                      수정하기
-                    </Link>
-                    <DeleteButton id={id} />
-                    <PublishButton id={id} />
-                  </>
-                ) : (
-                  <>
-                    <Link 
-                      href={`/admin/notices/${id}/edit`}
-                      className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
-                    >
-                      수정하기
-                    </Link>
-                    <DeleteButton id={id} />
-                  </>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* 본문 영역 */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            {isPublished ? (
-              <span className="px-3 py-1 text-xs font-bold bg-[#2B6340]/10 text-[#2B6340] rounded-full">
-                ● 발행 완료
-              </span>
-            ) : (
-              <span className="px-3 py-1 text-xs font-bold bg-amber-100 text-amber-700 rounded-full">
-                임시저장 초안
-              </span>
-            )}
-
-            {notice.data.deletedAt !== null && (
-              <span className="px-3 py-1 text-xs font-bold bg-red-100 text-red-700 rounded-full">
-                삭제됨
-              </span>
-            )}
-            
-            <span className='px-3 py-1 text-xs font-bold bg-[#54513E] text-white rounded-full'>
-              {notice.data.category}
-            </span>
-            <span className="text-xs text-gray-400">
-              생성 • {new Date(notice.data.createdAt).toLocaleDateString()}
-            </span>
-            <span className="text-xs text-gray-400">
-              | 수정 • {new Date(notice.data.updatedAt).toLocaleDateString()}
-            </span>
-            {notice.data.deletedAt !== null && (
-              <span className="text-xs text-gray-400">
-                 | 삭제 • {new Date(notice.data.deletedAt).toLocaleDateString()}
-              </span>
-            )}
-          </div>
-
-          <h1 className="text-2xl font-bold text-gray-800">{notice.data.title}</h1>
-          <div className="border-t pt-6 text-gray-700 min-h-[300px] whitespace-pre-wrap">
-            {notice.data.content}
-          </div>
-        </div>
-
-      </div>
-    );
+  let notice;
+  try{
+    notice = await getNoticeDetail(accessToken!, id);
   } catch (error) {
     console.error('공지사항 조회 실패:', error);
     return (
@@ -123,4 +37,80 @@ export default async function NoticeDetailPage({ params, searchParams }: PagePro
       </div>
     );
   }
+
+  const noticeData = notice.data;
+  const isPublished = noticeData.published;
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      
+      <div className="flex justify-between items-center border-b pb-4">
+        <Link 
+          href={listUrl} 
+          className="text-sm font-semibold text-[#54513E] hover:text-black flex items-center gap-1"
+        >
+          ← 목록으로
+        </Link>
+        
+        <div className="flex gap-2">
+          {/* 💡 2. 중복되던 분기문을 합쳐서 깔끔하게 청소했습니다. */}
+          {noticeData.deletedAt === null && (
+            <>
+              <Link 
+                href={`/admin/notices/${id}/edit`}
+                className="px-4 py-2 text-sm font-bold text-[#54513E] bg-[#54513E]/10 rounded-full hover:bg-[#54513E]/20"
+              >
+                수정하기
+              </Link>
+              <DeleteButton id={id} />
+              {/* 임시저장 상태일 때만 발행 버튼이 뒤에 추가됩니다. */}
+              {!isPublished && <PublishButton id={id} />}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* 본문 영역 */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          {isPublished ? (
+            <span className="px-3 py-1 text-xs font-bold bg-[#2B6340]/10 text-[#2B6340] rounded-full">
+              ● 발행 완료
+            </span>
+          ) : (
+            <span className="px-3 py-1 text-xs font-bold bg-amber-100 text-amber-700 rounded-full">
+              임시저장 초안
+            </span>
+          )}
+
+          {noticeData.deletedAt !== null && (
+            <span className="px-3 py-1 text-xs font-bold bg-red-100 text-red-700 rounded-full">
+              삭제됨
+            </span>
+          )}
+          
+          <span className='px-3 py-1 text-xs font-bold bg-[#54513E] text-white rounded-full'>
+            {noticeData.category}
+          </span>
+          <span className="text-xs text-gray-400">
+            생성 • {new Date(noticeData.createdAt).toLocaleDateString()}
+          </span>
+          <span className="text-xs text-gray-400">
+            | 수정 • {new Date(noticeData.updatedAt).toLocaleDateString()}
+          </span>
+          {noticeData.deletedAt !== null && (
+            <span className="text-xs text-gray-400">
+               | 삭제 • {new Date(noticeData.deletedAt).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+
+        <h1 className="text-2xl font-bold text-gray-800">{noticeData.title}</h1>
+        <div className="border-t pt-6 text-gray-700 min-h-[300px] whitespace-pre-wrap">
+          {noticeData.content}
+        </div>
+      </div>
+
+    </div>
+  );
 }
