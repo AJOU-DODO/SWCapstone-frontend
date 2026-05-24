@@ -1,4 +1,3 @@
-// 📂 src/components/common/RoundSelect.tsx (나만의 커스텀 격리소)
 'use client';
 
 import {
@@ -11,7 +10,7 @@ import {
 
 interface RoundSelectProps {
   value: string;
-  onChange: (value: any) => void;
+  onChange: (value: 'UPDATE' | 'EVENT' | 'POLICY') => void;
 }
 
 export function SelectBox({ value, onChange }: RoundSelectProps) {

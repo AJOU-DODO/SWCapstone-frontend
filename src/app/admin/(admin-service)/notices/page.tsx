@@ -39,10 +39,8 @@ function NoticeListContent() {
         const data = await getNotices(params);
         setNotices(data.data.content);
         setTotalPages(data.data.totalPages || 1);
-        console.log(data.data.totalPages);
       } catch (error) {
         console.error('공지사항 목록 로딩 실패:', error);
-        alert('목록을 불러오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
