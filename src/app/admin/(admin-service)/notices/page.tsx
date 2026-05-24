@@ -22,7 +22,6 @@ export default function Page() {
         setLoading(true);
         const data = await getNotices();
         setNotices(data.data.content);
-        console.log(data);
       } catch (error) {
         console.error('공지사항 목록 로딩 실패:', error);
         alert('목록을 불러오는 중 오류가 발생했습니다.');
