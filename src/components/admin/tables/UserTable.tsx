@@ -7,17 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// 데이터는 변경될 수 있음
-export interface User {
-  id: string;
-  nickname: string;
-  email: string;
-  role: "USER" | "ADMIN" | "ADVERTISER";
-  status: "ACTIVE" | "BANNED";
-  createdAt: string;
-  numNest: number;
-  numReply: number;
-}
+import { User } from '@/types/indexAdmin';
 
 export default function UserTable({ users }: { users: User[] }) {
   return (
@@ -42,10 +32,10 @@ export default function UserTable({ users }: { users: User[] }) {
               <TableCell>{user.nickname}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
-              <TableCell>{user.status}</TableCell>
-              <TableCell>{user.createdAt}</TableCell>
-              <TableCell>{user.numNest}</TableCell>
-              <TableCell>{user.numReply}</TableCell>
+              <TableCell>{user.isSanctioned ? 'O' : 'X' }</TableCell>
+              <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+              <TableCell>{user.nestCount}</TableCell>
+              <TableCell>{user.commentCount}</TableCell>
             </TableRow>
           ))}
         </TableBody>

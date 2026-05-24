@@ -1,60 +1,18 @@
+"use client";
+
 import SearchBar from '@/components/admin/SearchBar';
-import UserTable, { User } from '@/components/admin/tables/UserTable';
+import UserTable from '@/components/admin/tables/UserTable';
 import Pagination from '@/components/admin/Pagination';
 import SortSection from '@/components/admin/SortSection';
+import { getUsers } from '@/lib/adminApi/user';
+import { User } from '@/types/indexAdmin';
 
-export default async function Page({ searchParams,}: {searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) {
+import { useEffect, useState } from "react";
+import { useSearchParams } from 'next/navigation';
+
+export default function Page({ searchParams,}: {searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) {
   //정렬 옵션
-  const currentSort = await searchParams;
-
-  //임의의 데이터. (테이블 확인을 위한) 추후 삭제될 부분.
-  const users: User[] = [
-    { 
-      id: "1", 
-      nickname: "어드민", 
-      email: "admin@gmail.com", 
-      role: "ADMIN", 
-      status: "ACTIVE", 
-      createdAt: "2023-02-01", 
-      numNest: 27, 
-      numReply: 5 
-    },
-    { 
-    id: "2", 
-    nickname: "김도도", 
-    email: "kim@gmail.com", 
-    role: "USER", 
-    status: "ACTIVE", 
-    createdAt: "2023-02-01", 
-    numNest: 27, 
-    numReply: 5 
-    },
-    { 
-      id: "3", 
-      nickname: "양아치", 
-      email: "badguy@gmail.com", 
-      role: "ADMIN", 
-      status: "BANNED", 
-      createdAt: "2023-02-01", 
-      numNest: 27, 
-      numReply: 5 
-    },
-    { 
-    id: "4", 
-    nickname: "광고주", 
-    email: "adv@gmail.com", 
-    role: "ADVERTISER", 
-    status: "ACTIVE", 
-    createdAt: "2023-02-01", 
-    numNest: 27, 
-    numReply: 5 
-    },
-  ]
-
-  //임의 데이터 (페이지네이션을 위한)
-  const totalItems = 80; // 전체 유저 수
-  const itemsPerPage = 10; // 한 페이지당 보여줄 수
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const [users, setUsers] = useState<User[]>([]);
 
   //정렬 옵션
   const sortOptions = [
@@ -64,6 +22,19 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
     { label: "게시글 수", value: "nestCount" },
     { label: "댓글 수", value: "commentCount" },
   ];
+
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const data = await getUsers();
+        setUsers(data.data.content);
+      } catch (error) {
+        console.error('유저 목록 로딩 실패:', error);
+      } 
+    };
+
+    fetchNotices();
+  }, []);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
@@ -75,12 +46,12 @@ export default async function Page({ searchParams,}: {searchParams: Promise<{ [k
         <SortSection options={sortOptions} defaultSort='id'/>
       </div>
 
-      <div className="overflow-hidden">
+      <div className="w-full h-full min-h-0 overflow-y-auto">
         <UserTable users={users} />
       </div>
 
       <div className="mt-6 py-4 border-t">
-        <Pagination totalPages={totalPages}/>
+        <Pagination totalPages={10}/>
       </div>
     </div>
   )
