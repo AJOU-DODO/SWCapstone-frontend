@@ -104,3 +104,29 @@ export interface AddWhitelistPayload {
   email: string;
   remark: string | null;
 }
+
+// 카테고리 데이터
+export interface Category {
+  id: number;
+  name: string;
+  sortOrder: number;
+  createdAt: string;
+  deletedAt: string;
+  nestCount: number;
+}
+
+export interface CategoryApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: Category[];
+}
+
+export interface CategoryName {
+  name: string;
+}
+
+export interface CategoryOrder {
+  id: number;
+  sortOrder: number;
+}
