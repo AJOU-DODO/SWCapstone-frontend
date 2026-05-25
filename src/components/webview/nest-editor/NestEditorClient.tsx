@@ -53,17 +53,30 @@ export function NestEditorClient() {
 
   // S3 업로드 공통 함수
   const uploadImages = useCallback(async () => {
+    const tasks = imageUrls.map((url) => ({
+      url,
+      isNew: url.startsWith("data:"),
+    }));
+    const newImages = tasks.filter((t) => t.isNew);
+
+    if (newImages.length === 0) return imageUrls;
+
     // 파일명 생성
-    const fileNames = imageUrls.map((_, i) => `image_${Date.now()}_${i}.png`);
+    const fileNames = newImages.map((_, i) => `image_${Date.now()}_${i}.png`);
     // presignedurl 발급
     const presignedItems = await fetchPresignedUrls(fileNames, accessToken!);
+
     // 각 이미지를 S3에 업로드
     await Promise.all(
       presignedItems.data.map((item, i) =>
-        uploadImageToS3(item.presignedUrl, imageUrls[i]),
+        uploadImageToS3(item.presignedUrl, newImages[i].url),
       ),
     );
-    return presignedItems.data.map((item) => item.fileUrl);
+
+    let newIdx = 0;
+    return tasks.map((t) =>
+      t.isNew ? presignedItems.data[newIdx++].fileUrl : t.url,
+    );
   }, [imageUrls, accessToken]);
 
   // 임시저장 handle
