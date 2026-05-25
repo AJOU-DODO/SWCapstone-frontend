@@ -167,7 +167,7 @@ export const OpenSanctionModal: Story = {
     await userEvent.click(firstRow);
 
     // 제재 모달이 열렸는지 확인 (UserSanctionModal 안의 텍스트로 확인)
-    await expect(await screen.findByText('유저 제재')).toBeInTheDocument();
+    await expect(await screen.findByText('유저 제재 처리')).toBeInTheDocument();
   },
 };
 
@@ -188,12 +188,12 @@ export const CloseSanctionModal: Story = {
     await userEvent.click(firstRow);
 
     // 모달 열렸는지 확인
-    await expect(await screen.findByText('유저 제재')).toBeInTheDocument();
+    await expect(await screen.findByText('유저 제재 처리')).toBeInTheDocument();
 
     // 닫기 버튼 클릭
     const closeButton = await screen.findByRole('button', { name: '취소' });
     await userEvent.click(closeButton);
 
-    await expect(screen.queryByText('유저 제재')).not.toBeInTheDocument();
+    await expect(screen.queryByText('유저 제재 처리')).not.toBeInTheDocument();
   },
 };
