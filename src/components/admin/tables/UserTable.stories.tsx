@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import UserTable from './UserTable';
 import { User } from '@/types/indexAdmin';
 
