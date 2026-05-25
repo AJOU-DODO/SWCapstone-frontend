@@ -121,3 +121,16 @@ export interface ExchangeApiResponse {
   message: string | null;
   data: ExchangedPostcard;
 }
+
+export interface NestComment {
+  id: number;
+  content: string;
+  nickname: string;
+  profileImageUrl: string;
+  createdAt: string;
+  likeCount: number;
+  children: NestComment[];
+  liked: boolean;
+}
+
+export type CommentSortType = "LIKE" | "LATEST" | "DEFAULT";

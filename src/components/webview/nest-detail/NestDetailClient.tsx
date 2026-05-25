@@ -1,25 +1,56 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ThumbsUp, ThumbsDown, Hash, AlertCircle, Mail } from "lucide-react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  Hash,
+  AlertCircle,
+  Mail,
+  MessageCircle,
+  ChevronDown,
+  Send,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ImageSlider } from "./ImageSlider";
 import { PostcardModal } from "./PostcardModal";
-import { fetchNestDetail, postReaction } from "@/lib/api";
-import type { ReactionType } from "@/types";
+import { CommentItem } from "./CommentItem";
+import {
+  fetchNestDetail,
+  postReaction,
+  fetchComments,
+  postComment,
+} from "@/lib/api";
+import type { ReactionType, CommentSortType, NestComment } from "@/types";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
+const SORT_LABELS: Record<CommentSortType, string> = {
+  LIKE: "좋아요순",
+  LATEST: "최신순",
+  DEFAULT: "등록순",
+};
+
 interface Props {
   nestId: string;
 }
 
 export function NestDetailClient({ nestId }: Props) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const commentInputRef = useRef<HTMLInputElement>(null);
+
   const [reportOpen, setReportOpen] = useState(false);
   const [postcardModalOpen, setPostcardModalOpen] = useState(false);
 
@@ -28,6 +59,9 @@ export function NestDetailClient({ nestId }: Props) {
   const [likeOffset, setLikeOffset] = useState(0);
   const [dislikeOffset, setDislikeOffset] = useState(0);
   const [isReactionInitialized, setIsReactionInitialized] = useState(false);
+
+  const [commentText, setCommentText] = useState("");
+  const [sortBy, setSortBy] = useState<CommentSortType>("DEFAULT");
 
   //브릿지로 accesstoken 수신
   const [accessToken] = useState<string>(() => {
@@ -50,7 +84,6 @@ export function NestDetailClient({ nestId }: Props) {
   const nest = nestData?.data;
 
   // YES 버튼 클릭 시 이동할 페이지
-  const router = useRouter();
   const handlePostcardConfirm = () => {
     setPostcardModalOpen(false);
     router.push(`/nests/${nestId}/exchange-post`);
@@ -65,6 +98,13 @@ export function NestDetailClient({ nestId }: Props) {
   const displayDislikeCount = (nest?.dislikeCount ?? 0) + dislikeOffset;
 
   // 댓글 목록
+  const { data: commentsData, isLoading: isCommentsLoading } = useQuery({
+    queryKey: ["comments", nestId, sortBy],
+    queryFn: () => fetchComments(nestId, sortBy, accessToken),
+    enabled: !!accessToken,
+  });
+
+  const comments: NestComment[] = commentsData ?? [];
 
   // 좋아요/싫어요
   const reactionMutation = useMutation({
@@ -90,6 +130,20 @@ export function NestDetailClient({ nestId }: Props) {
     },
   });
 
+  // 댓글 작성
+  const commentMutation = useMutation({
+    mutationFn: () => postComment(nestId, commentText, accessToken),
+    onSuccess: () => {
+      setCommentText("");
+      queryClient.invalidateQueries({ queryKey: ["comments", nestId, sortBy] });
+    },
+  });
+
+  const handleSendComment = () => {
+    if (!commentText.trim() || commentMutation.isPending) return;
+    commentMutation.mutate();
+  };
+
   if (isNestLoading || !nest) {
     return (
       <div className="min-h-screen bg-[#F7F4EC] flex items-center justify-center">
@@ -107,8 +161,6 @@ export function NestDetailClient({ nestId }: Props) {
         {/* 이미지 + 편지 버튼 */}
         <div className="relative">
           <ImageSlider imageUrls={nest.imageUrls} title={nest.title} />
-
-          {/* 엽서가 있을 때만 편지 버튼 활성화 */}
           {nest.hasPostcard && (
             <button
               type="button"
@@ -134,8 +186,6 @@ export function NestDetailClient({ nestId }: Props) {
                 </span>
               ))}
             </div>
-
-            {/* 작성자 */}
             <div className="flex items-center gap-1.5 shrink-0">
               <div className="w-6 h-6 rounded-full overflow-hidden bg-[#EDEAE0] shrink-0">
                 <Image
@@ -164,7 +214,6 @@ export function NestDetailClient({ nestId }: Props) {
             {nest.content}
           </p>
 
-          {/* 구분선 */}
           <div className="h-px bg-[#E0DDD3]" />
 
           {/* 좋아요/싫어요 + 날짜 + 신고 */}
@@ -185,7 +234,6 @@ export function NestDetailClient({ nestId }: Props) {
                 />
                 <span className="text-xs font-medium">{displayLikeCount}</span>
               </button>
-
               <button
                 type="button"
                 onClick={() => reactionMutation.mutate("DISLIKE")}
@@ -204,7 +252,6 @@ export function NestDetailClient({ nestId }: Props) {
                 </span>
               </button>
             </div>
-
             <div className="flex items-center gap-2">
               <span className="text-xs text-[#B0AC9C]">
                 {formatDate(nest.createdAt)}
@@ -219,18 +266,103 @@ export function NestDetailClient({ nestId }: Props) {
             </div>
           </div>
 
-          {/* 엽서 모달 */}
-          <PostcardModal
-            open={postcardModalOpen}
-            accessToken={accessToken}
-            onClose={() => setPostcardModalOpen(false)}
-            onConfirm={handlePostcardConfirm}
-          />
-
-          {/* 구분선 */}
           <div className="h-px bg-[#E0DDD3]" />
+
+          {/* 댓글 섹션 헤더 */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <MessageCircle className="w-4 h-4 text-[#8B8070]" />
+              <span className="text-sm font-medium text-[#5C5346]">
+                댓글 {comments.length}
+              </span>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-xs text-[#8B8070] hover:text-[#5C5346] transition-colors"
+                >
+                  {SORT_LABELS[sortBy]}
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[#F7F4EC] border-[#E0DDD3] rounded-2xl min-w-25"
+              >
+                {(Object.keys(SORT_LABELS) as CommentSortType[]).map((key) => (
+                  <DropdownMenuItem
+                    key={key}
+                    onClick={() => setSortBy(key)}
+                    className={`text-xs cursor-pointer rounded-xl ${
+                      sortBy === key
+                        ? "text-[#5C5346] font-semibold"
+                        : "text-[#8B8070]"
+                    }`}
+                  >
+                    {SORT_LABELS[key]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* 댓글 목록 */}
+          <div className="space-y-3 pb-2">
+            {isCommentsLoading ? (
+              <div className="flex justify-center py-6">
+                <div className="w-5 h-5 rounded-full border-2 border-[#5C5346] border-t-transparent animate-spin" />
+              </div>
+            ) : comments.length === 0 ? (
+              <p className="text-xs text-[#B0AC9C] text-center py-6">
+                첫 번째 댓글을 남겨보세요.
+              </p>
+            ) : (
+              comments.map((comment) => (
+                <CommentItem
+                  key={comment.id}
+                  comment={comment}
+                  nestId={nestId}
+                  accessToken={accessToken}
+                  sortBy={sortBy}
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
+
+      {/* 댓글 입력창 - 하단 고정 */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#F7F4EC] border-t border-[#E0DDD3] px-4 py-3">
+        <div className="flex items-center gap-2 bg-white border border-[#E0DDD3] rounded-2xl px-3.5 py-2">
+          <MessageCircle className="w-4 h-4 text-[#B0AC9C] shrink-0" />
+          <input
+            ref={commentInputRef}
+            type="text"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSendComment()}
+            placeholder="댓글을 작성하세요."
+            className="flex-1 text-sm text-[#3D3830] placeholder:text-[#B0AC9C] outline-none bg-transparent"
+          />
+          <button
+            type="button"
+            onClick={handleSendComment}
+            disabled={!commentText.trim() || commentMutation.isPending}
+            className="w-7 h-7 rounded-full bg-[#5C5346] flex items-center justify-center transition-all active:scale-95 disabled:opacity-40"
+          >
+            <Send className="w-3.5 h-3.5 text-white" />
+          </button>
+        </div>
+      </div>
+
+      {/* 엽서 모달 */}
+      <PostcardModal
+        open={postcardModalOpen}
+        accessToken={accessToken}
+        onClose={() => setPostcardModalOpen(false)}
+        onConfirm={handlePostcardConfirm}
+      />
     </div>
   );
 }
