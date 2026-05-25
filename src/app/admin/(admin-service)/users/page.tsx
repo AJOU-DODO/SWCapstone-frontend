@@ -4,6 +4,7 @@ import SearchBar from '@/components/admin/SearchBar';
 import UserTable from '@/components/admin/tables/UserTable';
 import Pagination from '@/components/admin/Pagination';
 import SortSection from '@/components/admin/SortSection';
+import WhitelistModal from '@/components/admin/user/WhitelistModal';
 import { getUsers } from '@/lib/adminApi/user';
 import { User } from '@/types/indexAdmin';
 
@@ -12,6 +13,8 @@ import { useSearchParams } from 'next/navigation';
 
 export default function Page() {
   const [users, setUsers] = useState<User[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const searchParams = useSearchParams();
 
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -36,6 +39,7 @@ export default function Page() {
 
         const data = await getUsers(params);
         setUsers(data.data.content);
+        setTotalPages(data.data.totalPages || 1);
       } catch (error) {
         console.error('유저 목록 로딩 실패:', error);
       } 
@@ -50,8 +54,13 @@ export default function Page() {
         <SearchBar placeholder='유저 ID 혹은 유저 name 검색' /> 
       </div>
 
-      <div>
+      <div className='flex flex-row justify-between'>
         <SortSection options={sortOptions} defaultSort='id'/>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className='border-2 border-[#54513E] rounded-sm px-2 py-1 hover:bg-[#54513E]/30'>
+            화이트리스트 관리
+        </button>
       </div>
 
       <div className="w-full h-full min-h-0 overflow-y-auto">
@@ -59,8 +68,16 @@ export default function Page() {
       </div>
 
       <div className="mt-6 py-4 border-t">
-        <Pagination totalPages={10}/>
+        <Pagination totalPages={totalPages}/>
       </div>
+
+      {isModalOpen && (
+        <WhitelistModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+        />
+      )}
+
     </div>
   )
 }
