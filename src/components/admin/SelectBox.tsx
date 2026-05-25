@@ -8,12 +8,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface RoundSelectProps {
+export interface SelectOption {
   value: string;
-  onChange: (value: 'UPDATE' | 'EVENT' | 'POLICY') => void;
+  label: string;
 }
 
-export function SelectBox({ value, onChange }: RoundSelectProps) {
+interface RoundSelectProps {
+  value: string;
+  onChange: (value: string) => void;
+  options: SelectOption[];
+}
+
+export function SelectBox({ value, onChange, options }: RoundSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className=" border-2 border-[#54513E] rounded-full px-5 py-2.5 font-bold text-[#54513E] bg-[#FAF7E4]">
@@ -21,9 +27,15 @@ export function SelectBox({ value, onChange }: RoundSelectProps) {
       </SelectTrigger>
       
       <SelectContent className="rounded-2xl border-2 border-[#54513E] bg-[#FAF7E4] p-1">
-        <SelectItem value="UPDATE" className="rounded-xl py-2.5 focus:bg-[#54513E] focus:text-white">업데이트</SelectItem>
-        <SelectItem value="EVENT" className="rounded-xl py-2.5 focus:bg-[#54513E] focus:text-white">이벤트</SelectItem>
-        <SelectItem value="POLICY" className="rounded-xl py-2.5 focus:bg-[#54513E] focus:text-white">정책 변경</SelectItem>
+        {options.map((option) => (
+          <SelectItem 
+            key={option.value} 
+            value={option.value} 
+            className="rounded-xl py-2.5 focus:bg-[#54513E] focus:text-white"
+          >
+            {option.label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
