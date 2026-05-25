@@ -8,10 +8,10 @@ import WhitelistModal from '@/components/admin/user/WhitelistModal';
 import { getUsers } from '@/lib/adminApi/user';
 import { User } from '@/types/indexAdmin';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 
-export default function Page() {
+function AdminUsersPage(){
   const [users, setUsers] = useState<User[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,4 +80,12 @@ export default function Page() {
 
     </div>
   )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>페이지 로딩 중...</div>}>
+      <AdminUsersPage />
+    </Suspense>
+  );
 }
