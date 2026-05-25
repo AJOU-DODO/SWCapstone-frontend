@@ -269,3 +269,18 @@ export async function postComment(
   });
   if (!res.ok) throw new Error("댓글 작성에 실패했습니다.");
 }
+
+// 댓글에 좋아요를 남기는 함수
+export async function toggleCommentLike(
+  commentId: number,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/nests/comments/${commentId}/like`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
+  if (!res.ok) throw new Error("댓글 좋아요에 실패했습니다.");
+}

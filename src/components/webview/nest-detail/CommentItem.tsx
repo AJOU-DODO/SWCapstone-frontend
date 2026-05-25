@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { postComment } from "@/lib/api";
+import { postComment, toggleCommentLike } from "@/lib/api";
 import type { NestComment } from "@/types";
 
 interface Props {
@@ -33,6 +33,25 @@ export function CommentItem({
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
+  // 낙관적 업데이트를 위한 로컬 좋아요 상태
+  const [localLiked, setLocalLiked] = useState(comment.liked);
+  const [localLikeCount, setLocalLikeCount] = useState(comment.likeCount);
+
+  // 댓글 좋아요
+  const likeMutation = useMutation({
+    mutationFn: () => toggleCommentLike(comment.id, accessToken),
+    onMutate: () => {
+      setLocalLiked((prev) => !prev);
+      setLocalLikeCount((prev) => (localLiked ? prev - 1 : prev + 1));
+    },
+    onError: () => {
+      // 실패 시 원래 상태로 복구
+      setLocalLiked(comment.liked);
+      setLocalLikeCount(comment.likeCount);
+    },
+  });
+
+  // 댓글 작성
   const replyMutation = useMutation({
     mutationFn: () => postComment(nestId, replyText, accessToken, comment.id),
     onSuccess: () => {
@@ -77,13 +96,13 @@ export function CommentItem({
             <button
               type="button"
               className={`flex items-center gap-1 text-[10px] transition-colors ${
-                comment.liked ? "text-[#5C5346]" : "text-[#B0AC9C]"
+                localLiked ? "text-[#5C5346]" : "text-[#B0AC9C]"
               }`}
             >
               <ThumbsUp
-                className={`w-3 h-3 ${comment.liked ? "fill-[#5C5346]" : ""}`}
+                className={`w-3 h-3 ${localLiked ? "fill-[#5C5346]" : ""}`}
               />
-              {comment.likeCount}
+              {localLikeCount}
             </button>
 
             {/* 대댓글은 답글 버튼 숨김 */}
