@@ -4,6 +4,7 @@ import SearchBar from '@/components/admin/SearchBar';
 import CategoryCard from '@/components/admin/category/CategoryCard';
 import SortSection from '@/components/admin/SortSection';
 import IncludeDeletedToggle from '@/components/admin/category/IncludeDeletedToggle';
+import CreateCategoryModal from '@/components/admin/category/CreateCategoryModal';
 
 import { Category } from '@/types/indexAdmin';
 import { getCategories } from '@/lib/adminApi/category';
@@ -12,6 +13,7 @@ import { useSearchParams } from 'next/navigation';
 
 export default function Page() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const sort = searchParams.get('sort') || 'sortOrder,desc';
@@ -50,7 +52,6 @@ export default function Page() {
       </div>
 
       <div className="h-full overflow-y-auto pr-2">
-        {/* 💡 이 내부 그리드가 한 줄에 3개씩(grid-cols-3) 카드를 배치합니다. */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
           {categories.map((category) => (
             <CategoryCard 
@@ -58,6 +59,19 @@ export default function Page() {
             category={category}/>
           ))}
         </div>
+      </div>
+
+      <div className="flex justify-end items-center">
+        <button 
+        onClick={() => setIsModalOpen(true)}
+        className="flex items-center justify-center w-10 h-10 bg-[#2B6340] text-white rounded-full text-xl font-bold hover:bg-[#1e462d] transition-colors shadow-md">
+          +
+        </button>
+
+        <CreateCategoryModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
       </div>
     </div>
   );
