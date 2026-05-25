@@ -95,6 +95,8 @@ export function CommentItem({
           <div className="flex items-center gap-3 mt-1.5 px-1">
             <button
               type="button"
+              onClick={() => likeMutation.mutate()}
+              disabled={likeMutation.isPending}
               className={`flex items-center gap-1 text-[10px] transition-colors ${
                 localLiked ? "text-[#5C5346]" : "text-[#B0AC9C]"
               }`}
