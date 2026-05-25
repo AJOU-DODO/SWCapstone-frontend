@@ -5,6 +5,7 @@ import UserTable from '@/components/admin/tables/UserTable';
 import Pagination from '@/components/admin/Pagination';
 import SortSection from '@/components/admin/SortSection';
 import WhitelistModal from '@/components/admin/user/WhitelistModal';
+import UserSanctionModal from '@/components/admin/user/UserSanctionModal';
 import { getUsers } from '@/lib/adminApi/user';
 import { User } from '@/types/indexAdmin';
 
@@ -15,8 +16,11 @@ function AdminUsersPage(){
   const [users, setUsers] = useState<User[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const searchParams = useSearchParams();
 
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
+
+  const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const sort = searchParams.get('sort') || 'createdAt,desc';
 
@@ -46,7 +50,7 @@ function AdminUsersPage(){
     };
 
     fetchUsers();
-  }, [searchParams]);
+  }, [searchParams, refreshTrigger]);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
@@ -64,7 +68,7 @@ function AdminUsersPage(){
       </div>
 
       <div className="w-full h-full min-h-0 overflow-y-auto">
-        <UserTable users={users} />
+        <UserTable users={users} onRowClick={(id) => setSelectedUserId(id)} />
       </div>
 
       <div className="mt-6 py-4 border-t">
@@ -77,6 +81,13 @@ function AdminUsersPage(){
           onClose={() => setIsModalOpen(false)} 
         />
       )}
+
+      <UserSanctionModal 
+        isOpen={selectedUserId !== null}
+        userId={selectedUserId ?? 0} // null일 때는 방어코드로 0 토스
+        onClose={() => setSelectedUserId(null)} // 닫으면 다시 null로 초기화
+        setIsUpdated={setRefreshTrigger} // 제재 성공 시 목록 새로고침용
+      />
 
     </div>
   )
