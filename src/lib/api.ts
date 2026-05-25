@@ -7,6 +7,8 @@ import type {
   NestPayload,
   ReactionType,
   PresignedUrlItemApiResponse,
+  NestComment,
+  CommentSortType,
 } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -233,4 +235,52 @@ export async function publishDraft(
   if (!res.ok) throw new Error("임시저장 발행에 실패했습니다.");
   const data = await res.json();
   return data.data;
+}
+
+// 둥지의 댓글을 조회하는 함수
+export async function fetchComments(
+  id: string,
+  sortBy: CommentSortType,
+  accessToken: string,
+): Promise<NestComment[]> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/nests/${id}/comments?sortby=${sortBy}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  if (!res.ok) throw new Error("댓글을 불러오지 못했습니다.");
+  const data = await res.json();
+  return data.data;
+}
+
+// 둥지에 댓글을 작성하는 함수
+export async function postComment(
+  id: string,
+  content: string,
+  accessToken: string,
+  parentId?: number,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/${id}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(parentId ? { content, parentId } : { content }),
+  });
+  if (!res.ok) throw new Error("댓글 작성에 실패했습니다.");
+}
+
+// 댓글에 좋아요를 남기는 함수
+export async function toggleCommentLike(
+  commentId: number,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/nests/comments/${commentId}/like`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
+  if (!res.ok) throw new Error("댓글 좋아요에 실패했습니다.");
 }
