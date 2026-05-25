@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createNotice, updateNotice } from '@/lib/adminApi/notice';
-import { SelectBox } from "@/components/admin/SelectBox";
+import { SelectBox, SelectOption } from "@/components/admin/SelectBox";
 
 interface NoticeEditorProps {
   mode: 'create' | 'edit';
@@ -23,6 +23,12 @@ export default function NoticeEditor({ mode, initialData }: NoticeEditorProps) {
   const [content, setContent] = useState(initialData?.content ?? "");
 
   const submitText = mode === 'create' ? '발행하기' : '수정하기';
+
+  const noticeOptions: SelectOption[] = [
+    { value: "UPDATE", label: "업데이트" },
+    { value: "EVENT", label: "이벤트" },
+    { value: "POLICY", label: "정책 변경" },
+  ];
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +64,7 @@ export default function NoticeEditor({ mode, initialData }: NoticeEditorProps) {
         {/* 카테고리 선택 */}
         <div className="flex items-center flex-row gap-10">
           <label className="text-sm font-semibold items-center text-[#54513E]">카테고리</label>
-          <SelectBox value={category} onChange={setCategory} />
+          <SelectBox value={category} onChange={(val) => setCategory(val as 'UPDATE' | 'EVENT' | 'POLICY')} options={noticeOptions}/>
         </div>
 
         {/* 제목 작성 */}
