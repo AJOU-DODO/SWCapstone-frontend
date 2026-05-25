@@ -228,7 +228,7 @@ export async function publishDraft(
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(postcardId ? { postcardId } : {}),
+    body: JSON.stringify(postcardId !== null ? { postcardId } : {}),
   });
   if (!res.ok) throw new Error("임시저장 발행에 실패했습니다.");
   const data = await res.json();
