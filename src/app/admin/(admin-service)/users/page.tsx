@@ -82,12 +82,14 @@ function AdminUsersPage(){
         />
       )}
 
-      <UserSanctionModal 
-        isOpen={selectedUserId !== null}
-        userId={selectedUserId ?? 0} // null일 때는 방어코드로 0 토스
-        onClose={() => setSelectedUserId(null)} // 닫으면 다시 null로 초기화
-        setIsUpdated={setRefreshTrigger} // 제재 성공 시 목록 새로고침용
-      />
+      {selectedUserId !== null && (
+        <UserSanctionModal 
+          isOpen={true}
+          userId={selectedUserId}
+          onClose={() => setSelectedUserId(null)}
+          setIsUpdated={setRefreshTrigger}
+        />
+      )}
 
     </div>
   )

@@ -11,18 +11,18 @@ interface UserSanctionModalProps {
   setIsUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const sanctionOptions: SelectOption[] = [
+  { value: "SEVEN_DAYS", label: "7일 정지" },
+  { value: "THIRTY_DAYS", label: "30일 정지" },
+  { value: "PERMANENT", label: "영구 정지" },
+];
+
 export default function UserSanctionModal ({ userId, isOpen, onClose, setIsUpdated }: UserSanctionModalProps) {
   const [sanctionType, setSanctionType] = useState<'SEVEN_DAYS' | 'THIRTY_DAYS' | 'PERMANENT'>('SEVEN_DAYS');
   const [reason, setReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
-
-  const sanctionOptions: SelectOption[] = [
-      { value: "SEVEN_DAYS", label: "7일 정지" },
-      { value: "THIRTY_DAYS", label: "30일 정지" },
-      { value: "PERMANENT", label: "영구 정지" },
-    ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
