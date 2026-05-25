@@ -102,5 +102,5 @@ export interface Whitelists {
 // 화이트리스트 추가 데이터
 export interface AddWhitelistPayload {
   email: string;
-  remark: string;
+  remark: string | null;
 }
