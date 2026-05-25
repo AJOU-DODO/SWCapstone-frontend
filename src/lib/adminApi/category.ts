@@ -2,7 +2,7 @@ import api from '../axios';
 import { CategoryName, CategoryOrder } from '@/types/indexAdmin';
 
 // 카테고리 전체 목록 조회
-export const getCategories = async (params?: { includeDeleted?: boolean; sortBy?: string }) => {
+export const getCategories = async (params?: { includeDeleted?: string; sortBy?: string }) => {
   const { data } = await api.get('/api/v1/admin/categories', { params });
   return data;
 };
