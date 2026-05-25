@@ -57,7 +57,7 @@ export async function saveDraft(
 export async function publishNest(
   payload: NestPayload,
   accessToken: string,
-): Promise<void> {
+): Promise<{ id: number }> {
   const res = await fetch(`${BASE_URL}/api/v1/nests`, {
     method: "POST",
     headers: {
@@ -67,6 +67,8 @@ export async function publishNest(
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error("게시물 발행에 실패했습니다.");
+  const data = await res.json();
+  return data.data;
 }
 
 // 특정 id의 둥지의 상세정보를 가져오는 함수
@@ -167,6 +169,7 @@ export async function updateUserInterests(
   if (!res.ok) throw new Error("관심 카테고리 설정에 실패했습니다.");
 }
 
+// 엽서 교환 가능 횟수를 불러오는 함수
 export async function fetchExchangeCheck(
   accessToken: string,
 ): Promise<ExchangeCheckApiResponse> {
@@ -178,6 +181,7 @@ export async function fetchExchangeCheck(
   return res.json();
 }
 
+// 엽서를 교환하는 함수
 export async function exchangePostcard(
   nestId: string,
   myPostcardId: number,
@@ -193,4 +197,40 @@ export async function exchangePostcard(
   });
   if (!res.ok) throw new Error("엽서 교환에 실패했습니다.");
   return res.json();
+}
+
+// 임시저장 글을 수정하는 함수
+export async function updateDraft(
+  id: number,
+  payload: NestPayload,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/drafts/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("임시저장 수정에 실패했습니다.");
+}
+
+// 임시저장 글을 발행하는 함수(임시저장 글은 해당 함수를 활용해야 정식 발행 성공시, 임시저장 내용 삭제됨)
+export async function publishDraft(
+  id: number,
+  postcardId: number | null,
+  accessToken: string,
+): Promise<{ id: number }> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/drafts/${id}/publish`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(postcardId !== null ? { postcardId } : {}),
+  });
+  if (!res.ok) throw new Error("임시저장 발행에 실패했습니다.");
+  const data = await res.json();
+  return data.data;
 }

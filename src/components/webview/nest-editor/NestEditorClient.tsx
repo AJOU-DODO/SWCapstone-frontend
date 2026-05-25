@@ -7,6 +7,8 @@ import { useNestEditorStore } from "@/lib/store/nestEditorStore";
 import {
   saveDraft,
   publishNest,
+  updateDraft,
+  publishDraft,
   fetchPresignedUrls,
   uploadImageToS3,
 } from "@/lib/api";
@@ -18,11 +20,13 @@ import { ContentEditor } from "./ContentEditor";
 import { DraftListModal } from "./DraftListModal";
 import type { DraftItem } from "@/types";
 import { TitleInput } from "./TitleInput";
+import { useRouter } from "next/navigation";
 
 type ToastState = { type: "success" | "error"; message: string } | null;
 
 export function NestEditorClient() {
   useBridge();
+  const router = useRouter();
   const {
     accessToken,
     imageUrls,
@@ -34,6 +38,8 @@ export function NestEditorClient() {
     setUnlockRadius,
     setCategoryIds,
     setTitle,
+    loadedDraftId,
+    postcardId,
     errors,
   } = useNestEditorStore();
 
@@ -45,6 +51,35 @@ export function NestEditorClient() {
     setTimeout(() => setToast(null), 3000);
   };
 
+  // S3 업로드 공통 함수
+  const uploadImages = useCallback(async () => {
+    const tasks = imageUrls.map((url) => ({
+      url,
+      isNew: url.startsWith("data:"),
+    }));
+    const newImages = tasks.filter((t) => t.isNew);
+
+    if (newImages.length === 0) return imageUrls;
+
+    // 파일명 생성
+    const fileNames = newImages.map((_, i) => `image_${Date.now()}_${i}.png`);
+    // presignedurl 발급
+    const presignedItems = await fetchPresignedUrls(fileNames, accessToken!);
+
+    // 각 이미지를 S3에 업로드
+    await Promise.all(
+      presignedItems.data.map((item, i) =>
+        uploadImageToS3(item.presignedUrl, newImages[i].url),
+      ),
+    );
+
+    let newIdx = 0;
+    return tasks.map((t) =>
+      t.isNew ? presignedItems.data[newIdx++].fileUrl : t.url,
+    );
+  }, [imageUrls, accessToken]);
+
+  // 임시저장 handle
   const handleDraft = useCallback(async () => {
     if (isSubmitting || !accessToken) return;
     setSubmitting(true);
@@ -59,40 +94,87 @@ export function NestEditorClient() {
     }
   }, [isSubmitting, accessToken, getDraftPayload, setSubmitting]);
 
+  // 임시저장 글 수정 handle
+  const handleUpdateDraft = useCallback(async () => {
+    if (isSubmitting || !accessToken || loadedDraftId === null) return;
+    setSubmitting(true);
+    try {
+      const payload = getDraftPayload();
+      await updateDraft(loadedDraftId, payload, accessToken);
+      showToast("success", "임시저장 글이 수정되었습니다.");
+    } catch {
+      showToast("error", "수정에 실패했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
+  }, [
+    isSubmitting,
+    accessToken,
+    loadedDraftId,
+    getDraftPayload,
+    setSubmitting,
+  ]);
+
+  // 일반 발행 handle
   const handlePublish = useCallback(async () => {
     if (isSubmitting || !accessToken) return;
     const payload = getPublishPayload();
     if (!payload) return;
     setSubmitting(true);
     try {
-      // 발행 시점에 파일명 생성
-      const fileNames = imageUrls.map(
-        (_, index) => `image_${Date.now()}_${index}.png`,
-      );
-
-      console.log(fileNames[0]);
-
-      // presigned URL 발급
-      const presignedItems = await fetchPresignedUrls(fileNames, accessToken);
-
-      // 각 이미지를 S3에 병렬 업로드
-      await Promise.all(
-        presignedItems.data.map((item, index) =>
-          uploadImageToS3(item.presignedUrl, imageUrls[index]),
-        ),
-      );
-
       // fileUrl 배열로 업데이트 후 발행
-      const fileUrls = presignedItems.data.map((item) => item.fileUrl);
-      await publishNest({ ...payload, imageUrls: fileUrls }, accessToken);
-
+      const fileUrls = await uploadImages();
+      const result = await publishNest(
+        { ...payload, imageUrls: fileUrls },
+        accessToken,
+      );
       showToast("success", "게시물이 발행되었습니다.");
+      setTimeout(() => router.push(`/nests/${result.id}`), 1000);
     } catch {
       showToast("error", "발행에 실패했습니다.");
     } finally {
       setSubmitting(false);
     }
-  }, [isSubmitting, accessToken, imageUrls, getPublishPayload, setSubmitting]);
+  }, [
+    isSubmitting,
+    accessToken,
+    getPublishPayload,
+    setSubmitting,
+    router,
+    uploadImages,
+  ]);
+
+  // 임시저장 글 발행 handle
+  const handlePublishDraft = useCallback(async () => {
+    if (isSubmitting || !accessToken || loadedDraftId === null) return;
+    const payload = getPublishPayload();
+    if (!payload) return;
+    setSubmitting(true);
+    try {
+      const fileUrls = await uploadImages();
+      await updateDraft(
+        loadedDraftId,
+        { ...payload, imageUrls: fileUrls },
+        accessToken,
+      );
+      const result = await publishDraft(loadedDraftId, postcardId, accessToken);
+      showToast("success", "게시물이 발행되었습니다.");
+      setTimeout(() => router.push(`/nests/${result.id}`), 1000);
+    } catch {
+      showToast("error", "발행에 실패했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
+  }, [
+    isSubmitting,
+    accessToken,
+    loadedDraftId,
+    postcardId,
+    getPublishPayload,
+    setSubmitting,
+    router,
+    uploadImages,
+  ]);
 
   const handleLoadDraft = useCallback(
     (draft: DraftItem) => {
@@ -108,6 +190,7 @@ export function NestEditorClient() {
   );
 
   const hasErrors = Object.keys(errors).length > 0;
+  const isDraftLoaded = loadedDraftId !== null;
 
   return (
     <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
@@ -203,12 +286,14 @@ export function NestEditorClient() {
         <div className="px-5 pb-5 grid grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={handleDraft}
+            onClick={isDraftLoaded ? handleUpdateDraft : handleDraft}
             disabled={isSubmitting}
             className="h-12 rounded-2xl border-2 border-[#C8C4B0] bg-transparent text-[#5C5346] text-sm font-semibold transition-all active:scale-95 hover:bg-[#EDE9DA] disabled:opacity-50"
           >
             {isSubmitting ? (
               <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+            ) : isDraftLoaded ? (
+              "수정하기"
             ) : (
               "임시저장"
             )}
@@ -216,7 +301,7 @@ export function NestEditorClient() {
 
           <button
             type="button"
-            onClick={handlePublish}
+            onClick={isDraftLoaded ? handlePublishDraft : handlePublish}
             disabled={isSubmitting}
             className="h-12 rounded-2xl bg-[#5C5346] text-white text-sm font-semibold transition-all active:scale-95 hover:bg-[#4A4237] disabled:opacity-50"
           >
