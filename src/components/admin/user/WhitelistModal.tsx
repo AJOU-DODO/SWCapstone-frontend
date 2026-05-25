@@ -74,7 +74,7 @@ export default function WhitelistModal ({ isOpen, onClose }: WhitelistModalProps
                 <span className="text-sm text-gray-700 font-medium">{item.id}</span>
                 <span className="text-sm text-gray-700 font-medium">{item.email}</span>
                 <span className="text-sm text-gray-700 font-medium">{item.remark}</span>
-                <span className='text-sm texx-gray-700 font-medium'>{new Date(item.createdAt).toLocaleDateString()}</span>
+                <span className='text-sm text-gray-700 font-medium'>{new Date(item.createdAt).toLocaleDateString()}</span>
                 
                 <button 
                   className="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:bg-red-50 px-2 py-1 rounded-sm"
