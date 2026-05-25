@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { http, HttpResponse } from 'msw';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, screen, userEvent, within } from '@storybook/test';
 import Page from './page';
 import { User } from '@/types/indexAdmin';
 
@@ -142,5 +142,58 @@ export const ApiError: Story = {
         }),
       ],
     },
+  },
+};
+
+/**
+ * 6. 유저 행 클릭 시 제재 모달이 열리는지
+ */
+export const OpenSanctionModal: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...defaultHandlers,
+        http.post('/api/v1/admin/users/:userId/sanction', () => {
+          return HttpResponse.json({ status: 'SUCCESS' });
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 첫 번째 유저 행 클릭
+    const firstRow = await canvas.findByText('홍길동');
+    await userEvent.click(firstRow);
+
+    // 제재 모달이 열렸는지 확인 (UserSanctionModal 안의 텍스트로 확인)
+    await expect(await screen.findByText('유저 제재')).toBeInTheDocument();
+  },
+};
+
+/**
+ * 7. 제재 모달에서 닫기 클릭 시 모달이 닫히는지
+ */
+export const CloseSanctionModal: Story = {
+  parameters: {
+    msw: {
+      handlers: defaultHandlers,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 첫 번째 유저 행 클릭
+    const firstRow = await canvas.findByText('홍길동');
+    await userEvent.click(firstRow);
+
+    // 모달 열렸는지 확인
+    await expect(await screen.findByText('유저 제재')).toBeInTheDocument();
+
+    // 닫기 버튼 클릭
+    const closeButton = await screen.findByRole('button', { name: '취소' });
+    await userEvent.click(closeButton);
+
+    await expect(screen.queryByText('유저 제재')).not.toBeInTheDocument();
   },
 };
