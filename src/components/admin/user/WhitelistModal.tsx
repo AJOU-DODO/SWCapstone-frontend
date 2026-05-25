@@ -18,8 +18,6 @@ export default function WhitelistModal ({ isOpen, onClose }: WhitelistModalProps
   const [refreshTrigger, setRefreshTrigger] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
-  if (!isOpen) return null;
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -33,6 +31,8 @@ export default function WhitelistModal ({ isOpen, onClose }: WhitelistModalProps
 
     fetchUsers();
   }, [refreshTrigger]);
+
+  if (!isOpen) return null;
 
   const handleDelete = async () => {
     if (deleteTargetId === null) return;
