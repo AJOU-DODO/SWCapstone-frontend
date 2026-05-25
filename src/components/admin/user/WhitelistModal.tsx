@@ -6,7 +6,6 @@ import { Whitelists } from '@/types/indexAdmin';
 
 import PostWhitelistModal from '@/components/admin/user/PostWhitelistModal';
 import DeleteConfirmModal from '@/components/admin/user/DeleteConfirmModal';
-import { isTemplateExpression } from 'typescript';
 
 interface WhitelistModalProps {
   isOpen: boolean;
@@ -19,13 +18,14 @@ export default function WhitelistModal ({ isOpen, onClose }: WhitelistModalProps
   const [refreshTrigger, setRefreshTrigger] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
+  if (!isOpen) return null;
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
 
         const data = await getWhitelists();
         setWhitelist(data.data);
-        console.log(data);
       } catch (error) {
         console.error('화이트리스트 목록 로딩 실패:', error);
       } 
@@ -79,15 +79,9 @@ export default function WhitelistModal ({ isOpen, onClose }: WhitelistModalProps
                 <button 
                   className="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:bg-red-50 px-2 py-1 rounded-sm"
                   onClick={() => setDeleteTargetId(item.id)}
-                  //onClick={() => handleDelete()} // 테스트용
                 >
                   삭제
                 </button>
-                <DeleteConfirmModal 
-                  isOpen={deleteTargetId !== null} // ID가 있으면 열림
-                  onClose={() => setDeleteTargetId(null)} // 취소 시 null로 만들어 닫음
-                  onConfirm={handleDelete} // 확인 시 API 실행
-                />
               </div>
             ))
           )}
@@ -101,6 +95,12 @@ export default function WhitelistModal ({ isOpen, onClose }: WhitelistModalProps
           </button>
         </div>
       </div>
+
+      <DeleteConfirmModal 
+        isOpen={deleteTargetId !== null} 
+        onClose={() => setDeleteTargetId(null)} 
+        onConfirm={handleDelete} 
+      />
 
       {isModalOpen && (
         <PostWhitelistModal 
