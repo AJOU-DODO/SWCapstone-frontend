@@ -4,13 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { ThumbsUp, AlertCircle, Send, MessageCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { postComment, toggleCommentLike } from "@/lib/api";
+import { ReportModal } from "./ReportModal";
 import type { NestComment } from "@/types";
 
 interface Props {
@@ -19,6 +14,8 @@ interface Props {
   accessToken: string;
   sortBy: string;
   isChild?: boolean;
+  onReportSuccess: () => void;
+  onReportError: () => void;
 }
 
 export function CommentItem({
@@ -27,6 +24,8 @@ export function CommentItem({
   accessToken,
   sortBy,
   isChild = false,
+  onReportSuccess,
+  onReportError,
 }: Props) {
   const queryClient = useQueryClient();
   const [reportOpen, setReportOpen] = useState(false);
@@ -166,20 +165,24 @@ export function CommentItem({
           accessToken={accessToken}
           sortBy={sortBy}
           isChild
+          onReportSuccess={onReportSuccess}
+          onReportError={onReportError}
         />
       ))}
 
-      {/* 신고 다이얼로그 */}
-      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
-        <DialogContent className="bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl w-[calc(100vw-2rem)] max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-sm font-semibold text-[#3D3830]">
-              신고
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-[#5C5346] py-2">신고 페이지입니다.</p>
-        </DialogContent>
-      </Dialog>
+      {/* 신고 모달 */}
+      <ReportModal
+        open={reportOpen}
+        reportType="COMMENT"
+        targetId={comment.id}
+        accessToken={accessToken}
+        onClose={() => setReportOpen(false)}
+        onSuccess={() => {
+          setReportOpen(false);
+          onReportSuccess();
+        }}
+        onError={onReportError}
+      />
     </>
   );
 }
