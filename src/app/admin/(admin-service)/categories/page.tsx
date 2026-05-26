@@ -8,7 +8,7 @@ import CreateCategoryModal from '@/components/admin/category/CreateCategoryModal
 
 import { Category, CategoryOrder } from '@/types/indexAdmin';
 import { getCategories, updateCategoryOrder } from '@/lib/adminApi/category';
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 
 import {
@@ -68,7 +68,7 @@ function SortableCategoryCard({
   );
 }
 
-export default function Page() {
+function AdminCategoryPage(){
   const [categories, setCategories] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null); // DragOverlay용
@@ -236,4 +236,12 @@ export default function Page() {
       </div>
     </div>
   );
+}
+
+export default function Page() {
+  return (
+      <Suspense fallback={<div>페이지 로딩 중...</div>}>
+        <AdminCategoryPage />
+      </Suspense>
+    );
 }
