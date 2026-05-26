@@ -24,7 +24,7 @@ export const updateCategory = async (
 
 // 카테고리 노출 순서 일괄 변경
 export const updateCategoryOrder = async (body: CategoryOrder[]) => {
-  const { data } = await api.put(`/api/v1/admin/categories/orders`, body);
+  const { data } = await api.put(`/api/v1/admin/categories/orders`, { orders: body });
   return data;
 };
 

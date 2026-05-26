@@ -9,7 +9,6 @@ export default function IncludeDeletedToggle() {
 
   const isIncludeDeleted = searchParams.get("includeDeleted") === "false";
 
-  // 2. 스위치 토글 시 주소창(URL)의 쿼리스트링 업데이트
   const handleToggleChange = (checked: boolean) => {
     updateQuery({
       includeDeleted: checked ? "false" : null,
