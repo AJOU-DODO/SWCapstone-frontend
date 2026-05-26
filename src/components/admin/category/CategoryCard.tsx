@@ -26,12 +26,16 @@ export default function CategoryCard({ category }: { category: Category }) {
       };
 
     try {
+      setIsLoading(true);
+
       const res = await updateCategory(category.id, body);
 
       router.refresh();
       setIsEditing(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

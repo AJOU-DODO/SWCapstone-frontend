@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 export default function IncludeDeletedToggle() {
   const { updateQuery, searchParams } = useUpdateQuery();
 
-  const isIncludeDeleted = searchParams.get("includeDeleted") === "false";
+  const isExcludeDeleted = searchParams.get("includeDeleted") === "false";
 
   const handleToggleChange = (checked: boolean) => {
     updateQuery({
@@ -19,7 +19,7 @@ export default function IncludeDeletedToggle() {
     <div className="flex items-center space-x-2 bg-white px-3 py-2 rounded-xl border border-2 border-[#538752] shadow-sm">
       <Switch
         id="deleted-toggle"
-        checked={isIncludeDeleted}
+        checked={isExcludeDeleted}
         onCheckedChange={handleToggleChange}
         className="data-[state=checked]:bg-[#538752]"
       />

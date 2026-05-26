@@ -16,6 +16,7 @@ export default function DeleteCategoryButton({ category }: DeleteCategoryButtonP
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
 
     setIsLoading(true);
     try {
