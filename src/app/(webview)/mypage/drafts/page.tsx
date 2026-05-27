@@ -14,7 +14,8 @@ function formatDate(iso: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function formatCoord(lat: number, lng: number) {
+function formatCoord(lat: number | null | undefined, lng: number | null | undefined) {
+  if (lat == null || lng == null) return "위치 정보 없음";
   return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 }
 
@@ -50,8 +51,11 @@ export default function Page() {
       imageUrls: draft.imageUrls ?? [],
       latitude: draft.latitude ?? null,
       longitude: draft.longitude ?? null,
+      postcardId: null,
+      postcardTitle: null,
+      isSubmitting: false,
+      errors: {},
     });
-
     router.push("/nest-editor");
   };
 

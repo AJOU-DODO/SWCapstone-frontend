@@ -31,7 +31,10 @@ export function useBridge() {
       const token = window.AndroidBridge.getAccessToken();
 
       const { loadedDraftId } = useNestEditorStore.getState();
-      if (loadedDraftId !== null) return;
+      if (loadedDraftId !== null) {
+        useNestEditorStore.setState({ accessToken: token, isBridgeReady: true });
+        return;
+      }
 
       const location = JSON.parse(window.AndroidBridge.getLocation());
 
