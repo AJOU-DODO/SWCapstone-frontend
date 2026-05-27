@@ -29,6 +29,10 @@ export function useBridge() {
     if (typeof window !== "undefined" && window.AndroidBridge) {
       console.log("브릿지 실행 시작");
       const token = window.AndroidBridge.getAccessToken();
+
+      const { loadedDraftId } = useNestEditorStore.getState();
+      if (loadedDraftId !== null) return;
+
       const location = JSON.parse(window.AndroidBridge.getLocation());
 
       if (token && location) {
