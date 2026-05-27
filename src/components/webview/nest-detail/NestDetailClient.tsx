@@ -31,7 +31,12 @@ import {
   fetchComments,
   postComment,
 } from "@/lib/api";
-import type { ReactionType, CommentSortType, NestComment } from "@/types";
+import type {
+  ReactionType,
+  CommentSortType,
+  ReportType,
+  NestComment,
+} from "@/types";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -53,7 +58,10 @@ export function NestDetailClient({ nestId }: Props) {
   const queryClient = useQueryClient();
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  const [reportOpen, setReportOpen] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{
+    type: ReportType;
+    id: number;
+  } | null>(null);
   const [postcardModalOpen, setPostcardModalOpen] = useState(false);
 
   // 낙관적 업데이트를 위한 로컬 reaction 상태
@@ -288,7 +296,7 @@ export function NestDetailClient({ nestId }: Props) {
               </span>
               <button
                 type="button"
-                onClick={() => setReportOpen(true)}
+                onClick={() => setReportTarget({ type: "NEST", id: nest.id })}
                 className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center hover:bg-red-200 transition-colors"
               >
                 <AlertCircle className="w-3.5 h-3.5 text-red-400" />
@@ -355,14 +363,8 @@ export function NestDetailClient({ nestId }: Props) {
                   nestId={nestId}
                   accessToken={accessToken}
                   sortBy={sortBy}
-                  onReportSuccess={() =>
-                    showToast("success", "신고가 완료되었습니다.")
-                  }
-                  onReportError={() =>
-                    showToast(
-                      "error",
-                      "신고가 실패했습니다. 다시 시도해주세요.",
-                    )
+                  onReportClick={(type, targetId) =>
+                    setReportTarget({ type, id: targetId })
                   }
                 />
               ))
@@ -404,13 +406,13 @@ export function NestDetailClient({ nestId }: Props) {
       />
       {/* 신고 모달 */}
       <ReportModal
-        open={reportOpen}
-        reportType="NEST"
-        targetId={nest.id}
+        open={!!reportTarget}
+        reportType={reportTarget?.type ?? "NEST"}
+        targetId={reportTarget?.id ?? 0}
         accessToken={accessToken}
-        onClose={() => setReportOpen(false)}
+        onClose={() => setReportTarget(null)}
         onSuccess={() => {
-          setReportOpen(false);
+          setReportTarget(null);
           showToast("success", "신고가 완료되었습니다.");
         }}
         onError={() =>
