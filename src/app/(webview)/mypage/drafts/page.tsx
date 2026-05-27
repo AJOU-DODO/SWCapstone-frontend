@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDrafts } from "@/lib/api";
@@ -41,13 +41,17 @@ export default function Page() {
 
   const handleNavigate = (draft: DraftItem) => {
     useNestEditorStore.setState({
+      accessToken: accessToken,
       loadedDraftId: draft.id,
       title: draft.title ?? "",
       content: draft.content ?? "",
       unlockRadius: draft.unlockRadius,
       categoryIds: draft.categoryIds ?? [],
       imageUrls: draft.imageUrls ?? [],
+      latitude: draft.latitude ?? null,
+      longitude: draft.longitude ?? null,
     });
+
     router.push("/nest-editor");
   };
 
