@@ -22,6 +22,11 @@ interface Props {
   onError: () => void;
 }
 
+interface ReportVariables {
+  reason: ReportReason;
+  content?: string;
+}
+
 const REASON_LABELS: Record<ReportReason, string> = {
   ABUSE: "욕설 및 비방",
   SPAM: "스팸",
@@ -45,13 +50,13 @@ export function ReportModal({
   const [validationError, setValidationError] = useState("");
 
   const reportMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (variables: ReportVariables) =>
       postReport(
         {
           reportType,
           targetId,
-          reason: selectedReason!,
-          ...(selectedReason === "OTHER" ? { content } : {}),
+          reason: variables.reason,
+          ...(variables.content ? { content: variables.content } : {}),
         },
         accessToken,
       ),
@@ -85,7 +90,10 @@ export function ReportModal({
       return;
     }
     setValidationError("");
-    reportMutation.mutate();
+    reportMutation.mutate({
+      reason: selectedReason,
+      ...(selectedReason === "OTHER" ? { content } : {}),
+    });
   };
 
   return (
