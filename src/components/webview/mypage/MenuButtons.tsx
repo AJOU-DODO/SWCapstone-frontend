@@ -5,7 +5,7 @@ const MENUS = [
   { id: 2, label: "내 댓글", path: "/mypage/mycomments" },
   { id: 3, label: "엽서함", path: "/mypage/posts" },
   { id: 4, label: "해금한 둥지", path: "/mypage/unlocks" },
-  { id: 5, label: "임시저장 글", path: "/drafts" },
+  { id: 5, label: "임시저장 글", path: "/mypage/drafts" },
 ];
 
 export default function MenuButtons() {
