@@ -137,6 +137,7 @@ export function ReportModal({
             }}
             placeholder="상세 사유를 작성해주세요."
             rows={3}
+            maxLength={500}
             className="w-full resize-none bg-white border border-[#E0DDD3] rounded-2xl px-4 py-3 text-sm text-[#3D3830] placeholder:text-[#B0AC9C] outline-none focus:ring-2 focus:ring-[#5C5346]/30 transition-all"
           />
         )}
