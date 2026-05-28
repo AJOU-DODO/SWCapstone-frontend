@@ -130,3 +130,124 @@ export interface CategoryOrder {
   id: number;
   sortOrder: number;
 }
+
+export type ReportReasonType = "ABUSE" | "SPAM" | "ADVERTISEMENT" | "OTHER";
+
+export type ReportTargetType = 'NEST' | 'COMMENT' | 'POSTCARD';
+
+// 둥지 전체 조회 (리스트)
+export interface NestList {
+  nestId: number;
+  authorNickname: string;
+  content: string;
+  createdAt: string;
+  likeCount: number;
+  commentCount: number;
+  reportCount: number;
+  reasons: ReportReasonType[];
+  deleted: boolean;
+}
+
+export interface NestListData {
+  content: NestList[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+export interface NestListApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: NestListData;
+}
+
+// 둥지 상세보기
+export interface NestDetail {
+  nestId: number;
+  title: string;
+  content: string;
+  authorNickname: string;
+  latitude: number;
+  longitude: number;
+  imageUrls: string[];
+  categoryIds: number[];
+  categoryNames: string[];
+  createdAt: string;
+  deleted: boolean;
+}
+
+// 둥지 댓글
+export interface NestComment {
+  commentId: number;
+  parentId: number;
+  authorNickname: string;
+  content: string;
+  createdAt: string;
+  pendingReportCount: number;
+  deleted: boolean;
+}
+
+// 신고된 댓글 리스트
+export interface ReportedCommentList {
+  commentId: number;
+  authorNickname: string;
+  commentContent: number;
+  nestId: number;
+  nestTitle: string;
+  lastReportedAt: string;
+  reportCount: number;
+  commentCount: number;
+  reasons: ReportReasonType[];
+  status: "PENDING" | "PROCESSED";
+}
+
+export interface ReportedCommentListData {
+  content: ReportedCommentList[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+export interface ReportedCommentListApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: NestListData;
+}
+
+// 신고된 둥지 리스트
+export interface ReportedNestList {
+  nestId: number;
+  authorNickname: string;
+  content: number;
+  nestTitle: string;
+  firstReportedAt: string;
+  lastReportedAt: string;
+  reportCount: number;
+  reasons: ReportReasonType[];
+  status: "PENDING" | "PROCESSED";
+}
+
+export interface ReportedNestListData {
+  content: ReportedNestList[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+export interface ReportedNestListApiResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: NestListData;
+}
