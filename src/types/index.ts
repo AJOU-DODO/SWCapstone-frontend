@@ -134,3 +134,13 @@ export interface NestComment {
 }
 
 export type CommentSortType = "LIKE" | "LATEST" | "DEFAULT";
+
+export type ReportType = "NEST" | "COMMENT" | "POSTCARD";
+export type ReportReason = "ABUSE" | "SPAM" | "ADVERTISEMENT" | "OTHER";
+
+export interface ReportPayload {
+  reportType: ReportType;
+  targetId: number;
+  reason: ReportReason;
+  content?: string;
+}

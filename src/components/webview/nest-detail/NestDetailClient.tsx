@@ -13,6 +13,7 @@ import {
   MessageCircle,
   ChevronDown,
   Send,
+  CheckCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -23,13 +24,19 @@ import {
 import { ImageSlider } from "./ImageSlider";
 import { PostcardModal } from "./PostcardModal";
 import { CommentItem } from "./CommentItem";
+import { ReportModal } from "./ReportModal";
 import {
   fetchNestDetail,
   postReaction,
   fetchComments,
   postComment,
 } from "@/lib/api";
-import type { ReactionType, CommentSortType, NestComment } from "@/types";
+import type {
+  ReactionType,
+  CommentSortType,
+  ReportType,
+  NestComment,
+} from "@/types";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -51,7 +58,10 @@ export function NestDetailClient({ nestId }: Props) {
   const queryClient = useQueryClient();
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  const [reportOpen, setReportOpen] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{
+    type: ReportType;
+    id: number;
+  } | null>(null);
   const [postcardModalOpen, setPostcardModalOpen] = useState(false);
 
   // 낙관적 업데이트를 위한 로컬 reaction 상태
@@ -62,6 +72,16 @@ export function NestDetailClient({ nestId }: Props) {
 
   const [commentText, setCommentText] = useState("");
   const [sortBy, setSortBy] = useState<CommentSortType>("DEFAULT");
+
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const showToast = (type: "success" | "error", message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   //브릿지로 accesstoken 수신
   const [accessToken] = useState<string>(() => {
@@ -157,6 +177,24 @@ export function NestDetailClient({ nestId }: Props) {
 
   return (
     <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
+      {/* 토스트 */}
+      {toast && (
+        <div
+          className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl shadow-lg text-sm font-medium whitespace-nowrap ${
+            toast.type === "success"
+              ? "bg-[#5C5346] text-white"
+              : "bg-red-500 text-white"
+          }`}
+        >
+          {toast.type === "success" ? (
+            <CheckCircle className="w-4 h-4" />
+          ) : (
+            <AlertCircle className="w-4 h-4" />
+          )}
+          {toast.message}
+        </div>
+      )}
+
       <div className="flex-1 overflow-y-auto pb-24">
         {/* 이미지 + 편지 버튼 */}
         <div className="relative">
@@ -258,7 +296,7 @@ export function NestDetailClient({ nestId }: Props) {
               </span>
               <button
                 type="button"
-                onClick={() => setReportOpen(true)}
+                onClick={() => setReportTarget({ type: "NEST", id: nest.id })}
                 className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center hover:bg-red-200 transition-colors"
               >
                 <AlertCircle className="w-3.5 h-3.5 text-red-400" />
@@ -325,6 +363,9 @@ export function NestDetailClient({ nestId }: Props) {
                   nestId={nestId}
                   accessToken={accessToken}
                   sortBy={sortBy}
+                  onReportClick={(type, targetId) =>
+                    setReportTarget({ type, id: targetId })
+                  }
                 />
               ))
             )}
@@ -362,6 +403,21 @@ export function NestDetailClient({ nestId }: Props) {
         accessToken={accessToken}
         onClose={() => setPostcardModalOpen(false)}
         onConfirm={handlePostcardConfirm}
+      />
+      {/* 신고 모달 */}
+      <ReportModal
+        open={!!reportTarget}
+        reportType={reportTarget?.type ?? "NEST"}
+        targetId={reportTarget?.id ?? 0}
+        accessToken={accessToken}
+        onClose={() => setReportTarget(null)}
+        onSuccess={() => {
+          setReportTarget(null);
+          showToast("success", "신고가 완료되었습니다.");
+        }}
+        onError={() =>
+          showToast("error", "신고가 실패했습니다. 다시 시도해주세요.")
+        }
       />
     </div>
   );

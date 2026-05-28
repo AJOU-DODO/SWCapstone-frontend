@@ -5,6 +5,7 @@ import type {
   ExchangeApiResponse,
   ExchangeCheckApiResponse,
   NestPayload,
+  ReportPayload,
   ReactionType,
   PresignedUrlItemApiResponse,
   NestComment,
@@ -283,4 +284,20 @@ export async function toggleCommentLike(
     },
   );
   if (!res.ok) throw new Error("댓글 좋아요에 실패했습니다.");
+}
+
+// 도메인 통합 신고 함수
+export async function postReport(
+  payload: ReportPayload,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/reports`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("신고에 실패했습니다.");
 }
