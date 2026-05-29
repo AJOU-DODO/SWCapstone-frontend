@@ -16,6 +16,7 @@ interface NestEditorState {
   isSubmitting: boolean;
   errors: Partial<Record<keyof NestPayload, string>>;
   loadedDraftId: number | null;
+  loadedNestId: string | null;
 
   setBridgeData: (data: BridgeInitialData) => void;
   addImage: (url: string) => void;
@@ -33,6 +34,14 @@ interface NestEditorState {
   setLoadedDraftId: (id: number | null) => void;
   getDraftPayload: () => NestPayload;
   getPublishPayload: () => NestPayload | null;
+  setLoadedNestId: (id: string | null) => void;
+  setInitialNestData: (data: {
+    title: string;
+    content: string;
+    unlockRadius: 10 | 150;
+    categoryIds: number[];
+    imageUrls: string[];
+  }) => void;
 }
 
 export const useNestEditorStore = create<NestEditorState>((set, get) => ({
@@ -50,6 +59,7 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   isSubmitting: false,
   errors: {},
   loadedDraftId: null,
+  loadedNestId: null,
 
   setBridgeData: (data) =>
     set({
@@ -77,6 +87,15 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
   setErrors: (errors) => set({ errors }),
   clearErrors: () => set({ errors: {} }),
   setLoadedDraftId: (id) => set({ loadedDraftId: id }),
+  setLoadedNestId: (id) => set({ loadedNestId: id }),
+  setInitialNestData: (data) =>
+    set({
+      title: data.title,
+      content: data.content,
+      unlockRadius: data.unlockRadius,
+      categoryIds: data.categoryIds,
+      imageUrls: data.imageUrls,
+    }),
 
   getDraftPayload: () => {
     const state = get();
