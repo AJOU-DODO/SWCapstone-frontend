@@ -1,7 +1,7 @@
-import DetailHeader from '@/components/admin/NestDetail/DetailHeader';
-import ReportInfo from '@/components/admin/NestDetail/ReportInfo';
-import NestBody from '@/components/admin/NestDetail/NestBody';
-import CommentList from '@/components/admin/NestDetail/CommentList';
+import DetailHeader from '@/components/admin/nest/NestDetail/DetailHeader';
+import ReportInfo from '@/components/admin/nest/NestDetail/ReportInfo';
+import NestBody from '@/components/admin/nest/NestDetail/NestBody';
+import CommentList from '@/components/admin/nest/NestDetail/CommentList';
 
 export default function NestDetail({ postId }: { postId: string | number }){
   return(
