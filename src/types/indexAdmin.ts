@@ -131,9 +131,10 @@ export interface CategoryOrder {
   sortOrder: number;
 }
 
-export type ReportReasonType = "ABUSE" | "SPAM" | "ADVERTISEMENT" | "OTHER";
+export type ReportReasonType = "pendingAbuseCount" | "pendingAdvertisementCount" | "pendingOtherCount" | "pendingSpamCount";
 
 export type ReportTargetType = 'NEST' | 'COMMENT' | 'POSTCARD';
+
 
 // 둥지 전체 조회 (리스트)
 export interface NestList {
@@ -268,4 +269,19 @@ export interface ReportedNestListApiResponse {
   code: string;
   message: string | null;
   data: NestListData;
+}
+
+// 신고 상세
+export interface ReportDetail {
+  targetType: ReportTargetType;
+  targetId: number;
+  stats: {
+    [key in ReportReasonType]?: number;
+  }
+  otherReportContents: string[];
+}
+
+export interface ReportDetailRequest {
+  targetType:ReportTargetType;
+  targetId: number;
 }
