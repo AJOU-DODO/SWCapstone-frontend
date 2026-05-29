@@ -37,7 +37,9 @@ export default function NestTable({ nests, onRowClick }: TableProps) {
                 e.stopPropagation();
                 onRowClick(nest.nestId);
               }}
-              className="border-[#54513E]/50">
+              className={`border-[#54513E]/50 ${
+                nest.deleted ? "opacity-40 pointer-events-none select-none" : ""
+              }`}>
                 <TableCell>{nest.authorNickname}</TableCell>
                 <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
                 <TableCell>{new Date(nest.createdAt).toLocaleDateString()}</TableCell>

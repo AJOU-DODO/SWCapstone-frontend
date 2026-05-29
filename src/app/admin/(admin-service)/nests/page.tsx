@@ -50,8 +50,6 @@ export default function Page() {
           page: currentPage - 1
         };
 
-        console.log(params);
-
         const data = await getNestsAdmin(params);
         setNests(data.data.content);
         setTotalPages(data.data.totalPages || 1);
@@ -74,8 +72,6 @@ export default function Page() {
           page: currentPage - 1
         };
 
-        console.log(params);
-
         const data = await getReportedNests(params);
         setReportedNests(data.data.content);
         setTotalPages(data.data.totalPages || 1);
@@ -97,8 +93,6 @@ export default function Page() {
           sort: sortBy,
           page: currentPage - 1
         };
-
-        console.log(params);
 
         const data = await getReportedComments(params);
         setReportedComments(data.data.content);
