@@ -66,6 +66,7 @@ export interface NestDetail {
   postcardId: number | null;
   ad: boolean;
   unlocked: boolean;
+  isMine: boolean;
 }
 
 export interface NestDetailApiResponse {
