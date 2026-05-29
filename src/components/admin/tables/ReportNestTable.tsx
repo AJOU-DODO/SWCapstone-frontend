@@ -12,10 +12,11 @@ import { ReportedNestList } from '@/types/indexAdmin';
 
 interface TableProps {
   reports: ReportedNestList[];
-  onRowClick: (id: string | number) => void;
+  onRowClick: (id: number) => void;
+  selectedId: number | null;
 }
 
-export default function ReportNestTable({ reports, onRowClick }: TableProps) {
+export default function ReportNestTable({ reports, onRowClick, selectedId }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -29,21 +30,28 @@ export default function ReportNestTable({ reports, onRowClick }: TableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {reports.map((report) => (
+          {reports.map((report) => {
+            const isSelected = selectedId === report.nestId;
+            
+            return(
             <TableRow 
               key={report.nestId} 
               onClick={(e) => {
                   e.stopPropagation();
                   onRowClick(report.nestId);
                 }}
-              className="border-[#54513E]/50">
+              className={`border-[#54513E]/50 cursor-pointer transition-colors ${
+                isSelected 
+                  ? "bg-[#54513E]/10 hover:bg-[#54513E]/15 font-medium"
+                  : "hover:bg-gray-50"
+              }`}>
                 <TableCell>{report.authorNickname}</TableCell>
                 <TableCell className="max-w-[150px] truncate">{report.content}</TableCell>
                 <TableCell>{new Date(report.firstReportedAt).toLocaleDateString()}</TableCell>
                 <TableCell>{new Date(report.lastReportedAt).toLocaleDateString()}</TableCell>
                 <TableCell>{report.reportCount}</TableCell>
               </TableRow>
-          ))}
+          )})}
         </TableBody>
       </Table>
     </div>
