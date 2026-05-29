@@ -180,6 +180,24 @@ export interface NestDetail {
   deleted: boolean;
 }
 
+// 둥지 상세보기 헤더
+export interface NestDetailHeader {
+  authorNickname: string;
+  createdAt: string;
+  firstReportedAt: string;
+  lastReportedAt: string;
+}
+
+// 둥지 상세보기 바디
+export interface NestDetailBody {
+  imageUrls: string[];
+  categoryNames: string[];
+  title: string;
+  content: string;
+  likeCount: number;
+  dislikeCount: number;
+}
+
 // 둥지 댓글
 export interface NestComment {
   commentId: number;

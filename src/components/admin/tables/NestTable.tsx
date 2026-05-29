@@ -12,10 +12,11 @@ import { NestList } from '@/types/indexAdmin';
 
 interface TableProps {
   nests: NestList[];
-  onRowClick: (id: string | number) => void;
+  onRowClick: (id: number) => void;
+  selectedId: number | null;
 }
 
-export default function NestTable({ nests, onRowClick }: TableProps) {
+export default function NestTable({ nests, onRowClick, selectedId }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -30,15 +31,22 @@ export default function NestTable({ nests, onRowClick }: TableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {nests.map((nest) => (
+          {nests.map((nest) => {
+            const isSelected = selectedId === nest.nestId;
+            
+            return(
             <TableRow 
               key={nest.nestId} 
               onClick={(e) => {
                 e.stopPropagation();
                 onRowClick(nest.nestId);
               }}
-              className={`border-[#54513E]/50 ${
-                nest.deleted ? "opacity-40 pointer-events-none select-none" : ""
+              className={`border-[#54513E]/50 cursor-pointer transition-colors ${
+                nest.deleted ? "opacity-40" : ""
+              } ${
+                isSelected 
+                  ? "bg-[#54513E]/10 hover:bg-[#54513E]/15 font-medium"
+                  : "hover:bg-gray-50"
               }`}>
                 <TableCell>{nest.authorNickname}</TableCell>
                 <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
@@ -47,7 +55,7 @@ export default function NestTable({ nests, onRowClick }: TableProps) {
                 <TableCell>{nest.commentCount}</TableCell>
                 <TableCell>{nest.reportCount}</TableCell>
             </TableRow>
-          ))}
+          )})}
         </TableBody>
       </Table>
     </div>

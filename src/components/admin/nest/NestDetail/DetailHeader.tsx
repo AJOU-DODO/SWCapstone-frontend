@@ -1,6 +1,8 @@
 import Image from "next/image";
 
-export default function DetailHeader ({ nestId }: { nestId: number }) {
+import { NestDetailHeader } from '@/types/indexAdmin';
+
+export default function DetailHeader ({ header }: { header: NestDetailHeader }) {
 
   return (
   <div className="flex flex-row justify-between items-start md:items-end gap-4 p-4 border-b bg-[#E8E4CD] w-full">
@@ -13,18 +15,18 @@ export default function DetailHeader ({ nestId }: { nestId: number }) {
         className="rounded-full object-cover border-2 border-[#54513E]"
       />
       <div className="text-[#54513E] truncate font-medium whitespace-nowrap">
-        nickname
+        {header.authorNickname}
       </div>
       <div className="pl-3 text-xs text-gray-500 whitespace-nowrap pb-0.5">
-        0000.00.00 {/*생성일*/}
+        {new Date(header.createdAt).toLocaleDateString()} {/*생성일*/}
       </div>
     </div>
     <div className="flex flex-row gap-6 md:gap-8 text-xs text-gray-500 flex-1 justify-start md:justify-center whitespace-nowrap pb-0.5">
       <div>
-        최초 신고일: --.--.--
+        최초 신고일: {header.firstReportedAt}
       </div>
       <div>
-        최근 신고일: --.--.--
+        최근 신고일: {header.lastReportedAt}
       </div>
     </div>
     <div className="flex flex-row gap-2 items-end flex-shrink-0 w-full md:w-auto justify-end">
