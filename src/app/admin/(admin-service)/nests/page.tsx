@@ -5,8 +5,8 @@ import { useSearchParams } from 'next/navigation';
 
 import NestTabButton from '@/components/admin/nest/NestTabButton';
 import NestTable from '@/components/admin/tables/NestTable';
-import ReportNestTable, { Report } from '@/components/admin/tables/ReportNestTable';
-import ReplyTable, { Comments } from '@/components/admin/tables/ReplyTable';
+import ReportNestTable from '@/components/admin/tables/ReportNestTable';
+import CommentTable from '@/components/admin/tables/CommentTable';
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
 import NestDetail from '@/components/admin/nest/NestDetail/index';
@@ -14,14 +14,16 @@ import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label";
 
-import { NestList } from '@/types/indexAdmin';
-import { getNestsAdmin } from '@/lib/adminApi/nest';
+import { NestList, ReportedNestList, ReportedCommentList } from '@/types/indexAdmin';
+import { getNestsAdmin, getReportedNests, getReportedComments } from '@/lib/adminApi/nest';
 import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 
 export default function Page() {
 
   const [selectedPostId, setSelectedPostId] = useState<string | number | null>(null);
   const [nests, setNests] = useState<NestList[]>([]);
+  const [reportedNests, setReportedNests] = useState<ReportedNestList[]>([]);
+  const [reportedComments, setReportedComments] = useState<ReportedCommentList[]>([]);
   const [totalPages, setTotalPages] = useState(1);
 
   const { updateQuery } = useUpdateQuery();
@@ -36,8 +38,11 @@ export default function Page() {
 
   const [sortBy] = sort.split(',');
 
+  // 전체 둥지 get
   useEffect(() => {
-    const fetchUsers = async () => {
+    if (activeTab !== 'all') return
+
+    const fetchAllNests = async () => {
       try {
         const params: { includeDeleted?: string; sort?: string; page: number } = {
           includeDeleted: includeDeleted,
@@ -55,32 +60,56 @@ export default function Page() {
       } 
     };
 
-    fetchUsers();
-  }, [searchParams]);
-  
-  const report: Report[] = [
-    { 
-      id: "1",
-      creatorNickname: "김도도",
-      content: "안물어봤다요다야이야이야오",
-      createdAt: "2023-02-01",
-      latestReportDate: "2023-02-01",
-      reportCount: 5,
-      reportReason: "욕설",
-    },
-  ]
+    fetchAllNests();
+  }, [activeTab, searchParams]);
 
-  const reply: Comments[] = [
-    { 
-      id: "1",
-      creatorNickname: "김도도",
-      content: "너는그게예쁘냐?눈이어떻게됐네ㅉ",
-      originContent: "여기 벚꽃이 너무 예쁘네요 다들 한번 구경오세요",
-      latestReportDate: "2023-02-01",
-      reportCount: 10,
-      reportReason: "욕설",
-    },
-  ]
+  // 신고된 둥지 get
+  useEffect(() => {
+    if (activeTab !== 'reported') return
+
+    const fetchReportedNests = async () => {
+      try {
+        const params: { sort?: string; page: number } = {
+          sort: sortBy,
+          page: currentPage - 1
+        };
+
+        console.log(params);
+
+        const data = await getReportedNests(params);
+        setReportedNests(data.data.content);
+        setTotalPages(data.data.totalPages || 1);
+      } catch (error) {
+        console.error('신고된 둥지 목록 로딩 실패:', error);
+      } 
+    };
+
+    fetchReportedNests();
+  }, [activeTab, searchParams]);
+
+  // 신고된 댓글 get
+  useEffect(() => {
+    if (activeTab !== 'comments') return
+
+    const fetchReportedComments = async () => {
+      try {
+        const params: { sort?: string; page: number } = {
+          sort: sortBy,
+          page: currentPage - 1
+        };
+
+        console.log(params);
+
+        const data = await getReportedComments(params);
+        setReportedComments(data.data.content);
+        setTotalPages(data.data.totalPages || 1);
+      } catch (error) {
+        console.error('신고된 댓글 목록 로딩 실패:', error);
+      } 
+    };
+
+    fetchReportedComments();
+  }, [activeTab, searchParams]);
 
   //전체 둥지 정렬 옵션
   const nestSortOptions = [
@@ -92,18 +121,17 @@ export default function Page() {
 
   //신고 둥지 정렬 옵션
   const reportSortOptions = [
-    { label: "최근 신고일", value: "latest" },
-    { label: "최초 신고일", value: "createdAt" },
-    { label: "신고 수", value: "reportCount" },
-    { label: "제재 유저", value: "userType" },
+    { label: "최근 신고일", value: "LATEST_REPORT" },
+    { label: "최초 신고일", value: "FIRST_REPORT" },
+    { label: "신고 수", value: "REPORT_COUNT" },
+    { label: "처리 상태", value: "STATUS" },
   ];
 
   //신고 댓글 정렬 옵션
   const replySortOptions = [
-    { label: "최근 신고일", value: "latest" },
-    { label: "제재 유저", value: "userType" },
-    { label: "신고수", value: "reportCount" },
-    { label: "둥지", value: "nestId" },
+    { label: "최근 신고일", value: "LATEST_REPORT" },
+    { label: "신고 수", value: "REPORT_COUNT" },
+    { label: "둥지", value: "NEST_ID" },
   ];
 
   return (
@@ -117,29 +145,32 @@ export default function Page() {
       <div className='flex flex-row justify-between'>
         <div>
           {activeTab === 'all' && <SortSection options={nestSortOptions} defaultSort='latest' disableToggle={true}/>}
-          {activeTab === 'reported' && <SortSection options={reportSortOptions} defaultSort='latest'/>}
-          {activeTab === 'comments' && <SortSection options={replySortOptions} defaultSort='latest'/>}
+          {activeTab === 'reported' && <SortSection options={reportSortOptions} defaultSort='LATEST_REPORT' disableToggle={true}/>}
+          {activeTab === 'comments' && <SortSection options={replySortOptions} defaultSort='LATEST_REPORT' disableToggle={true}/>}
         </div>
-        <div className="flex flex-row items-center gap-5">
-          <div className="flex flex-row items-center gap-2">
-            <Checkbox 
-              checked={searchParams.get("includeDeleted") === "ALL"} 
-              onCheckedChange={(checked) => updateQuery({ includeDeleted: checked ? "ALL" : "ACTIVE_ONLY" })}
-              className="data-[state=checked]:bg-[#538752] data-[state=checked]:border-[#538752]"
-            />
-            <Label htmlFor="all-nest-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
-              전체
-            </Label>
+
+        {activeTab === 'all' &&
+          <div className="flex flex-row items-center gap-5">
+            <div className="flex flex-row items-center gap-2">
+              <Checkbox 
+                checked={searchParams.get("includeDeleted") === "ALL"} 
+                onCheckedChange={(checked) => updateQuery({ includeDeleted: checked ? "ALL" : "ACTIVE_ONLY" })}
+                className="data-[state=checked]:bg-[#538752] data-[state=checked]:border-[#538752]"
+              />
+              <Label htmlFor="all-nest-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
+                전체
+              </Label>
+            </div>
+            <IncludeDeletedToggle label="삭제된 둥지 보기" trueValue="DELETED_ONLY" falseValue="ACTIVE_ONLY" isDisabled={isAllMode}/>
           </div>
-          <IncludeDeletedToggle label="삭제된 둥지 보기" trueValue="DELETED_ONLY" falseValue="ACTIVE_ONLY" isDisabled={isAllMode}/>
-        </div>
+        }
       </div>
 
-      <div className='w-full h-full grid grid-cols-[1fr_1fr] min-h-0 overflow-y-auto'>
-        <div className="">
+      <div className='w-full h-full grid grid-cols-[1fr_1fr] min-h-0'>
+        <div className="overflow-y-auto">
           {activeTab === 'all' && <NestTable nests={nests} onRowClick={setSelectedPostId}/>}
-          {activeTab === 'reported' && <ReportNestTable reports={report} onRowClick={setSelectedPostId}/>}
-          {activeTab === 'comments' && <ReplyTable comments={reply} onRowClick={setSelectedPostId}/>}
+          {activeTab === 'reported' && <ReportNestTable reports={reportedNests} onRowClick={setSelectedPostId}/>}
+          {activeTab === 'comments' && <CommentTable comments={reportedComments} onRowClick={setSelectedPostId}/>}
         </div>
         
         {selectedPostId ? (

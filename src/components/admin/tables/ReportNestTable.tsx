@@ -8,19 +8,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// 데이터는 변경될 수 있음
-export interface Report {
-  id: string;
-  creatorNickname: string;
-  content: string;
-  createdAt: string;
-  latestReportDate: string;
-  reportCount: number;
-  reportReason: string;
-}
+import { ReportedNestList } from '@/types/indexAdmin';
 
 interface TableProps {
-  reports: Report[];
+  reports: ReportedNestList[];
   onRowClick: (id: string | number) => void;
 }
 
@@ -35,24 +26,22 @@ export default function ReportNestTable({ reports, onRowClick }: TableProps) {
             <TableHead>최초 신고일</TableHead>
             <TableHead>최근 신고일</TableHead>
             <TableHead>신고 수</TableHead>
-            <TableHead>신고 사유</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {reports.map((report) => (
             <TableRow 
-              key={report.id} 
+              key={report.nestId} 
               onClick={(e) => {
                   e.stopPropagation();
-                  onRowClick(report.id);
+                  onRowClick(report.nestId);
                 }}
               className="border-[#54513E]/50">
-                <TableCell>{report.creatorNickname}</TableCell>
+                <TableCell>{report.authorNickname}</TableCell>
                 <TableCell className="max-w-[150px] truncate">{report.content}</TableCell>
-                <TableCell>{report.createdAt}</TableCell>
-                <TableCell>{report.latestReportDate}</TableCell>
+                <TableCell>{new Date(report.firstReportedAt).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(report.lastReportedAt).toLocaleDateString()}</TableCell>
                 <TableCell>{report.reportCount}</TableCell>
-                <TableCell>{report.reportReason}</TableCell>
               </TableRow>
           ))}
         </TableBody>
