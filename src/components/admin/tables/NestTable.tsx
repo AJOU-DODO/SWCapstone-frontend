@@ -8,19 +8,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// 데이터는 변경될 수 있음
-export interface Nest {
-  id: string;
-  creatorNickname: string;
-  content: string;
-  createdAt: string;
-  likeCount: number;
-  replyCount: number;
-  reportCount: number;
-}
+import { NestList } from '@/types/indexAdmin';
 
 interface TableProps {
-  nests: Nest[];
+  nests: NestList[];
   onRowClick: (id: string | number) => void;
 }
 
@@ -41,17 +32,17 @@ export default function NestTable({ nests, onRowClick }: TableProps) {
         <TableBody>
           {nests.map((nest) => (
             <TableRow 
-              key={nest.id} 
+              key={nest.nestId} 
               onClick={(e) => {
                 e.stopPropagation();
-                onRowClick(nest.id);
+                onRowClick(nest.nestId);
               }}
               className="border-[#54513E]/50">
-                <TableCell>{nest.creatorNickname}</TableCell>
+                <TableCell>{nest.authorNickname}</TableCell>
                 <TableCell className="max-w-[150px] truncate">{nest.content}</TableCell>
-                <TableCell>{nest.createdAt}</TableCell>
+                <TableCell>{new Date(nest.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell>{nest.likeCount}</TableCell>
-                <TableCell>{nest.replyCount}</TableCell>
+                <TableCell>{nest.commentCount}</TableCell>
                 <TableCell>{nest.reportCount}</TableCell>
             </TableRow>
           ))}

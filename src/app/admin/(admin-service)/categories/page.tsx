@@ -3,7 +3,7 @@
 import SearchBar from '@/components/admin/SearchBar';
 import CategoryCard from '@/components/admin/category/CategoryCard';
 import SortSection from '@/components/admin/SortSection';
-import IncludeDeletedToggle from '@/components/admin/category/IncludeDeletedToggle';
+import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
 import CreateCategoryModal from '@/components/admin/category/CreateCategoryModal';
 
 import { Category, CategoryOrder } from '@/types/indexAdmin';
@@ -162,7 +162,7 @@ function AdminCategoryPage(){
 
       <div className='flex flex-row justify-between'>
         <SortSection options={sortOptions} defaultSort='sortOrder' disableToggle={true} />
-        <IncludeDeletedToggle />
+        <IncludeDeletedToggle label="삭제된 카테고리 제외"/>
       </div>
 
       <div className="h-full overflow-y-auto pr-2">

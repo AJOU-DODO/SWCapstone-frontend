@@ -1,60 +1,62 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, use, useEffect } from "react";
+import { useSearchParams } from 'next/navigation';
 
-import NestTabButton from '@/components/admin/NestTabButton';
-import NestTable, { Nest } from '@/components/admin/tables/NestTable';
+import NestTabButton from '@/components/admin/nest/NestTabButton';
+import NestTable from '@/components/admin/tables/NestTable';
 import ReportNestTable, { Report } from '@/components/admin/tables/ReportNestTable';
 import ReplyTable, { Comments } from '@/components/admin/tables/ReplyTable';
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
-import NestDetail from '@/components/admin/NestDetail/index';
+import NestDetail from '@/components/admin/nest/NestDetail/index';
+import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label";
 
-export default function Page({ searchParams, }: {searchParams: Promise<{ tab?: string }>;}) {
+import { NestList } from '@/types/indexAdmin';
+import { getNestsAdmin } from '@/lib/adminApi/nest';
+import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
+
+export default function Page() {
 
   const [selectedPostId, setSelectedPostId] = useState<string | number | null>(null);
-  //게시글 관리 메뉴 파라미터
-  const resolvedParams = use(searchParams);
-  const activeTab = resolvedParams.tab || 'all';
+  const [nests, setNests] = useState<NestList[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const nests: Nest[] = [
-    { 
-      id: "1",
-      creatorNickname: "김도도",
-      content: "여기 벚쫓이 너무 예쁘고 좋으네요 가나다라마바사 아자차카타파하",
-      createdAt: "2023-02-01",
-      likeCount: 37,
-      replyCount: 5,
-      reportCount: 0,
-    },
-    { 
-      id: "2",
-      creatorNickname: "김도도",
-      content: "여기 벚쫓이 너무 예...",
-      createdAt: "2023-02-01",
-      likeCount: 37,
-      replyCount: 5,
-      reportCount: 0,
-    },
-    { 
-      id: "3",
-      creatorNickname: "김도도",
-      content: "여기 벚쫓이 너무 예...",
-      createdAt: "2023-02-01",
-      likeCount: 37,
-      replyCount: 5,
-      reportCount: 0,
-    },
-    { 
-      id: "4",
-      creatorNickname: "김도도",
-      content: "여기 벚쫓이 너무 예...",
-      createdAt: "2023-02-01",
-      likeCount: 37,
-      replyCount: 5,
-      reportCount: 0,
-    },
-  ]
+  const { updateQuery } = useUpdateQuery();
+
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const sort = searchParams.get('sort') || 'latest';
+  const activeTab = searchParams.get('tab') || 'all';
+  const includeDeleted = searchParams.get('includeDeleted') || 'ACTIVE_ONLY';
+
+  const isAllMode = includeDeleted === "ALL";
+
+  const [sortBy] = sort.split(',');
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const params: { includeDeleted?: string; sort?: string; page: number } = {
+          includeDeleted: includeDeleted,
+          sort: sortBy,
+          page: currentPage - 1
+        };
+
+        console.log(params);
+
+        const data = await getNestsAdmin(params);
+        setNests(data.data.content);
+        setTotalPages(data.data.totalPages || 1);
+      } catch (error) {
+        console.error('둥지 목록 로딩 실패:', error);
+      } 
+    };
+
+    fetchUsers();
+  }, [searchParams]);
   
   const report: Report[] = [
     { 
@@ -80,17 +82,12 @@ export default function Page({ searchParams, }: {searchParams: Promise<{ tab?: s
     },
   ]
 
-  //임의 데이터 (페이지네이션을 위한)
-  const totalItems = 80; // 전체 유저 수
-  const itemsPerPage = 10; // 한 페이지당 보여줄 수
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
   //전체 둥지 정렬 옵션
   const nestSortOptions = [
     { label: "최신 순", value: "latest" },
-    { label: "좋아요 순", value: "likeCount" },
-    { label: "댓글 순", value: "replyCount" },
-    { label: "인기 순", value: "viewCount" },
+    { label: "좋아요 순", value: "like" },
+    { label: "댓글 순", value: "comment" },
+    { label: "인기 순", value: "view" },
   ];
 
   //신고 둥지 정렬 옵션
@@ -117,15 +114,28 @@ export default function Page({ searchParams, }: {searchParams: Promise<{ tab?: s
         <NestTabButton/>
       </div>
 
-      <div>
+      <div className='flex flex-row justify-between'>
         <div>
-          {activeTab === 'all' && <SortSection options={nestSortOptions} defaultSort='latest'/>}
+          {activeTab === 'all' && <SortSection options={nestSortOptions} defaultSort='latest' disableToggle={true}/>}
           {activeTab === 'reported' && <SortSection options={reportSortOptions} defaultSort='latest'/>}
           {activeTab === 'comments' && <SortSection options={replySortOptions} defaultSort='latest'/>}
         </div>
+        <div className="flex flex-row items-center gap-5">
+          <div className="flex flex-row items-center gap-2">
+            <Checkbox 
+              checked={searchParams.get("includeDeleted") === "ALL"} 
+              onCheckedChange={(checked) => updateQuery({ includeDeleted: checked ? "ALL" : "ACTIVE_ONLY" })}
+              className="data-[state=checked]:bg-[#538752] data-[state=checked]:border-[#538752]"
+            />
+            <Label htmlFor="all-nest-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
+              전체
+            </Label>
+          </div>
+          <IncludeDeletedToggle label="삭제된 둥지 보기" trueValue="DELETED_ONLY" falseValue="ACTIVE_ONLY" isDisabled={isAllMode}/>
+        </div>
       </div>
 
-      <div className='w-full h-full grid grid-cols-[1fr_1fr] min-h-0 overflow-hidden'>
+      <div className='w-full h-full grid grid-cols-[1fr_1fr] min-h-0 overflow-y-auto'>
         <div className="">
           {activeTab === 'all' && <NestTable nests={nests} onRowClick={setSelectedPostId}/>}
           {activeTab === 'reported' && <ReportNestTable reports={report} onRowClick={setSelectedPostId}/>}
