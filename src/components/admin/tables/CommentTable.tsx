@@ -8,23 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// 데이터는 변경될 수 있음
-export interface Comments {
-  id: string;
-  creatorNickname: string;
-  content: string;
-  originContent: string;
-  latestReportDate: string;
-  reportCount: number;
-  reportReason: string;
-}
+import { ReportedCommentList } from '@/types/indexAdmin';
 
 interface TableProps {
-  comments: Comments[];
+  comments: ReportedCommentList[];
   onRowClick: (id: string | number) => void;
 }
 
-export default function ReplyTable({ comments, onRowClick }: TableProps) {
+export default function CommentTable({ comments, onRowClick }: TableProps) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -35,24 +26,22 @@ export default function ReplyTable({ comments, onRowClick }: TableProps) {
             <TableHead>최초 신고일</TableHead>
             <TableHead>최근 신고일</TableHead>
             <TableHead>신고 수</TableHead>
-            <TableHead>신고 사유</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {comments.map((comment) => (
             <TableRow 
-              key={comment.id} 
+              key={comment.commentId} 
               onClick={(e) => {
                   e.stopPropagation();
-                  onRowClick(comment.id);
+                  onRowClick(comment.commentId);
                 }}
               className="border-[#54513E]/50">
-                <TableCell>{comment.creatorNickname}</TableCell>
-                <TableCell className="max-w-[150px] truncate">{comment.content}</TableCell>
-                <TableCell className="max-w-[150px] truncate">{comment.originContent}</TableCell>
-                <TableCell>{comment.latestReportDate}</TableCell>
+                <TableCell>{comment.authorNickname}</TableCell>
+                <TableCell className="max-w-[150px] truncate">{comment.commentContent}</TableCell>
+                <TableCell className="max-w-[150px] truncate">{comment.nestTitle}</TableCell>
+                <TableCell>{new Date(comment.lastReportedAt).toLocaleDateString()}</TableCell>
                 <TableCell>{comment.reportCount}</TableCell>
-                <TableCell>{comment.reportReason}</TableCell>
             </TableRow>
           ))}
         </TableBody>
