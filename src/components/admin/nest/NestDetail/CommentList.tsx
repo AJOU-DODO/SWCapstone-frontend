@@ -7,6 +7,7 @@ import { ThumbsUp, AlertTriangle, ShieldCheck, Trash2, CornerDownRight } from "l
 import { NestComment } from '@/types/indexAdmin';
 import { useReportActions } from "@/hooks/admin/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
+import DeleteModal from "@/components/admin/nest/DeleteModal";
 
 interface CommentItemProps {
   authorId: number;
@@ -19,6 +20,7 @@ interface CommentItemProps {
   isSubComment?: boolean;
   childrenComments: NestComment[];
   createdAt: string;
+  deleted: boolean;
   triggerRefresh: () => void;
 }
 
@@ -56,6 +58,7 @@ export default function CommentList ({ comment, triggerRefresh }: { comment: Nes
             isSubComment={!!comment.parentId}
             childrenComments={comment.children}
             createdAt={comment.createdAt}
+            deleted={comment.deleted}
             triggerRefresh={triggerRefresh}
           />
         ))}
@@ -65,9 +68,10 @@ export default function CommentList ({ comment, triggerRefresh }: { comment: Nes
   );
 };
 
-export function CommentItem({ authorId, profileImageUrl, commentId, nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments, triggerRefresh }: CommentItemProps) {
+export function CommentItem({ authorId, profileImageUrl, commentId, nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments, deleted, triggerRefresh }: CommentItemProps) {
   const bgStyles = getReportBgColor(reportCount);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { handleCommentRejectReport, isLoading } = useReportActions({
     targetId: commentId,
@@ -77,9 +81,21 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
     }
   });
 
+  const { handleCommentDelete, isLoading: isDeleteLoading } = useReportActions({
+    targetId: commentId,
+    onSuccess: () => {
+      setIsDeleteModalOpen(false);
+      triggerRefresh();
+    }
+  });
+
   return (
     <>
-    <div className={`flex flex-row items-start justify-between p-3.5 border border-[#54513E] rounded-xl shadow-sm ${bgStyles} ${isSubComment ? "pl-8" : ""}`}>
+    <div className={`flex flex-row items-start justify-between p-3.5 border border-[#54513E] rounded-xl shadow-sm ${bgStyles} ${isSubComment ? "pl-8" : ""}
+    ${deleted 
+          ? "bg-gray-50 border-gray-200 opacity-70 selection:bg-transparent"
+          : `${bgStyles} border-[#54513E]`
+        }`}>
       {isSubComment && (
         <CornerDownRight size={16} className="text-gray-400 mt-2 flex-shrink-0" />
       )}
@@ -133,20 +149,26 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
 
         <div className="flex flex-row gap-1">
           {/* 정상 댓글이라 판단하여 신고 반려 (신고 취소) */}
-          {reportCount !=0 && (
-          <button 
-          onClick={() => setIsRejectModalOpen(true)}
-          className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-green-600 bg-green-100 hover:bg-green-200 border border-gray-200 rounded-md transition-colors">
-            <ShieldCheck size={12} />
-            <span>취소</span>
-          </button>
+          {!deleted && (
+            <>
+              {reportCount !=0 && (
+              <button 
+              onClick={() => setIsRejectModalOpen(true)}
+              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-green-600 bg-green-100 hover:bg-green-200 border border-gray-200 rounded-md transition-colors">
+                <ShieldCheck size={12} />
+                <span>취소</span>
+              </button>
+              )}
+              
+              {/* 악성 댓글이라 판단하여 삭제 조치 + 유저 제재 처리 */}
+              <button 
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 rounded-md transition-colors">
+                <Trash2 size={12} />
+                <span>삭제</span>
+              </button>
+            </>
           )}
-          
-          {/* 악성 댓글이라 판단하여 삭제 조치 + 유저 제재 처리 */}
-          <button className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 rounded-md transition-colors">
-            <Trash2 size={12} />
-            <span>삭제</span>
-          </button>
 
           <RejectModal
             isOpen={isRejectModalOpen}
@@ -155,6 +177,17 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
             isLoading={isLoading}
             title="신고 반려 확인"
             message="정말로 이 콘텐츠에 들어온 모든 대기 상태의 신고를 반려하시겠습니까?"
+          />
+
+          <DeleteModal
+            targetType="COMMENT"
+            authorId={authorId}
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleCommentDelete}
+            isLoading={isDeleteLoading}
+            title="댓글 삭제 확인"
+            message="정말로 이 콘텐츠를 삭제하시겠습니까?"
           />
         </div>
       </div>
@@ -175,6 +208,7 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
             likeCount={subComment.likeCount}
             isSubComment={true}
             childrenComments={subComment.children}
+            deleted={subComment.deleted}
             triggerRefresh={triggerRefresh}
           />
         ))}

@@ -16,6 +16,9 @@ export default function NestDetail({ nestId, triggerRefresh, onClose }: { nestId
   const [report, setReport] = useState<ReportDetail | null>(null);
   const [comment, setCommet] = useState<NestComment[] | []>([]);
 
+  const [refreshKey, setRefreshKey] = useState(0);
+  const triggerNestDetailRefresh = () => setRefreshKey(prev => prev + 1);
+
   useEffect(() => {
     const fetchNestDetail = async () => {
       try {
@@ -74,7 +77,7 @@ export default function NestDetail({ nestId, triggerRefresh, onClose }: { nestId
     fetchNestDetail();
     fetchReportDetail();
     fetchNestComment();
-  }, [nestId]);
+  }, [nestId, refreshKey]);
 
   return(
     <div 
@@ -83,7 +86,7 @@ export default function NestDetail({ nestId, triggerRefresh, onClose }: { nestId
       {header && <DetailHeader header={header} triggerRefresh={triggerRefresh} onClose={onClose}/>}
       {report && <ReportInfo report={report}/>}
       {body && <NestBody body={body} />}
-      {comment && <CommentList comment={comment} triggerRefresh={triggerRefresh}/>}
+      {comment && <CommentList comment={comment} triggerRefresh={triggerNestDetailRefresh}/>}
     </div>
   )
 }

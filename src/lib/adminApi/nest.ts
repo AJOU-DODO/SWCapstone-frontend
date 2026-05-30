@@ -41,7 +41,7 @@ export const deleteNestAdmin = async (nestId: number, reason: string ) => {
 
 // 관리자 권한으로 댓글 삭제
 export const deleteCommentAdmin = async (commentId: number) => {
-  const { data } = await api.delete(`/api/v1/admin/nests/comments/${commentId}`);
+  const { data } = await api.delete(`/api/v1/admin/comments/${commentId}`);
   return data;
 };
 
