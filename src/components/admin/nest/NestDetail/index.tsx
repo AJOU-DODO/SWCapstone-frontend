@@ -7,13 +7,14 @@ import ReportInfo from '@/components/admin/nest/NestDetail/ReportInfo';
 import NestBody from '@/components/admin/nest/NestDetail/NestBody';
 import CommentList from '@/components/admin/nest/NestDetail/CommentList';
 
-import { NestDetailHeader, NestDetailBody, ReportDetail, ReportTargetType } from '@/types/indexAdmin';
-import { getNestDetailAdmin, getReportDetail } from '@/lib/adminApi/nest';
+import { NestDetailHeader, NestDetailBody, ReportDetail, ReportTargetType, NestComment } from '@/types/indexAdmin';
+import { getNestDetailAdmin, getReportDetail, getCommentsAdmin } from '@/lib/adminApi/nest';
 
 export default function NestDetail({ nestId }: { nestId: number }){
   const [header, setHeader] = useState<NestDetailHeader| null>(null);
   const [body, setBody] = useState<NestDetailBody | null>(null);
   const [report, setReport] = useState<ReportDetail | null>(null);
+  const [comment, setCommet] = useState<NestComment[] | []>([]);
 
   useEffect(() => {
     const fetchNestDetail = async () => {
@@ -58,8 +59,20 @@ export default function NestDetail({ nestId }: { nestId: number }){
       } 
     };
 
+    const fetchNestComment = async () => {
+      try {
+        const data = await getCommentsAdmin(nestId);
+
+        setCommet(data.data);
+
+      } catch (error) {
+        console.error('댓글 정보 로딩 실패:', error);
+      } 
+    };
+
     fetchNestDetail();
     fetchReportDetail();
+    fetchNestComment();
   }, [nestId]);
 
   return(
@@ -69,7 +82,7 @@ export default function NestDetail({ nestId }: { nestId: number }){
       {header && <DetailHeader header={header} />}
       {report && <ReportInfo report={report}/>}
       {body && <NestBody body={body} />}
-      <CommentList nestId={1}/>
+      {comment && <CommentList comment={comment} />}
     </div>
   )
 }

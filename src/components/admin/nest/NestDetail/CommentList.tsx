@@ -1,4 +1,5 @@
 import { ThumbsUp, AlertTriangle, ShieldCheck, Trash2, CornerDownRight } from "lucide-react";
+import { NestComment } from '@/types/indexAdmin';
 
 interface CommentItemProps {
   nickname: string;
@@ -6,45 +7,45 @@ interface CommentItemProps {
   reportCount: number;
   likeCount: number;
   isSubComment?: boolean;
+  childrenComments: NestComment[];
 }
 
-export default function CommentList ({ nestId }: { nestId: number }) {
-  const dummyComments = [
-    {
-      commentId: 456,
-      authorNickname: "매너유저",
-      commentContent: "바보멍청이",
-      pendingReportCount: 33,
-      likeCount: 0,
-    },
-    {
-      commentId: 457,
-      authorNickname: "등산조아",
-      commentContent: "아니 여기 정보 완전 엉터리인데요? 낚시글 제재 안 하나요 관리자님?",
-      pendingReportCount: 5,
-      likeCount: 12,
-      isSubComment: true
-    },
-  ];
+// 댓글 신고 수에 따라 색상 표현
+const getReportBgColor = (count: number) => {
+    if (count >= 20) {
+      return "bg-red-200/90 border-red-300 hover:bg-red-300/80";
+    }
+    if (count >= 10) {
+      return "bg-orange-200/80 border-orange-300 hover:bg-orange-300/70";
+    }
+    if (count >= 1) {
+      return "bg-yellow-50 border-yellow-300 hover:bg-yellow-100/70";
+    }
+    
+    return "bg-[#FAF7E4]/50 hover:bg-[#FAF7E4]/80";
+  };
+
+export default function CommentList ({ comment }: { comment: NestComment[] }) {
 
   return (
     <div className="p-4 flex flex-col gap-3 bg-[#E8E4CD] border-t border-[#54513E]">
       
       {/* 댓글 영역 타이틀 */}
       <div className="text-xs font-bold text-[#54513E] flex items-center gap-1.5 select-none">
-        댓글 목록 <span className="text-red-500 font-extrabold">{dummyComments.length}</span>
+        댓글 목록 <span className="text-red-500 font-extrabold">{comment.length}</span>
       </div>
 
       {/* 댓글 아이템들이 세로로 쌓이는 구역 */}
       <div className="flex flex-col gap-2.5">
-        {dummyComments.map((comment) => (
+        {comment.map((comment) => (
           <CommentItem
             key={comment.commentId}
             nickname={comment.authorNickname}
-            content={comment.commentContent}
+            content={comment.content}
             reportCount={comment.pendingReportCount}
             likeCount={comment.likeCount}
-            isSubComment={comment.isSubComment}
+            isSubComment={!!comment.parentId}
+            childrenComments={comment.children}
           />
         ))}
       </div>
@@ -53,9 +54,11 @@ export default function CommentList ({ nestId }: { nestId: number }) {
   );
 };
 
-export function CommentItem({ nickname, content, reportCount, likeCount, isSubComment }: CommentItemProps) {
+export function CommentItem({ nickname, content, reportCount, likeCount, isSubComment, childrenComments }: CommentItemProps) {
+  const bgStyles = getReportBgColor(reportCount);
   return (
-    <div className={`flex flex-row items-start justify-between p-3.5 border border-[#54513E] rounded-xl shadow-sm ${isSubComment ? "pl-8" : ""}`}>
+    <>
+    <div className={`flex flex-row items-start justify-between p-3.5 border border-[#54513E] rounded-xl shadow-sm ${bgStyles} ${isSubComment ? "pl-8" : ""}`}>
       {isSubComment && (
         <CornerDownRight size={16} className="text-gray-400 mt-2 flex-shrink-0" />
       )}
@@ -112,9 +115,24 @@ export function CommentItem({ nickname, content, reportCount, likeCount, isSubCo
             <span>삭제</span>
           </button>
         </div>
-
       </div>
-
     </div>
+
+    {childrenComments && childrenComments.length > 0 && (
+      <div className="flex flex-col gap-2.5 mt-1">
+        {childrenComments.map((subComment) => (
+          <CommentItem
+            key={subComment.commentId}
+            nickname={subComment.authorNickname}
+            content={subComment.content}
+            reportCount={subComment.pendingReportCount}
+            likeCount={subComment.likeCount}
+            isSubComment={true} // 🟢 대댓글이므로 true 고정
+            childrenComments={subComment.children} // 혹시 모를 대대댓글(3뎁스)까지 대응 가능하게 구조 유지
+          />
+        ))}
+      </div>
+    )}
+    </>
   );
 }
