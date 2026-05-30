@@ -6,5 +6,5 @@ interface Props {
 
 export default async function NestEditPage({ params }: Props) {
   const { id } = await params;
-  return <div>{id}</div>;
+  return <NestUpdateClient nestId={id} />;
 }

@@ -25,7 +25,7 @@ interface Props {
 }
 
 export function NestUpdateClient({ nestId }: Props) {
-  const { requestImageUpload } = useBridge();
+  useBridge();
   const router = useRouter();
   const {
     accessToken,
