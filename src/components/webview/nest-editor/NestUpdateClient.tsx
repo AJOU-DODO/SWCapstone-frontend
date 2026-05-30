@@ -67,6 +67,16 @@ export function NestUpdateClient({ nestId }: Props) {
       }
     }
 
+    // store 초기화
+    useNestEditorStore.setState({
+      imageUrls: [],
+      categoryIds: [],
+      content: "",
+      title: "",
+      postcardId: null,
+      errors: {},
+    });
+
     loadNestData();
   }, [accessToken, nestId, setLoadedNestId, setInitialNestData]);
 
