@@ -25,7 +25,6 @@ interface Props {
 }
 
 export function NestUpdateClient({ nestId }: Props) {
-  useBridge();
   const router = useRouter();
   const {
     accessToken,
@@ -39,12 +38,16 @@ export function NestUpdateClient({ nestId }: Props) {
 
   const [toast, setToast] = useState<ToastState>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  useState(() => {
+    setLoadedNestId(nestId);
+  });
 
   const showToast = (type: "success" | "error", message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 3000);
   };
 
+  useBridge();
   // 기존 둥지 데이터 로드
   useEffect(() => {
     if (!accessToken) return;
