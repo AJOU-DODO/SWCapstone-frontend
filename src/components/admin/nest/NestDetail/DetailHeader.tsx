@@ -6,11 +6,13 @@ import { useState } from "react";
 import { NestDetailHeader } from '@/types/indexAdmin';
 import { useReportActions } from "@/hooks/admin/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
+import DeleteModal from "@/components/admin/nest/DeleteModal";
 
-export default function DetailHeader ({ header, triggerRefresh }: { header: NestDetailHeader; triggerRefresh: () => void; }) {
+export default function DetailHeader ({ header, triggerRefresh, onClose }: { header: NestDetailHeader; triggerRefresh: () => void; onClose: () => void; }) {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { handleNestRejectReport, isLoading } = useReportActions({
+  const { handleNestRejectReport, isLoading: isRejectLoading } = useReportActions({
     targetId: header.nestId,
     onSuccess: () => {
       setIsRejectModalOpen(false);
@@ -18,16 +20,27 @@ export default function DetailHeader ({ header, triggerRefresh }: { header: Nest
     }
   });
 
+  const { handleNestDelete, isLoading: isDeleteLoading } = useReportActions({
+    targetId: header.nestId,
+    onSuccess: () => {
+      setIsDeleteModalOpen(false);
+      triggerRefresh();
+      onClose();
+    }
+  });
+
   return (
   <div className="flex flex-row justify-between items-start md:items-end gap-4 p-4 border-b bg-[#E8E4CD] w-full">
     <div className="flex flex-row items-end gap-2 flex-shrink-0">
-      <Image 
-        src="/DODOLogo.png"
-        alt="DODO 로고"
-        width={50}
-        height={50}
-        className="rounded-full object-cover border-2 border-[#54513E]"
-      />
+      <div className="w-[50px] h-[50px] rounded-full overflow-hidden border-2 border-[#54513E] flex-shrink-0">
+        <Image 
+          src={header.profileImageUrl}
+          alt="DODO 로고"
+          width={50}
+          height={50}
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="text-[#54513E] truncate font-medium whitespace-nowrap">
         {header.authorNickname}
       </div>
@@ -46,26 +59,41 @@ export default function DetailHeader ({ header, triggerRefresh }: { header: Nest
     
     <div 
     className="flex flex-row gap-2 items-end flex-shrink-0 w-full md:w-auto justify-end">
-      {header.firstReportedAt && (
+      {!header.deleted && (
+        <>
+        {header.firstReportedAt && (
+          <button 
+          onClick={() => setIsRejectModalOpen(true)}
+          className="rounded-md border-2 h-9 w-16 border-black text-sm hover:bg-black/5 transition-colors"> 
+            취소 
+          </button>
+        )}
+        
         <button 
-        onClick={() => setIsRejectModalOpen(true)}
-        className="rounded-md border-2 h-9 w-16 border-black text-sm hover:bg-black/5 transition-colors"> 
-          취소 
+        onClick={() => setIsDeleteModalOpen(true)}
+        className="rounded-md border-2 h-9 w-16 border-black text-sm hover:bg-black/5 transition-colors">
+          삭제 
         </button>
+        </>
       )}
-      
-      <button 
-      className="rounded-md border-2 h-9 w-16 border-black text-sm hover:bg-black/5 transition-colors">
-        삭제 
-      </button>
 
       <RejectModal
         isOpen={isRejectModalOpen}
         onClose={() => setIsRejectModalOpen(false)}
-        onConfirm={handleNestRejectReport} // 모달 안에서 확인을 누르면 실제 API 호출 로직 실행!
-        isLoading={isLoading}
+        onConfirm={handleNestRejectReport}
+        isLoading={isRejectLoading}
         title="신고 반려 확인"
         message="정말로 이 콘텐츠에 들어온 모든 대기 상태의 신고를 반려하시겠습니까?"
+      />
+
+      <DeleteModal
+        authorId={header.authorId}
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleNestDelete}
+        isLoading={isDeleteLoading}
+        title="게시물 삭제 확인"
+        message="정말로 이 콘텐츠를 삭제하시겠습니까?"
       />
     </div>
   </div>

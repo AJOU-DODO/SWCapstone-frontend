@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import { ThumbsUp, AlertTriangle, ShieldCheck, Trash2, CornerDownRight } from "lucide-react";
 import { NestComment } from '@/types/indexAdmin';
@@ -8,6 +9,8 @@ import { useReportActions } from "@/hooks/admin/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
 
 interface CommentItemProps {
+  authorId: number;
+  profileImageUrl: string;
   commentId: number;
   nickname: string;
   content: string;
@@ -43,6 +46,8 @@ export default function CommentList ({ comment, triggerRefresh }: { comment: Nes
         {comment.map((comment) => (
           <CommentItem
             key={comment.commentId}
+            authorId={comment.authorId}
+            profileImageUrl={comment.profileImageUrl}
             commentId={comment.commentId}
             nickname={comment.authorNickname}
             content={comment.content}
@@ -60,7 +65,7 @@ export default function CommentList ({ comment, triggerRefresh }: { comment: Nes
   );
 };
 
-export function CommentItem({ commentId, nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments, triggerRefresh }: CommentItemProps) {
+export function CommentItem({ authorId, profileImageUrl, commentId, nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments, triggerRefresh }: CommentItemProps) {
   const bgStyles = getReportBgColor(reportCount);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
@@ -83,15 +88,25 @@ export function CommentItem({ commentId, nickname, content, reportCount, created
       <div className="flex flex-row items-start gap-3 min-w-0 flex-1">
         
         {/* 프로필 사진 영역 */}
-        <div className="w-8 h-8 rounded-full bg-gray-200 border border-gray-300 flex-shrink-0 flex items-center justify-center text-xs font-bold text-gray-500 select-none">
-          {nickname[0]}
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 border border-[#54513E] flex-shrink-0 flex items-center justify-center text-xs font-bold text-gray-500 select-none">
+          {profileImageUrl ? (
+              <Image 
+                src={profileImageUrl} 
+                alt={`${nickname}의 프로필`} 
+                width={32}
+                height={32}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              nickname[0]
+            )}
         </div>
 
         {/* 유저 정보 및 댓글 내용 */}
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-gray-800">{nickname}</span>
-            <span className="text-[10px] text-gray-400">2026-05-18</span>
+            <span className="text-[10px] text-gray-400">{new Date(createdAt).toLocaleDateString()}</span>
           </div>
           {/* 댓글 본문 */}
           <p className="text-xs text-gray-600 leading-relaxed break-all">
@@ -103,9 +118,8 @@ export function CommentItem({ commentId, nickname, content, reportCount, created
       {/* 오른쪽: 메트릭 지표(좋아요, 신고수) + 어드민 액션 버튼 */}
       <div className="flex flex-col items-end gap-3 flex-shrink-0">
         
-        {/* 지표 레이어 (작성일 & 좋아요 & 신고수) */}
+        {/* 지표 레이어 ( 좋아요 & 신고수) */}
         <div className="flex flex-row items-center gap-2 select-none">
-          <span className="text-xs items-center text-[#54513E]">{new Date(createdAt).toLocaleDateString()}</span>
           <div className="flex items-center gap-1 text-[11px] font-medium text-[#2B6340] px-2 py-0.5">
             <ThumbsUp size={11} className="stroke-[2.5]" />
             <span>{likeCount}</span>
@@ -151,6 +165,8 @@ export function CommentItem({ commentId, nickname, content, reportCount, created
         {childrenComments.map((subComment) => (
           <CommentItem
             key={subComment.commentId}
+            authorId={authorId}
+            profileImageUrl={profileImageUrl}
             commentId={subComment.commentId}
             nickname={subComment.authorNickname}
             content={subComment.content}

@@ -172,7 +172,7 @@ export default function Page() {
         </div>
         
         {selectedNestId ? (
-          <NestDetail nestId={selectedNestId} triggerRefresh={triggerRefresh}/>
+          <NestDetail nestId={selectedNestId} triggerRefresh={triggerRefresh} onClose={() => setSelectedNestId(null)}/>
         ) : (
           // 클릭하지 않았을 시 보여주는 대기 영역
           <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-300 p-8 select-none text-center">
