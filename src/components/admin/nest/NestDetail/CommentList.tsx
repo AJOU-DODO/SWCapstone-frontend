@@ -8,6 +8,7 @@ interface CommentItemProps {
   likeCount: number;
   isSubComment?: boolean;
   childrenComments: NestComment[];
+  createdAt: string;
 }
 
 // 댓글 신고 수에 따라 색상 표현
@@ -46,6 +47,7 @@ export default function CommentList ({ comment }: { comment: NestComment[] }) {
             likeCount={comment.likeCount}
             isSubComment={!!comment.parentId}
             childrenComments={comment.children}
+            createdAt={comment.createdAt}
           />
         ))}
       </div>
@@ -54,7 +56,7 @@ export default function CommentList ({ comment }: { comment: NestComment[] }) {
   );
 };
 
-export function CommentItem({ nickname, content, reportCount, likeCount, isSubComment, childrenComments }: CommentItemProps) {
+export function CommentItem({ nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments }: CommentItemProps) {
   const bgStyles = getReportBgColor(reportCount);
   return (
     <>
@@ -87,15 +89,14 @@ export function CommentItem({ nickname, content, reportCount, likeCount, isSubCo
       {/* 오른쪽: 메트릭 지표(좋아요, 신고수) + 어드민 액션 버튼 */}
       <div className="flex flex-col items-end gap-3 flex-shrink-0">
         
-        {/* 지표 레이어 (좋아요 & 신고수) */}
+        {/* 지표 레이어 (작성일 & 좋아요 & 신고수) */}
         <div className="flex flex-row items-center gap-2 select-none">
-          {/* 좋아요 수 */}
+          <span className="text-xs items-center text-[#54513E]">{new Date(createdAt).toLocaleDateString()}</span>
           <div className="flex items-center gap-1 text-[11px] font-medium text-[#2B6340] px-2 py-0.5">
             <ThumbsUp size={11} className="stroke-[2.5]" />
             <span>{likeCount}</span>
           </div>
 
-          {/* 신고 수 (위험 지표이므로 노란/주황 톤으로 강조) */}
           <div className="flex items-center gap-1 text-[11px] font-bold text-amber-600 px-2 py-0.5">
             <AlertTriangle size={11} className="stroke-[2.5]" />
             <span>{reportCount}</span>
@@ -126,9 +127,10 @@ export function CommentItem({ nickname, content, reportCount, likeCount, isSubCo
             nickname={subComment.authorNickname}
             content={subComment.content}
             reportCount={subComment.pendingReportCount}
+            createdAt={subComment.createdAt}
             likeCount={subComment.likeCount}
-            isSubComment={true} // 🟢 대댓글이므로 true 고정
-            childrenComments={subComment.children} // 혹시 모를 대대댓글(3뎁스)까지 대응 가능하게 구조 유지
+            isSubComment={true}
+            childrenComments={subComment.children}
           />
         ))}
       </div>
