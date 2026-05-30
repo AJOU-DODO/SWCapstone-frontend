@@ -14,7 +14,7 @@ export default function NestDetail({ nestId, triggerRefresh, onClose }: { nestId
   const [header, setHeader] = useState<NestDetailHeader| null>(null);
   const [body, setBody] = useState<NestDetailBody | null>(null);
   const [report, setReport] = useState<ReportDetail | null>(null);
-  const [comment, setCommet] = useState<NestComment[] | []>([]);
+  const [comment, setComment] = useState<NestComment[]>([]);
 
   const [refreshKey, setRefreshKey] = useState(0);
   const triggerNestDetailRefresh = () => setRefreshKey(prev => prev + 1);
@@ -67,7 +67,7 @@ export default function NestDetail({ nestId, triggerRefresh, onClose }: { nestId
       try {
         const data = await getCommentsAdmin(nestId);
 
-        setCommet(data.data);
+        setComment(data.data);
 
       } catch (error) {
         console.error('댓글 정보 로딩 실패:', error);

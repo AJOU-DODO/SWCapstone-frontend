@@ -30,7 +30,7 @@ export default function UserSanctionModal ({ userId, isOpen, onClose, onConfirm 
 
     if (sanctionType === "NONE") {
       setReason("");
-      onConfirm(reason);
+      onConfirm("");
       onClose();
       return;
     }
@@ -67,7 +67,7 @@ export default function UserSanctionModal ({ userId, isOpen, onClose, onConfirm 
           {/* 제재 유형 설정 */}
           <div className="flex flex-col gap-1.5 text-left">
             <label className="text-xs font-semibold text-[#54513E] pl-0.5">제재 유형 설정</label>
-            <SelectBox value={sanctionType} onChange={(val) => setSanctionType(val as 'SEVEN_DAYS' | 'THIRTY_DAYS' | 'PERMANENT')} options={sanctionOptions}/>
+            <SelectBox value={sanctionType} onChange={(val) => setSanctionType(val as 'SEVEN_DAYS' | 'THIRTY_DAYS' | 'PERMANENT' | 'NONE')} options={sanctionOptions}/>
           </div>
 
           {/* 제재 이유 입력창 */}

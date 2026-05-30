@@ -24,11 +24,10 @@ export default function DeleteModal({
   message, 
   isLoading 
 }: ConfirmModalProps) {
-  if (!isOpen) return null;
-
   const [reason, setReason] = useState("");
-
   const [isSanctionModalOpen, setIsSanctionModalOpen] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleNextStep = () => {
     if (!reason.trim() && targetType !== "COMMENT") {
@@ -79,7 +78,7 @@ export default function DeleteModal({
           </button>
           <button
             onClick={handleNextStep}
-            disabled={isLoading}
+            disabled={isLoading  || (targetType !== "COMMENT" && !reason.trim())}
             className="px-4 py-2 text-xs cursor-pointer font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-50"
           >
             확인
