@@ -83,7 +83,7 @@ export default function NestDetail({ nestId, triggerRefresh }: { nestId: number;
       {header && <DetailHeader header={header} triggerRefresh={triggerRefresh}/>}
       {report && <ReportInfo report={report}/>}
       {body && <NestBody body={body} />}
-      {comment && <CommentList comment={comment} />}
+      {comment && <CommentList comment={comment} triggerRefresh={triggerRefresh}/>}
     </div>
   )
 }

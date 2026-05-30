@@ -1,7 +1,14 @@
+"use client";
+
+import { useState } from "react";
+
 import { ThumbsUp, AlertTriangle, ShieldCheck, Trash2, CornerDownRight } from "lucide-react";
 import { NestComment } from '@/types/indexAdmin';
+import { useReportActions } from "@/hooks/admin/useReportActions";
+import RejectModal from "@/components/admin/nest/RejectModal";
 
 interface CommentItemProps {
+  commentId: number;
   nickname: string;
   content: string;
   reportCount: number;
@@ -9,24 +16,19 @@ interface CommentItemProps {
   isSubComment?: boolean;
   childrenComments: NestComment[];
   createdAt: string;
+  triggerRefresh: () => void;
 }
 
 // 댓글 신고 수에 따라 색상 표현
 const getReportBgColor = (count: number) => {
-    if (count >= 20) {
-      return "bg-red-200/90 border-red-300 hover:bg-red-300/80";
-    }
-    if (count >= 10) {
-      return "bg-orange-200/80 border-orange-300 hover:bg-orange-300/70";
-    }
-    if (count >= 1) {
-      return "bg-yellow-50 border-yellow-300 hover:bg-yellow-100/70";
-    }
+    if (count >= 20) return "bg-red-200/90 border-red-300 hover:bg-red-300/80";
+    if (count >= 10) return "bg-orange-200/80 border-orange-300 hover:bg-orange-300/70";
+    if (count >= 1) return "bg-yellow-50 border-yellow-300 hover:bg-yellow-100/70";
     
     return "bg-[#FAF7E4]/50 hover:bg-[#FAF7E4]/80";
   };
 
-export default function CommentList ({ comment }: { comment: NestComment[] }) {
+export default function CommentList ({ comment, triggerRefresh }: { comment: NestComment[]; triggerRefresh: () => void; }) {
 
   return (
     <div className="p-4 flex flex-col gap-3 bg-[#E8E4CD] border-t border-[#54513E]">
@@ -41,6 +43,7 @@ export default function CommentList ({ comment }: { comment: NestComment[] }) {
         {comment.map((comment) => (
           <CommentItem
             key={comment.commentId}
+            commentId={comment.commentId}
             nickname={comment.authorNickname}
             content={comment.content}
             reportCount={comment.pendingReportCount}
@@ -48,6 +51,7 @@ export default function CommentList ({ comment }: { comment: NestComment[] }) {
             isSubComment={!!comment.parentId}
             childrenComments={comment.children}
             createdAt={comment.createdAt}
+            triggerRefresh={triggerRefresh}
           />
         ))}
       </div>
@@ -56,8 +60,18 @@ export default function CommentList ({ comment }: { comment: NestComment[] }) {
   );
 };
 
-export function CommentItem({ nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments }: CommentItemProps) {
+export function CommentItem({ commentId, nickname, content, reportCount, createdAt, likeCount, isSubComment, childrenComments, triggerRefresh }: CommentItemProps) {
   const bgStyles = getReportBgColor(reportCount);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+
+  const { handleCommentRejectReport, isLoading } = useReportActions({
+    targetId: commentId,
+    onSuccess: () => {
+      setIsRejectModalOpen(false);
+      triggerRefresh();
+    }
+  });
+
   return (
     <>
     <div className={`flex flex-row items-start justify-between p-3.5 border border-[#54513E] rounded-xl shadow-sm ${bgStyles} ${isSubComment ? "pl-8" : ""}`}>
@@ -105,16 +119,29 @@ export function CommentItem({ nickname, content, reportCount, createdAt, likeCou
 
         <div className="flex flex-row gap-1">
           {/* 정상 댓글이라 판단하여 신고 반려 (신고 취소) */}
-          <button className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-green-600 bg-green-100 hover:bg-green-200 border border-gray-200 rounded-md transition-colors">
+          {reportCount !=0 && (
+          <button 
+          onClick={() => setIsRejectModalOpen(true)}
+          className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-green-600 bg-green-100 hover:bg-green-200 border border-gray-200 rounded-md transition-colors">
             <ShieldCheck size={12} />
             <span>취소</span>
           </button>
+          )}
           
           {/* 악성 댓글이라 판단하여 삭제 조치 + 유저 제재 처리 */}
           <button className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 rounded-md transition-colors">
             <Trash2 size={12} />
             <span>삭제</span>
           </button>
+
+          <RejectModal
+            isOpen={isRejectModalOpen}
+            onClose={() => setIsRejectModalOpen(false)}
+            onConfirm={handleCommentRejectReport} // 모달 안에서 확인을 누르면 실제 API 호출 로직 실행!
+            isLoading={isLoading}
+            title="신고 반려 확인"
+            message="정말로 이 콘텐츠에 들어온 모든 대기 상태의 신고를 반려하시겠습니까?"
+          />
         </div>
       </div>
     </div>
@@ -124,6 +151,7 @@ export function CommentItem({ nickname, content, reportCount, createdAt, likeCou
         {childrenComments.map((subComment) => (
           <CommentItem
             key={subComment.commentId}
+            commentId={subComment.commentId}
             nickname={subComment.authorNickname}
             content={subComment.content}
             reportCount={subComment.pendingReportCount}
@@ -131,6 +159,7 @@ export function CommentItem({ nickname, content, reportCount, createdAt, likeCou
             likeCount={subComment.likeCount}
             isSubComment={true}
             childrenComments={subComment.children}
+            triggerRefresh={triggerRefresh}
           />
         ))}
       </div>
