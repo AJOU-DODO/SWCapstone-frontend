@@ -151,7 +151,7 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
           {/* 정상 댓글이라 판단하여 신고 반려 (신고 취소) */}
           {!deleted && (
             <>
-              {reportCount !=0 && (
+              {reportCount !==0 && (
               <button 
               onClick={() => setIsRejectModalOpen(true)}
               className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-green-600 bg-green-100 hover:bg-green-200 border border-gray-200 rounded-md transition-colors">
@@ -198,8 +198,8 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
         {childrenComments.map((subComment) => (
           <CommentItem
             key={subComment.commentId}
-            authorId={authorId}
-            profileImageUrl={profileImageUrl}
+            authorId={subComment.authorId}
+            profileImageUrl={subComment.profileImageUrl}
             commentId={subComment.commentId}
             nickname={subComment.authorNickname}
             content={subComment.content}
