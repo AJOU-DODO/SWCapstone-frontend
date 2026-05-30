@@ -32,8 +32,10 @@ export const getCommentsAdmin = async (nestId: number) => {
 };
 
 // 관리자 권한으로 둥지 삭제
-export const deleteNestAdmin = async (nestId: number) => {
-  const { data } = await api.delete(`/api/v1/admin/nests/${nestId}`);
+export const deleteNestAdmin = async (nestId: number, reason: string ) => {
+  const { data } = await api.delete(`/api/v1/admin/nests/${nestId}`, {
+    data: {reason} 
+  });
   return data;
 };
 

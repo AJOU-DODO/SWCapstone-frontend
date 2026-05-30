@@ -168,6 +168,8 @@ export interface NestListApiResponse {
 
 // 둥지 상세보기
 export interface NestDetail {
+  authorId: number;
+  profileImageUrl: string;
   nestId: number;
   title: string;
   content: string;
@@ -177,17 +179,24 @@ export interface NestDetail {
   imageUrls: string[];
   categoryIds: number[];
   categoryNames: string[];
+  firstReportedAt: string;
+  lastReportedAt: string;
   createdAt: string;
+  likeCount: number;
+  dislikeCount: number;
   deleted: boolean;
 }
 
 // 둥지 상세보기 헤더
 export interface NestDetailHeader {
+  authorId: number;
+  profileImageUrl: string;
   nestId: number;
   authorNickname: string;
   createdAt: string;
   firstReportedAt: string;
   lastReportedAt: string;
+  deleted: boolean;
 }
 
 // 둥지 상세보기 바디
@@ -202,6 +211,8 @@ export interface NestDetailBody {
 
 // 둥지 댓글
 export interface NestComment {
+  authorId: number;
+  profileImageUrl: string;
   commentId: number;
   parentId: number;
   authorNickname: string;

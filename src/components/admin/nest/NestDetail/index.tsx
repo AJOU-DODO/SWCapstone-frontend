@@ -10,7 +10,7 @@ import CommentList from '@/components/admin/nest/NestDetail/CommentList';
 import { NestDetailHeader, NestDetailBody, ReportDetail, ReportTargetType, NestComment } from '@/types/indexAdmin';
 import { getNestDetailAdmin, getReportDetail, getCommentsAdmin } from '@/lib/adminApi/nest';
 
-export default function NestDetail({ nestId, triggerRefresh }: { nestId: number; triggerRefresh: () => void; }){
+export default function NestDetail({ nestId, triggerRefresh, onClose }: { nestId: number; triggerRefresh: () => void; onClose: () => void;}){
   const [header, setHeader] = useState<NestDetailHeader| null>(null);
   const [body, setBody] = useState<NestDetailBody | null>(null);
   const [report, setReport] = useState<ReportDetail | null>(null);
@@ -22,13 +22,14 @@ export default function NestDetail({ nestId, triggerRefresh }: { nestId: number;
         const data = await getNestDetailAdmin(nestId);
 
         setHeader({
+          authorId: data.data.authorId,
           nestId: data.data.nestId,
-          // TODO: 사용자 프로필 이미지 데이터 받아오기
+          profileImageUrl: data.data.profileImageUrl,
           authorNickname: data.data.authorNickname,
           createdAt: data.data.createdAt,
-          // TODO: 최초신고일, 최근신고일 데이터 받아오기
           firstReportedAt: data.data.firstReportedAt, 
           lastReportedAt: data.data.lastReportedAt,
+          deleted: data.data.deleted
         });
 
         setBody({
@@ -36,7 +37,6 @@ export default function NestDetail({ nestId, triggerRefresh }: { nestId: number;
           categoryNames: data.data.categoryNames,
           title: data.data.title,
           content: data.data.content,
-          // TODO: 좋아요 수, 싫어요 수 데이터 받아오기
           likeCount: data.data.likeCount ?? 0,
           dislikeCount: data.data.dislikeCount ?? 0,
         });
@@ -80,7 +80,7 @@ export default function NestDetail({ nestId, triggerRefresh }: { nestId: number;
     <div 
     onClick={(e) => e.stopPropagation()}
     className='w-full min-w-0 h-full overflow-y-auto'>
-      {header && <DetailHeader header={header} triggerRefresh={triggerRefresh}/>}
+      {header && <DetailHeader header={header} triggerRefresh={triggerRefresh} onClose={onClose}/>}
       {report && <ReportInfo report={report}/>}
       {body && <NestBody body={body} />}
       {comment && <CommentList comment={comment} triggerRefresh={triggerRefresh}/>}

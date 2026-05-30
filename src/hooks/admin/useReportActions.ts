@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateReportStatus } from '@/lib/adminApi/nest';
+import { updateReportStatus, deleteNestAdmin, deleteCommentAdmin } from '@/lib/adminApi/nest';
 
 interface UseReportActionsProps {
   targetId: number;
@@ -51,15 +51,43 @@ export function useReportActions({ targetId, onSuccess }: UseReportActionsProps)
     }
   };
 
-  // 🛑 1.2 콘텐츠 삭제 기능 (나중에 여기에 이어서 구현하시면 편리합니다!)
-  const handleDeleteContent = async () => {
-    // 삭제 API 로직...
+  // 관리자 권한으로 둥지 강제 삭제
+  const handleNestDelete = async (reason: string) => {
+    setIsLoading(true);
+    try {
+
+      await deleteNestAdmin(targetId, reason);
+      
+      if (onSuccess) onSuccess(); 
+    } catch (error) {
+      console.error("둥지 삭제 처리 실패:", error);
+
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 관리자 권한으로 댓글 강제 삭제
+  const handleCommentDelete = async () => {
+    setIsLoading(true);
+    try {
+
+      await deleteCommentAdmin(targetId);
+      
+      if (onSuccess) onSuccess(); 
+    } catch (error) {
+      console.error("댓글 삭제 처리 실패:", error);
+
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
     handleNestRejectReport,
     handleCommentRejectReport,
-    handleDeleteContent,
+    handleNestDelete,
+    handleCommentDelete,
     isLoading
   };
 }
