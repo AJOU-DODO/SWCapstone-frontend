@@ -4,6 +4,7 @@ import { useState } from "react";
 import UserSanctionModal from "@/components/admin/nest/UserSanctionModal";
 
 interface ConfirmModalProps {
+  targetType?: string;
   authorId: number;
   isOpen: boolean;
   onClose: () => void;
@@ -14,6 +15,7 @@ interface ConfirmModalProps {
 }
 
 export default function DeleteModal({
+  targetType,
   authorId, 
   isOpen, 
   onClose, 
@@ -29,7 +31,7 @@ export default function DeleteModal({
   const [isSanctionModalOpen, setIsSanctionModalOpen] = useState(false);
 
   const handleNextStep = () => {
-    if (!reason.trim()) {
+    if (!reason.trim() && targetType !== "COMMENT") {
       return;
     }
     setIsSanctionModalOpen(true);
@@ -52,17 +54,19 @@ export default function DeleteModal({
           <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{message}</p>
         </div>
 
-        <div className="flex flex-col gap-1.5 text-left">
-          <label className="text-xs font-semibold text-gray-700 pl-0.5">삭제 및 제재 사유</label>
-          <input 
-            type="text"
-            placeholder="해당 콘텐츠를 삭제하는 사유를 입력하세요."
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            disabled={isLoading}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-red-500 disabled:bg-gray-100"
-          />
-        </div>
+        {targetType !== "COMMENT" && (
+          <div className="flex flex-col gap-1.5 text-left">
+            <label className="text-xs font-semibold text-gray-700 pl-0.5">삭제 및 제재 사유</label>
+            <input 
+              type="text"
+              placeholder="해당 콘텐츠를 삭제하는 사유를 입력하세요."
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              disabled={isLoading}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-red-500 disabled:bg-gray-100"
+            />
+          </div>
+        )}
 
         {/* 하단 버튼 영역 */}
         <div className="flex flex-row justify-end gap-2 mt-2">
