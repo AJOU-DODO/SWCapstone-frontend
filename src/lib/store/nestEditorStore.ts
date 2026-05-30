@@ -39,7 +39,6 @@ interface NestEditorState {
     title: string;
     content: string;
     unlockRadius: 10 | 150;
-    categoryIds: number[];
     imageUrls: string[];
   }) => void;
 }
@@ -93,7 +92,6 @@ export const useNestEditorStore = create<NestEditorState>((set, get) => ({
       title: data.title,
       content: data.content,
       unlockRadius: data.unlockRadius,
-      categoryIds: data.categoryIds,
       imageUrls: data.imageUrls,
     }),
 
