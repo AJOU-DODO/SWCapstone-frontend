@@ -207,6 +207,8 @@ export interface NestComment {
   content: string;
   createdAt: string;
   pendingReportCount: number;
+  likeCount: number;
+  children: NestComment[];
   deleted: boolean;
 }
 
