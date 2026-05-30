@@ -324,7 +324,7 @@ export function NestDetailClient({ nestId }: Props) {
           </div>
 
           {/* 수정/삭제 버튼 - isMine일 때만 표시 */}
-          {nest.isMine && (
+          {nest.mine && (
             <div className="flex items-center gap-2 justify-end">
               <button
                 type="button"
