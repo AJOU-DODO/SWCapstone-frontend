@@ -1,4 +1,12 @@
-import { NestUpdateClient } from "@/components/webview/nest-editor/NestUpdateClient";
+import dynamic from "next/dynamic";
+
+const NestUpdateClient = dynamic(
+  () =>
+    import("@/components/webview/nest-editor/NestUpdateClient").then(
+      (mod) => mod.NestUpdateClient,
+    ),
+  { ssr: false },
+);
 
 interface Props {
   params: Promise<{ id: string }>;
