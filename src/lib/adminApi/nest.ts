@@ -39,12 +39,18 @@ export const deleteNestAdmin = async (nestId: number) => {
 
 // 관리자 권한으로 댓글 삭제
 export const deleteCommentAdmin = async (commentId: number) => {
-  const { data } = await api.delete(`/api/v1/admin/comments/${commentId}`);
+  const { data } = await api.delete(`/api/v1/admin/nests/comments/${commentId}`);
   return data;
 };
 
 // 신고 상세 및 통계 조회
 export const getReportDetail = async ( params: { targetType: ReportTargetType; targetId: number }) => {
   const { data } = await api.get(`/api/v1/admin/reports/details`, { params }  );
+  return data;
+};
+
+// 신고 상태 수동 변경
+export const updateReportStatus = async ( body: { targetType: ReportTargetType; targetId: number; newStatus: string }) => {
+  const { data } = await api.patch(`/api/v1/admin/reports/status`, body );
   return data;
 };

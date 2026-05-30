@@ -183,6 +183,7 @@ export interface NestDetail {
 
 // 둥지 상세보기 헤더
 export interface NestDetailHeader {
+  nestId: number;
   authorNickname: string;
   createdAt: string;
   firstReportedAt: string;

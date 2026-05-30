@@ -10,7 +10,7 @@ import CommentList from '@/components/admin/nest/NestDetail/CommentList';
 import { NestDetailHeader, NestDetailBody, ReportDetail, ReportTargetType, NestComment } from '@/types/indexAdmin';
 import { getNestDetailAdmin, getReportDetail, getCommentsAdmin } from '@/lib/adminApi/nest';
 
-export default function NestDetail({ nestId }: { nestId: number }){
+export default function NestDetail({ nestId, triggerRefresh }: { nestId: number; triggerRefresh: () => void; }){
   const [header, setHeader] = useState<NestDetailHeader| null>(null);
   const [body, setBody] = useState<NestDetailBody | null>(null);
   const [report, setReport] = useState<ReportDetail | null>(null);
@@ -22,12 +22,13 @@ export default function NestDetail({ nestId }: { nestId: number }){
         const data = await getNestDetailAdmin(nestId);
 
         setHeader({
+          nestId: data.data.nestId,
           // TODO: 사용자 프로필 이미지 데이터 받아오기
           authorNickname: data.data.authorNickname,
           createdAt: data.data.createdAt,
           // TODO: 최초신고일, 최근신고일 데이터 받아오기
-          firstReportedAt: data.data.firstReportedAt ??  "--.--.--", 
-          lastReportedAt: data.data.lastReportedAt ?? "--.--.--",
+          firstReportedAt: data.data.firstReportedAt, 
+          lastReportedAt: data.data.lastReportedAt,
         });
 
         setBody({
@@ -79,7 +80,7 @@ export default function NestDetail({ nestId }: { nestId: number }){
     <div 
     onClick={(e) => e.stopPropagation()}
     className='w-full min-w-0 h-full overflow-y-auto'>
-      {header && <DetailHeader header={header} />}
+      {header && <DetailHeader header={header} triggerRefresh={triggerRefresh}/>}
       {report && <ReportInfo report={report}/>}
       {body && <NestBody body={body} />}
       {comment && <CommentList comment={comment} />}
