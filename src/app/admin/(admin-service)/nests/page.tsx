@@ -49,6 +49,9 @@ export default function Page() {
   const [reportedComments, setReportedComments] = useState<ReportedCommentList[]>([]);
   const [totalPages, setTotalPages] = useState(1);
 
+  const [refreshKey, setRefreshKey] = useState(0);
+  const triggerRefresh = () => setRefreshKey(prev => prev + 1);
+
   const { updateQuery } = useUpdateQuery();
 
   const searchParams = useSearchParams();
@@ -82,7 +85,7 @@ export default function Page() {
     };
 
     fetchAllNests();
-  }, [activeTab, searchParams]);
+  }, [activeTab, searchParams, refreshKey]);
 
   // 신고된 둥지 get
   useEffect(() => {
@@ -104,7 +107,7 @@ export default function Page() {
     };
 
     fetchReportedNests();
-  }, [activeTab, searchParams]);
+  }, [activeTab, searchParams, refreshKey]);
 
   // 신고된 댓글 get
   useEffect(() => {
@@ -126,7 +129,7 @@ export default function Page() {
     };
 
     fetchReportedComments();
-  }, [activeTab, searchParams]);
+  }, [activeTab, searchParams, refreshKey]);
 
 
   return (
@@ -169,7 +172,7 @@ export default function Page() {
         </div>
         
         {selectedNestId ? (
-          <NestDetail nestId={selectedNestId}/>
+          <NestDetail nestId={selectedNestId} triggerRefresh={triggerRefresh}/>
         ) : (
           // 클릭하지 않았을 시 보여주는 대기 영역
           <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-300 p-8 select-none text-center">
