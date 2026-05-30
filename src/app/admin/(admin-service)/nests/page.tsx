@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 
 import NestTabButton from '@/components/admin/nest/NestTabButton';
@@ -18,31 +18,30 @@ import { NestList, ReportedNestList, ReportedCommentList } from '@/types/indexAd
 import { getNestsAdmin, getReportedNests, getReportedComments } from '@/lib/adminApi/nest';
 import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 
-  //전체 둥지 정렬 옵션
-  const nestSortOptions = [
-    { label: "최신 순", value: "latest" },
-    { label: "좋아요 순", value: "like" },
-    { label: "댓글 순", value: "comment" },
-    { label: "인기 순", value: "view" },
-  ];
+//전체 둥지 정렬 옵션
+const nestSortOptions = [
+  { label: "최신 순", value: "latest" },
+  { label: "좋아요 순", value: "like" },
+  { label: "댓글 순", value: "comment" },
+  { label: "인기 순", value: "view" },
+];
 
-  //신고 둥지 정렬 옵션
-  const reportSortOptions = [
-    { label: "최근 신고일", value: "LATEST_REPORT" },
-    { label: "최초 신고일", value: "FIRST_REPORT" },
-    { label: "신고 수", value: "REPORT_COUNT" },
-    { label: "처리 상태", value: "STATUS" },
-  ];
+//신고 둥지 정렬 옵션
+const reportSortOptions = [
+  { label: "최근 신고일", value: "LATEST_REPORT" },
+  { label: "최초 신고일", value: "FIRST_REPORT" },
+  { label: "신고 수", value: "REPORT_COUNT" },
+  { label: "처리 상태", value: "STATUS" },
+];
 
-  //신고 댓글 정렬 옵션
-  const replySortOptions = [
-    { label: "최근 신고일", value: "LATEST_REPORT" },
-    { label: "신고 수", value: "REPORT_COUNT" },
-    { label: "둥지", value: "NEST_ID" },
-  ];
+//신고 댓글 정렬 옵션
+const replySortOptions = [
+  { label: "최근 신고일", value: "LATEST_REPORT" },
+  { label: "신고 수", value: "REPORT_COUNT" },
+  { label: "둥지", value: "NEST_ID" },
+];
 
-export default function Page() {
-
+function AdminNestsPage(){
   const [selectedNestId, setSelectedNestId] = useState<number | null>(null);
   const [nests, setNests] = useState<NestList[]>([]);
   const [reportedNests, setReportedNests] = useState<ReportedNestList[]>([]);
@@ -190,5 +189,13 @@ export default function Page() {
         <Pagination totalPages={totalPages}/>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>페이지 로딩 중...</div>}>
+      <AdminNestsPage />
+    </Suspense>
   );
 }
