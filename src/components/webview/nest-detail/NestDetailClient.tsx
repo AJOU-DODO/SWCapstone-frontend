@@ -196,7 +196,7 @@ export function NestDetailClient({ nestId }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
       {/* 토스트 */}
       {toast && (
         <div
