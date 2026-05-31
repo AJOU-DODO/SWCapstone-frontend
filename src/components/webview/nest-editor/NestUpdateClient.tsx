@@ -66,7 +66,7 @@ export function NestUpdateClient({ nestId }: Props) {
 
   // 기존 둥지 데이터 로드
   useEffect(() => {
-    if (!accessToken || isInitializing) return;
+    if (!accessToken || !isInitializing) return;
 
     async function loadNestData() {
       try {
@@ -87,7 +87,13 @@ export function NestUpdateClient({ nestId }: Props) {
     }
 
     loadNestData();
-  }, [accessToken, nestId, setLoadedNestId, setInitialNestData]);
+  }, [
+    accessToken,
+    nestId,
+    setLoadedNestId,
+    setInitialNestData,
+    isInitializing,
+  ]);
 
   // S3 업로드
   const uploadImages = useCallback(async () => {
