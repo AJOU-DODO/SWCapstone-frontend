@@ -30,9 +30,12 @@ export function useBridge() {
       console.log("브릿지 실행 시작");
       const token = window.AndroidBridge.getAccessToken();
 
-      const { loadedDraftId } = useNestEditorStore.getState();
-      if (loadedDraftId !== null) {
-        useNestEditorStore.setState({ accessToken: token, isBridgeReady: true });
+      const { loadedDraftId, loadedNestId } = useNestEditorStore.getState();
+      if (loadedDraftId !== null || loadedNestId !== null) {
+        useNestEditorStore.setState({
+          accessToken: token,
+          isBridgeReady: true,
+        });
         return;
       }
 

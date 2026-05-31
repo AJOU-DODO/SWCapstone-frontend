@@ -301,3 +301,36 @@ export async function postReport(
   });
   if (!res.ok) throw new Error("신고에 실패했습니다.");
 }
+
+// 둥지를 수정하는 함수
+export async function updateNest(
+  id: string,
+  payload: NestPayload,
+  accessToken: string,
+): Promise<{ id: number }> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("둥지 수정에 실패했습니다.");
+  const data = await res.json();
+  return data.data;
+}
+
+// 둥지를 삭제하는 함수
+export async function deleteNest(
+  id: string,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok) throw new Error("둥지 삭제에 실패했습니다.");
+}

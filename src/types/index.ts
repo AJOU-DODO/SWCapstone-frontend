@@ -14,8 +14,8 @@ export interface CategoryApiResponse {
 export interface NestPayload {
   title: string | null;
   content: string | null;
-  latitude: number | null;
-  longitude: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
   unlockRadius: 10 | 150;
   categoryIds: number[] | null;
   imageUrls: string[] | null;
@@ -66,6 +66,7 @@ export interface NestDetail {
   postcardId: number | null;
   ad: boolean;
   unlocked: boolean;
+  mine: boolean;
 }
 
 export interface NestDetailApiResponse {

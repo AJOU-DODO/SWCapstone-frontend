@@ -14,6 +14,8 @@ import {
   ChevronDown,
   Send,
   CheckCircle,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,11 +27,14 @@ import { ImageSlider } from "./ImageSlider";
 import { PostcardModal } from "./PostcardModal";
 import { CommentItem } from "./CommentItem";
 import { ReportModal } from "./ReportModal";
+import { BackHeader } from "../BackHeader";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import {
   fetchNestDetail,
   postReaction,
   fetchComments,
   postComment,
+  deleteNest,
 } from "@/lib/api";
 import type {
   ReactionType,
@@ -72,6 +77,9 @@ export function NestDetailClient({ nestId }: Props) {
 
   const [commentText, setCommentText] = useState("");
   const [sortBy, setSortBy] = useState<CommentSortType>("DEFAULT");
+
+  // 삭제 확인 모달 상태 추가
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const [toast, setToast] = useState<{
     type: "success" | "error";
@@ -159,6 +167,19 @@ export function NestDetailClient({ nestId }: Props) {
     },
   });
 
+  // 둥지 삭제 mutation
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteNest(nestId, accessToken),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["nest", nestId] });
+      showToast("success", "둥지가 삭제되었습니다.");
+      setTimeout(() => router.back(), 1500);
+    },
+    onError: () => {
+      showToast("error", "삭제에 실패했습니다.");
+    },
+  });
+
   const handleSendComment = () => {
     if (!commentText.trim() || commentMutation.isPending) return;
     commentMutation.mutate();
@@ -176,7 +197,8 @@ export function NestDetailClient({ nestId }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
+      <BackHeader />
       {/* 토스트 */}
       {toast && (
         <div
@@ -304,6 +326,28 @@ export function NestDetailClient({ nestId }: Props) {
             </div>
           </div>
 
+          {/* 수정/삭제 버튼 - isMine일 때만 표시 */}
+          {nest.mine && (
+            <div className="flex items-center gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => router.push(`/nests/${nestId}/edit`)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EDEAE0] text-[#5C5346] text-xs font-medium transition-all active:scale-95 hover:bg-[#E2DFD5]"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                수정
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 text-red-400 text-xs font-medium transition-all active:scale-95 hover:bg-red-100"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                삭제
+              </button>
+            </div>
+          )}
+
           <div className="h-px bg-[#E0DDD3]" />
 
           {/* 댓글 섹션 헤더 */}
@@ -418,6 +462,14 @@ export function NestDetailClient({ nestId }: Props) {
         onError={() =>
           showToast("error", "신고가 실패했습니다. 다시 시도해주세요.")
         }
+      />
+
+      {/*둥지 삭제 확인 모달 */}
+      <DeleteConfirmDialog
+        open={deleteConfirmOpen}
+        isPending={deleteMutation.isPending}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={() => deleteMutation.mutate()}
       />
     </div>
   );
