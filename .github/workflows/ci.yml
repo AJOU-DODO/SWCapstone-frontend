@@ -1,6 +1,8 @@
 name: DODO CI Pipleline
 
 on:
+  push:
+    branches: ["main", "develop"]
   pull_request:
     branches: ["main", "develop"]
 
@@ -38,9 +40,19 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           exitOnceUploaded: true
 
-      - name: Deploy to Vercel Production
-        if: github.event.pull_request.merged == true
-        run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+  deploy:
+    needs: build-and-tests
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel
+
+      - name: Deploy to Production
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
