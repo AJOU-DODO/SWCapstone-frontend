@@ -169,7 +169,8 @@ export function NestDetailClient({ nestId }: Props) {
   // 둥지 삭제 mutation
   const deleteMutation = useMutation({
     mutationFn: () => deleteNest(nestId, accessToken),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["nest", nestId] });
       showToast("success", "둥지가 삭제되었습니다.");
       setTimeout(() => router.back(), 1500);
     },

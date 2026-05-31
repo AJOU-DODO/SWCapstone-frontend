@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useBridge } from "@/lib/hooks/useBridge";
 import { useNestEditorStore } from "@/lib/store/nestEditorStore";
 import {
@@ -26,6 +27,7 @@ interface Props {
 
 export function NestUpdateClient({ nestId }: Props) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     accessToken,
     imageUrls,
@@ -127,6 +129,7 @@ export function NestUpdateClient({ nestId }: Props) {
         },
         accessToken,
       );
+      await queryClient.invalidateQueries({ queryKey: ["nest", nestId] });
       showToast("success", "둥지가 수정되었습니다.");
       setTimeout(() => router.push(`/nests/${result.id}`), 1000);
     } catch {
