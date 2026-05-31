@@ -132,6 +132,7 @@ export interface NestComment {
   likeCount: number;
   children: NestComment[];
   liked: boolean;
+  mine: boolean;
 }
 
 export type CommentSortType = "LIKE" | "LATEST" | "DEFAULT";
