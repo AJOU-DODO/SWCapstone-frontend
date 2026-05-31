@@ -122,14 +122,14 @@ export function NestUpdateClient({ nestId }: Props) {
       const result = await updateNest(
         nestId,
         {
-          latitude: state.latitude,
-          longitude: state.longitude,
           title: state.title,
           content: state.content,
           unlockRadius: state.unlockRadius,
           categoryIds: state.categoryIds,
           imageUrls: fileUrls,
           postcardId: state.postcardId,
+          ...(state.latitude !== null && { latitude: state.latitude }),
+          ...(state.longitude !== null && { longitude: state.longitude }),
         },
         accessToken,
       );
