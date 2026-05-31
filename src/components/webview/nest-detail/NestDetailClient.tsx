@@ -27,6 +27,7 @@ import { ImageSlider } from "./ImageSlider";
 import { PostcardModal } from "./PostcardModal";
 import { CommentItem } from "./CommentItem";
 import { ReportModal } from "./ReportModal";
+import { BackHeader } from "../BackHeader";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import {
   fetchNestDetail,
@@ -197,6 +198,7 @@ export function NestDetailClient({ nestId }: Props) {
 
   return (
     <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
+      <BackHeader />
       {/* 토스트 */}
       {toast && (
         <div

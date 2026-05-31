@@ -18,6 +18,7 @@ import { UnlockRadiusSelector } from "./UnlockRadiusSelector";
 import { PostcardSelector } from "./PostcardSelector";
 import { ContentEditor } from "./ContentEditor";
 import { TitleInput } from "./TitleInput";
+import { BackHeader } from "../BackHeader";
 
 type ToastState = { type: "success" | "error"; message: string } | null;
 
@@ -151,6 +152,7 @@ export function NestUpdateClient({ nestId }: Props) {
 
   return (
     <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
+      <BackHeader />
       {/* 토스트 */}
       {toast && (
         <div
