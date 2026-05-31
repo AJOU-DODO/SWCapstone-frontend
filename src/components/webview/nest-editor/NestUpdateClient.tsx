@@ -51,9 +51,22 @@ export function NestUpdateClient({ nestId }: Props) {
   };
 
   useBridge();
+
+  // 마운트 시 스토어 초기화 - 딱 한 번만 실행
+  useEffect(() => {
+    useNestEditorStore.setState({
+      imageUrls: [],
+      categoryIds: [],
+      content: "",
+      title: "",
+      postcardId: null,
+      errors: {},
+    });
+  }, []);
+
   // 기존 둥지 데이터 로드
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken || isInitializing) return;
 
     async function loadNestData() {
       try {
@@ -72,16 +85,6 @@ export function NestUpdateClient({ nestId }: Props) {
         setIsInitializing(false);
       }
     }
-
-    // store 초기화
-    useNestEditorStore.setState({
-      imageUrls: [],
-      categoryIds: [],
-      content: "",
-      title: "",
-      postcardId: null,
-      errors: {},
-    });
 
     loadNestData();
   }, [accessToken, nestId, setLoadedNestId, setInitialNestData]);
