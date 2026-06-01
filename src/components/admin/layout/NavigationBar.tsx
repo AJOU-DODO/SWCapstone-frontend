@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { name: "유저 관리", path: "/admin/users"},
   { name: "둥지 관리", path: "/admin/nests"},
-  { name: "신고된 엽서", path: "/admin/reports"},
+  { name: "신고된 엽서", path: "/admin/postcard"},
   { name: "카테고리 관리", path: "/admin/categories"},
   { name: "공지사항", path: "/admin/notices"},
   { name: "통계 확인", path: "/admin/stats"},
