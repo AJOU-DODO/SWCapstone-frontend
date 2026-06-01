@@ -9,6 +9,7 @@ import type {
   ProfileEditPayload,
   MyCommentsApiResponse,
   ImageUrlApiResponse,
+  PostcardReactionType,
 } from "@/types/indexMypage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
@@ -175,4 +176,20 @@ export async function deletePostcard(
     },
   });
   if (!res.ok) throw new Error("엽서 삭제에 실패했습니다.");
+}
+
+// 엽서에 감정을 남기는 함수
+export async function togglePostcardReaction(
+  id: number,
+  type: PostcardReactionType,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/postcards/${id}/reactions?type=${type}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
+  if (!res.ok) throw new Error("리액션 처리에 실패했습니다.");
 }

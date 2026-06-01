@@ -2,13 +2,16 @@
 import React from "react";
 import Image from "next/image";
 import { Pencil, Trash2, AlertCircle } from "lucide-react";
+import { PostcardReactions } from "./PostcardReactions";
 import type { MyPostcard } from "@/types/indexMypage";
+import { REACTION_LABELS, PostcardReactionType } from "@/types/indexMypage";
 
 interface PostcardModalProps {
   isOpen: boolean;
   onClose: () => void;
   postcardData: MyPostcard | null;
   activeTab: "mine" | "sent" | "received";
+  accessToken: string;
   onEditClick: () => void;
   onDeleteClick: () => void;
   onReportClick: () => void;
@@ -24,6 +27,7 @@ export default function PostcardModal({
   onClose,
   postcardData,
   activeTab,
+  accessToken,
   onEditClick,
   onDeleteClick,
   onReportClick,
@@ -96,17 +100,55 @@ export default function PostcardModal({
             </div>
           )}
 
-          {/* received 탭일 때만 신고 버튼 표시 */}
+          {/* received 탭 - 리액션, 신고 버튼 표시 */}
           {activeTab === "received" && (
-            <div className="flex items-center justify-end mt-4 pt-4 border-t">
-              <button
-                type="button"
-                onClick={onReportClick}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 text-red-400 text-xs font-medium transition-all active:scale-95 hover:bg-red-100"
-              >
-                <AlertCircle className="w-3.5 h-3.5" />
-                신고
-              </button>
+            <>
+              <PostcardReactions
+                postcardId={postcardData.id}
+                accessToken={accessToken}
+                initialReaction={
+                  postcardData.reactionType as PostcardReactionType | null
+                }
+              />
+              <div className="flex items-center justify-end mt-3">
+                <button
+                  type="button"
+                  onClick={onReportClick}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 text-red-400 text-xs font-medium transition-all active:scale-95 hover:bg-red-100"
+                >
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  신고
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* sent 탭 - 상대방이 남긴 리액션 표시 */}
+          {activeTab === "sent" && (
+            <div className="mt-4 pt-4 border-t">
+              <p className="text-xs text-center text-[#8B8070] mb-3">
+                엽서를 가져간 유저가 남겨준 감정
+              </p>
+              <div className="flex items-center justify-center">
+                {postcardData.reactionType ? (
+                  <div className="flex flex-col items-center gap-1 px-4 py-2 rounded-2xl bg-[#FAF7E4]">
+                    <span className="text-2xl">
+                      {
+                        REACTION_LABELS[
+                          postcardData.reactionType as PostcardReactionType
+                        ]
+                      }
+                    </span>
+                    <span className="text-xs text-[#54513E] font-medium">
+                      {postcardData.reactionType}
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-xs text-[#B0AC9C]">
+                    아직 감정을 남기지 않았어요.
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>

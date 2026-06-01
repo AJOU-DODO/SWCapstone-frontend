@@ -142,6 +142,7 @@ export default function Page() {
       <ExchangeResultModal
         open={resultOpen}
         postcard={exchangedPostcard}
+        accessToken={accessToken}
         onClose={handleResultClose}
       />
     </div>

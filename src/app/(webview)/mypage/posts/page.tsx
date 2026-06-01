@@ -138,6 +138,7 @@ export default function Page() {
         isOpen={!!selectedPostcard}
         postcardData={selectedPostcard}
         activeTab={activeTab}
+        accessToken={accessToken}
         onClose={() => setSelectedPostcard(null)}
         onEditClick={() => {
           setEditTarget(selectedPostcard);
