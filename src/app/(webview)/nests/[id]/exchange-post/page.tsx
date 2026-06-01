@@ -12,6 +12,7 @@ import { ExchangedPostcard } from "@/types";
 import PostcardGrid from "@/components/webview/mypage/Postcard/PostcardGrid";
 import { ExchangeConfirmModal } from "@/components/webview/nest-detail/ExchangeConfirmModal";
 import { ExchangeResultModal } from "@/components/webview/nest-detail/ExchangeResultModal";
+import { accessedDynamicData } from "next/dist/server/app-render/dynamic-rendering";
 
 export default function Page() {
   const params = useParams();
@@ -76,9 +77,10 @@ export default function Page() {
 
   // 엽서 교환 mutation
   const { mutate: exchange, isPending: isExchanging } = useMutation({
-    mutationFn: () => {
-      if (!selectedPostcard) throw new Error("선택된 엽서가 없습니다.");
-      return exchangePostcard(id, selectedPostcard!.id, accessToken);
+    mutationFn: (postcardId: number) => {
+      console.log("postcardId:", postcardId);
+      console.log("nestId:", id);
+      return exchangePostcard(id, postcardId, accessToken);
     },
     onSuccess: (data) => {
       setConfirmOpen(false);
@@ -140,8 +142,7 @@ export default function Page() {
         isExchanging={isExchanging}
         onClose={() => setConfirmOpen(false)}
         onConfirm={() => {
-          alert("YES 버튼 클릭됨");
-          exchange();
+          if (selectedPostcard) exchange(selectedPostcard.id);
         }}
       />
 
