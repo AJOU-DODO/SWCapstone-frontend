@@ -1,0 +1,91 @@
+"use client";
+
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from 'next/navigation';
+
+import { PostcardList } from '@/types/indexAdmin';
+import { getReportPostcard } from '@/lib/adminApi/postcard';
+
+import SortSection from '@/components/admin/SortSection';
+import Pagination from '@/components/admin/Pagination';
+import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
+import PostcardGrid from '@/components/admin/postcard/PostcardGrid';
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label";
+import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
+
+import { MOCK_REPORTED_POSTCARDS } from "./mockData";
+
+//정렬 옵션
+const sortOptions = [
+  { label: "최근 신고 순", value: "RECENT_REPORT" },
+  { label: "닉네임", value: "RECENT_CREATED" },
+];
+
+export default function Page() {
+  const [postcard, setPostcard] = useState<PostcardList[]>(MOCK_REPORTED_POSTCARDS);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const { updateQuery } = useUpdateQuery();
+
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const sort = searchParams.get('sort') || 'RECENT_REPORT';
+  const statuses = searchParams.get('statuses') || 'PENDING';
+
+  const [sortBy] = sort.split(',');
+
+  const isAllMode = statuses === "ALL";
+
+  /*useEffect(() => {
+      const fetchPostcard = async () => {
+        try {
+          const params: { statuses?: string; sort?: string; page: number } = {
+            statuses: statuses,
+            sort: sortBy,
+            page: currentPage - 1
+          };
+  
+          const data = await getReportPostcard(params);
+          setPostcard(data.data.content);
+          setTotalPages(data.data.totalPages || 1);
+          console.log(data);
+        } catch (error) {
+          console.error('엽서 목록 로딩 실패:', error);
+        } 
+      };
+  
+      fetchPostcard();
+    }, [searchParams]);*/
+
+  return (
+    <div className="grid grid-rows-[auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
+
+      <div className='flex flex-row justify-between'>
+        <SortSection options={sortOptions} defaultSort='RECENT_REPORT' disableToggle={true}/>
+
+        <div className="flex flex-row items-center gap-5">
+          <div className="flex flex-row items-center gap-2">
+            <Checkbox 
+              checked={searchParams.get("includeDeleted") === "ALL"} 
+              onCheckedChange={(checked) => updateQuery({ statuses: checked ? "PENDING,PROCESSED" : "PENDING" })}
+              className="data-[state=checked]:bg-[#538752] data-[state=checked]:border-[#538752]"
+            />
+            <Label htmlFor="all-nest-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
+              전체
+            </Label>
+          </div>
+          <IncludeDeletedToggle label="처리 완료 엽서 보기" trueValue="PROCESSED" falseValue="PENDING" isDisabled={isAllMode}/>
+        </div>
+      </div>
+
+      <div>
+        <PostcardGrid postcards={postcard}/>
+      </div>
+
+      <div className="py-4 border-t">
+        <Pagination totalPages={totalPages}/>
+      </div>
+    </div>
+  );
+}

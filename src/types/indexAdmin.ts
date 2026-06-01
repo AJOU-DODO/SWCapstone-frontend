@@ -299,3 +299,29 @@ export interface ReportDetailRequest {
   targetType:ReportTargetType;
   targetId: number;
 }
+
+export type ReasonType = "ABUSE" | "ADVERTISEMENT" | "OTHER" | "SPAM";
+
+// 신고된 엽서
+export interface PostcardList {
+  postcardId: number;
+  authorNickname: string;
+  content: string;
+  imageUrl: string;
+  createdAt: string;
+  firstReportedAt: string;
+  lastReportedAt: string;
+  reportCount: number;
+  reasons: ReasonType[];
+  deleted: boolean;
+}
+
+export interface PostcardListData {
+  content: PostcardList[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
