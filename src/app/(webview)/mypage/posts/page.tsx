@@ -6,6 +6,7 @@ import PostcardGrid from "@/components/webview/mypage/Postcard/PostcardGrid";
 import PostcardModal from "@/components/webview/mypage/Postcard/PostcardModal";
 import PostcardEditModal from "@/components/webview/mypage/Postcard/PostcardEditModal";
 import DeletePostcardDialog from "@/components/webview/mypage/Postcard/DeletePostcardDialog";
+import { ReportModal } from "@/components/webview/nest-detail/ReportModal";
 import Spinner from "@/components/webview/Spinner";
 import { fetchUserPostcards } from "@/lib/apiMypage";
 import type { MyPostcard } from "@/types/indexMypage";
@@ -31,6 +32,8 @@ export default function Page() {
   );
   const [editTarget, setEditTarget] = useState<MyPostcard | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<MyPostcard | null>(null);
+  const [reportTarget, setReportTarget] = useState<number | null>(null);
+
   const [toast, setToast] = useState<ToastState>(null);
 
   //브릿지로 accesstoken 수신
@@ -144,6 +147,10 @@ export default function Page() {
           setDeleteTarget(selectedPostcard);
           setSelectedPostcard(null);
         }}
+        onReportClick={() => {
+          setReportTarget(selectedPostcard!.id);
+          setSelectedPostcard(null);
+        }}
       />
 
       {/* 수정 모달 */}
@@ -166,6 +173,22 @@ export default function Page() {
         onClose={() => setDeleteTarget(null)}
         onSuccess={() => showToast("success", "엽서가 삭제되었습니다.")}
         onError={() => showToast("error", "엽서 삭제에 실패했습니다.")}
+      />
+
+      {/* 신고 모달 */}
+      <ReportModal
+        open={!!reportTarget}
+        reportType="POSTCARD"
+        targetId={reportTarget ?? 0}
+        accessToken={accessToken}
+        onClose={() => setReportTarget(null)}
+        onSuccess={() => {
+          setReportTarget(null);
+          showToast("success", "신고가 완료되었습니다.");
+        }}
+        onError={() =>
+          showToast("error", "신고가 실패했습니다. 다시 시도해주세요.")
+        }
       />
     </div>
   );

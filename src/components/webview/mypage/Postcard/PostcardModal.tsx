@@ -1,7 +1,7 @@
 // PostcardModal.tsx
 import React from "react";
 import Image from "next/image";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, AlertCircle } from "lucide-react";
 import type { MyPostcard } from "@/types/indexMypage";
 
 interface PostcardModalProps {
@@ -11,6 +11,7 @@ interface PostcardModalProps {
   activeTab: "mine" | "sent" | "received";
   onEditClick: () => void;
   onDeleteClick: () => void;
+  onReportClick: () => void;
 }
 
 function formatDate(iso: string) {
@@ -25,6 +26,7 @@ export default function PostcardModal({
   activeTab,
   onEditClick,
   onDeleteClick,
+  onReportClick,
 }: PostcardModalProps) {
   if (!isOpen || !postcardData) return null;
   console.log(postcardData.content);
@@ -90,6 +92,20 @@ export default function PostcardModal({
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 삭제
+              </button>
+            </div>
+          )}
+
+          {/* received 탭일 때만 신고 버튼 표시 */}
+          {activeTab === "received" && (
+            <div className="flex items-center justify-end mt-4 pt-4 border-t">
+              <button
+                type="button"
+                onClick={onReportClick}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 text-red-400 text-xs font-medium transition-all active:scale-95 hover:bg-red-100"
+              >
+                <AlertCircle className="w-3.5 h-3.5" />
+                신고
               </button>
             </div>
           )}
