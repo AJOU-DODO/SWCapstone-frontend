@@ -85,6 +85,10 @@ export default function Page() {
       setExchangedPostcard(data.data);
       setResultOpen(true);
     },
+    onError: (error) => {
+      console.error("교환 실패:", error);
+      alert(`교환 실패: ${error}`);
+    },
   });
 
   const displayList = useMemo(() => {
