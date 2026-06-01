@@ -4,12 +4,12 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 
 import { PostcardList } from '@/types/indexAdmin';
-import { getReportPostcard } from '@/lib/adminApi/postcard';
 
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
 import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
 import PostcardGrid from '@/components/admin/postcard/PostcardGrid';
+import PostcardSkeleton from '@/components/admin/postcard/PostcardSkeleton';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label";
 import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
@@ -25,6 +25,7 @@ const sortOptions = [
 export default function Page() {
   const [postcard, setPostcard] = useState<PostcardList[]>(MOCK_REPORTED_POSTCARDS);
   const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [refreshKey, setRefreshKey] = useState(0);
   const triggerRefresh = () => setRefreshKey(prev => prev + 1);
@@ -41,6 +42,7 @@ export default function Page() {
   const isAllMode = statuses === "PENDING,PROCESSED";
 
   /*useEffect(() => {
+      setIsLoading(true);
       const fetchPostcard = async () => {
         try {
           const params: { statuses?: string; sort?: string; page: number } = {
@@ -55,11 +57,13 @@ export default function Page() {
           console.log(data);
         } catch (error) {
           console.error('엽서 목록 로딩 실패:', error);
-        } 
+        } finally {
+          setIsLoading(false);
+        }
       };
   
       fetchPostcard();
-    }, [searchParams]);*/
+    }, [searchParams, refreshKey]);*/
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
@@ -83,7 +87,8 @@ export default function Page() {
       </div>
 
       <div>
-        <PostcardGrid postcards={postcard} triggerRefresh={triggerRefresh}/>
+        {isLoading ? (
+        <PostcardSkeleton count={10} /> ) : (<PostcardGrid postcards={postcard} triggerRefresh={triggerRefresh}/>)}
       </div>
 
       <div className="py-4 border-t">
