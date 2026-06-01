@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { updateReportStatus, deleteNestAdmin, deleteCommentAdmin } from '@/lib/adminApi/nest';
+import { deleteReportPostcard } from '@/lib/adminApi/postcard';
 
 interface UseReportActionsProps {
   targetId: number;
@@ -51,6 +52,27 @@ export function useReportActions({ targetId, onSuccess }: UseReportActionsProps)
     }
   };
 
+  // 엽서 신고 반려 (취소) 기능
+  const handlePostcardRejectReport = async () => {
+    setIsLoading(true);
+    try {
+      const payload = {
+        targetType: "POSTCARD" as const,
+        targetId: Number(targetId),
+        newStatus: "REJECTED" as const
+      };
+
+      await updateReportStatus(payload);
+
+      if (onSuccess) onSuccess(); 
+    } catch (error) {
+      console.error("엽서 신고 반려 처리 실패:", error);
+
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // 관리자 권한으로 둥지 강제 삭제
   const handleNestDelete = async (reason: string) => {
     setIsLoading(true);
@@ -83,11 +105,28 @@ export function useReportActions({ targetId, onSuccess }: UseReportActionsProps)
     }
   };
 
+  // 관리자 권한으로 엽서 강제 삭제
+  const handlePostcardDelete = async (reason: string) => {
+    setIsLoading(true);
+    try {
+
+      await deleteReportPostcard(targetId, reason);
+
+      if (onSuccess) onSuccess(); 
+    } catch (error) {
+      console.error("엽서 삭제 처리 실패:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     handleNestRejectReport,
     handleCommentRejectReport,
+    handlePostcardRejectReport,
     handleNestDelete,
     handleCommentDelete,
+    handlePostcardDelete,
     isLoading
   };
 }
