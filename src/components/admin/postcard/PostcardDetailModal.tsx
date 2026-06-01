@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 import { PostcardList } from "@/types/indexAdmin";
 import { useReportActions } from "@/hooks/admin/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
 import DeleteModal from "@/components/admin/nest/DeleteModal";
+import { getReportDetail } from '@/lib/adminApi/nest';
 
 interface PostcardDetailModalProps {
   postcard: PostcardList;
@@ -17,6 +18,38 @@ interface PostcardDetailModalProps {
 export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,}: PostcardDetailModalProps) {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const initialReason = postcard.reasons[0];
+  const [displayReason, setDisplayReason] = useState<string>("");
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialReason === "OTHER") {
+      const fetchDetailReason = async () => {
+        try {
+          setIsDetailLoading(true);
+          
+          const response = await getReportDetail({
+            targetType: "POSTCARD", 
+            targetId: postcard.postcardId,
+          });
+
+          if (response && response.otherReportContents) {
+            setDisplayReason(`기타: ${response.otherReportContents}`);
+          }
+        } catch (error) {
+          console.error("신고 상세 조회 실패:", error);
+          setDisplayReason("OTHER (상세 사유 로드 실패)");
+        } finally {
+          setIsDetailLoading(false);
+        }
+      };
+
+      fetchDetailReason();
+    } else {
+      setDisplayReason("");
+    }
+  }, [postcard, initialReason]);
 
   const { handlePostcardRejectReport, isLoading: isRejectLoading } =
     useReportActions({
@@ -96,6 +129,20 @@ export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,
                   ))}
                 </div>
               </div>
+              {/* 사유가 OTHER 일 때 상세 신고 이유 불러와 표시하기*/}
+              {isDetailLoading ? (
+                  <div className="text-xs text-gray-400 animate-pulse mt-2">
+                    상세 사유 불러오는 중...
+                  </div>
+                ) : (
+                  displayReason !== "" && (
+                    <div className="mt-1">
+                      <span className="inline-block text-[11px] text-gray-400 px-2 py-0.5 border-b-2 font-medium">
+                        {displayReason}
+                      </span>
+                    </div>
+                  )
+                )}
             </div>
           </div>
 
