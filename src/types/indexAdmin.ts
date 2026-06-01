@@ -304,6 +304,7 @@ export type ReasonType = "ABUSE" | "ADVERTISEMENT" | "OTHER" | "SPAM";
 
 // 신고된 엽서
 export interface PostcardList {
+  authorId: number;
   postcardId: number;
   authorNickname: string;
   content: string;
