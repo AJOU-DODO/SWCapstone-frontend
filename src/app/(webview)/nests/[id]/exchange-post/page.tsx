@@ -139,7 +139,10 @@ export default function Page() {
         postcard={selectedPostcard}
         isExchanging={isExchanging}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={() => exchange()}
+        onConfirm={() => {
+          alert("YES 버튼 클릭됨");
+          exchange();
+        }}
       />
 
       {/* 교환 결과 모달 */}
