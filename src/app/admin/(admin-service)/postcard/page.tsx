@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 
 import { PostcardList } from '@/types/indexAdmin';
+import { getReportPostcard } from '@/lib/adminApi/postcard';
 
 import SortSection from '@/components/admin/SortSection';
 import Pagination from '@/components/admin/Pagination';
@@ -14,16 +15,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label";
 import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 
-import { MOCK_REPORTED_POSTCARDS } from "./mockData";
-
 //정렬 옵션
 const sortOptions = [
   { label: "최근 신고 순", value: "RECENT_REPORT" },
   { label: "닉네임", value: "RECENT_CREATED" },
 ];
 
-export default function Page() {
-  const [postcard, setPostcard] = useState<PostcardList[]>(MOCK_REPORTED_POSTCARDS);
+export function AdminPostcardPage(){
+  const [postcard, setPostcard] = useState<PostcardList[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,7 +40,7 @@ export default function Page() {
 
   const isAllMode = statuses === "PENDING,PROCESSED";
 
-  /*useEffect(() => {
+  useEffect(() => {
       setIsLoading(true);
       const fetchPostcard = async () => {
         try {
@@ -63,7 +62,7 @@ export default function Page() {
       };
   
       fetchPostcard();
-    }, [searchParams, refreshKey]);*/
+    }, [searchParams, refreshKey]);
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
@@ -95,5 +94,13 @@ export default function Page() {
         <Pagination totalPages={totalPages}/>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>페이지 로딩 중...</div>}>
+      <AdminPostcardPage />
+    </Suspense>
   );
 }
