@@ -26,16 +26,19 @@ export default function Page() {
   const [postcard, setPostcard] = useState<PostcardList[]>(MOCK_REPORTED_POSTCARDS);
   const [totalPages, setTotalPages] = useState(1);
 
+  const [refreshKey, setRefreshKey] = useState(0);
+  const triggerRefresh = () => setRefreshKey(prev => prev + 1);
+
   const { updateQuery } = useUpdateQuery();
 
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const sort = searchParams.get('sort') || 'RECENT_REPORT';
-  const statuses = searchParams.get('statuses') || 'PENDING';
+  const statuses = searchParams.get('includeDeleted') || 'PENDING';
 
   const [sortBy] = sort.split(',');
 
-  const isAllMode = statuses === "ALL";
+  const isAllMode = statuses === "PENDING,PROCESSED";
 
   /*useEffect(() => {
       const fetchPostcard = async () => {
@@ -67,8 +70,8 @@ export default function Page() {
         <div className="flex flex-row items-center gap-5">
           <div className="flex flex-row items-center gap-2">
             <Checkbox 
-              checked={searchParams.get("includeDeleted") === "ALL"} 
-              onCheckedChange={(checked) => updateQuery({ statuses: checked ? "PENDING,PROCESSED" : "PENDING" })}
+              checked={searchParams.get("includeDeleted") === "PENDING,PROCESSED"} 
+              onCheckedChange={(checked) => updateQuery({ includeDeleted: checked ? "PENDING,PROCESSED" : "PENDING" })}
               className="data-[state=checked]:bg-[#538752] data-[state=checked]:border-[#538752]"
             />
             <Label htmlFor="all-nest-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
@@ -80,7 +83,7 @@ export default function Page() {
       </div>
 
       <div>
-        <PostcardGrid postcards={postcard}/>
+        <PostcardGrid postcards={postcard} triggerRefresh={triggerRefresh}/>
       </div>
 
       <div className="py-4 border-t">

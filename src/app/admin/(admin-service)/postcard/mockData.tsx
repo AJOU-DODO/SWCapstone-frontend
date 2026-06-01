@@ -62,7 +62,7 @@ export const MOCK_REPORTED_POSTCARDS: PostcardList[] = [
     deleted: true, // 🚫 이미 블라인드(삭제) 처리된 데이터 테스트용 2!
   },
   {
-    postcardId: 106,
+    postcardId: 1061585154656564,
     authorNickname: "익명회원A",
     content: "니들이 뭔데 나를 판단해? 진짜 어이없네 ㅋㅋ 다 고소할 줄 알아라 손가락 조심해라",
     imageUrl: "https://loremflickr.com/400/600/angry,dark",
