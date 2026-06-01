@@ -19,12 +19,12 @@ export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const initialReason = postcard.reasons[0];
+  const hasOtherReason  = postcard.reasons.includes("OTHER");
   const [displayReason, setDisplayReason] = useState<string>("");
   const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   useEffect(() => {
-    if (initialReason === "OTHER") {
+    if (hasOtherReason) {
       const fetchDetailReason = async () => {
         try {
           setIsDetailLoading(true);
@@ -49,7 +49,7 @@ export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,
     } else {
       setDisplayReason("");
     }
-  }, [postcard, initialReason]);
+  }, [postcard, hasOtherReason]);
 
   const { handlePostcardRejectReport, isLoading: isRejectLoading } =
     useReportActions({
@@ -171,7 +171,7 @@ export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,
             />
 
             <DeleteModal
-              authorId={postcard.postcardId}
+              authorId={postcard.authorId}
               isOpen={isDeleteModalOpen}
               onClose={() => setIsDeleteModalOpen(false)}
               onConfirm={handlePostcardDelete}

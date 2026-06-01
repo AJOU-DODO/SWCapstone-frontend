@@ -17,8 +17,8 @@ import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 
 //정렬 옵션
 const sortOptions = [
-  { label: "최근 신고 순", value: "RECENT_REPORT" },
-  { label: "닉네임", value: "RECENT_CREATED" },
+  { label: "최근 신고순", value: "RECENT_REPORT" },
+  { label: "엽서 발행순", value: "RECENT_CREATED" },
 ];
 
 export function AdminPostcardPage(){
@@ -72,11 +72,12 @@ export function AdminPostcardPage(){
         <div className="flex flex-row items-center gap-5">
           <div className="flex flex-row items-center gap-2">
             <Checkbox 
+              id="all-post-checkbox"
               checked={searchParams.get("includeDeleted") === "PENDING,PROCESSED"} 
               onCheckedChange={(checked) => updateQuery({ includeDeleted: checked ? "PENDING,PROCESSED" : "PENDING" })}
               className="data-[state=checked]:bg-[#538752] data-[state=checked]:border-[#538752]"
             />
-            <Label htmlFor="all-nest-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
+            <Label htmlFor="all-postcard-checkbox" className="text-sm font-medium text-[#54513E] cursor-pointer select-none">
               전체
             </Label>
           </div>

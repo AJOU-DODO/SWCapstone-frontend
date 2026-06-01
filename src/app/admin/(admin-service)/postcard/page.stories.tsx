@@ -10,6 +10,7 @@ import { PostcardList } from "@/types/indexAdmin";
 // Mock 데이터
 // ─────────────────────────────────────────────
 const makePostcard = (overrides?: Partial<PostcardList>): PostcardList => ({
+  authorId: 1,
   postcardId: 1,
   authorNickname: "testuser",
   content: "이 엽서는 부적절한 내용을 포함하고 있습니다.",
@@ -24,16 +25,16 @@ const makePostcard = (overrides?: Partial<PostcardList>): PostcardList => ({
 });
 
 const mockPostcards: PostcardList[] = [
-  makePostcard({ postcardId: 1, authorNickname: "user_alpha", reasons: ["SPAM"], imageUrl: "https://picsum.photos/seed/p1/500/300" }),
-  makePostcard({ postcardId: 2, authorNickname: "user_beta", reasons: ["ABUSE", "OTHER"], imageUrl: "https://picsum.photos/seed/p2/500/300" }),
-  makePostcard({ postcardId: 3, authorNickname: "user_gamma", reasons: ["ADVERTISEMENT"], imageUrl: "https://picsum.photos/seed/p3/500/300", reportCount: 12 }),
-  makePostcard({ postcardId: 4, authorNickname: "user_delta", reasons: ["SPAM", "ABUSE", "OTHER"], imageUrl: "https://picsum.photos/seed/p4/500/300" }),
-  makePostcard({ postcardId: 5, authorNickname: "user_epsilon", reasons: ["OTHER"], imageUrl: "https://picsum.photos/seed/p5/500/300", deleted: true }),
-  makePostcard({ postcardId: 6, authorNickname: "user_zeta", reasons: ["ABUSE"], imageUrl: "https://picsum.photos/seed/p6/500/300" }),
-  makePostcard({ postcardId: 7, authorNickname: "user_eta", reasons: ["SPAM"], imageUrl: "https://picsum.photos/seed/p7/500/300", reportCount: 3 }),
-  makePostcard({ postcardId: 8, authorNickname: "user_theta", reasons: ["ADVERTISEMENT", "SPAM"], imageUrl: "https://picsum.photos/seed/p8/500/300" }),
-  makePostcard({ postcardId: 9, authorNickname: "user_iota", reasons: ["OTHER"], imageUrl: "https://picsum.photos/seed/p9/500/300" }),
-  makePostcard({ postcardId: 10, authorNickname: "user_kappa", reasons: ["ABUSE"], imageUrl: "https://picsum.photos/seed/p10/500/300" }),
+  makePostcard({ authorId: 1, postcardId: 1, authorNickname: "user_alpha", reasons: ["SPAM"], imageUrl: "https://picsum.photos/seed/p1/500/300" }),
+  makePostcard({ authorId: 2, postcardId: 2, authorNickname: "user_beta", reasons: ["ABUSE", "OTHER"], imageUrl: "https://picsum.photos/seed/p2/500/300" }),
+  makePostcard({ authorId: 3, postcardId: 3, authorNickname: "user_gamma", reasons: ["ADVERTISEMENT"], imageUrl: "https://picsum.photos/seed/p3/500/300", reportCount: 12 }),
+  makePostcard({ authorId: 4, postcardId: 4, authorNickname: "user_delta", reasons: ["SPAM", "ABUSE", "OTHER"], imageUrl: "https://picsum.photos/seed/p4/500/300" }),
+  makePostcard({ authorId: 5, postcardId: 5, authorNickname: "user_epsilon", reasons: ["OTHER"], imageUrl: "https://picsum.photos/seed/p5/500/300", deleted: true }),
+  makePostcard({ authorId: 6, postcardId: 6, authorNickname: "user_zeta", reasons: ["ABUSE"], imageUrl: "https://picsum.photos/seed/p6/500/300" }),
+  makePostcard({ authorId: 7, postcardId: 7, authorNickname: "user_eta", reasons: ["SPAM"], imageUrl: "https://picsum.photos/seed/p7/500/300", reportCount: 3 }),
+  makePostcard({ authorId: 8, postcardId: 8, authorNickname: "user_theta", reasons: ["ADVERTISEMENT", "SPAM"], imageUrl: "https://picsum.photos/seed/p8/500/300" }),
+  makePostcard({ authorId: 9, postcardId: 9, authorNickname: "user_iota", reasons: ["OTHER"], imageUrl: "https://picsum.photos/seed/p9/500/300" }),
+  makePostcard({ authorId: 10, postcardId: 10, authorNickname: "user_kappa", reasons: ["ABUSE"], imageUrl: "https://picsum.photos/seed/p10/500/300" }),
 ];
 
 // ─────────────────────────────────────────────
