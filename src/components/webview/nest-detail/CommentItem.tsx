@@ -204,7 +204,10 @@ export function CommentItem({
               <>
                 <button
                   type="button"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setIsEditing(true);
+                    setEditText(comment.content);
+                  }}
                   className="flex items-center gap-1 text-[10px] text-[#B0AC9C] hover:text-[#5C5346] transition-colors"
                 >
                   <Pencil className="w-3 h-3" />
