@@ -87,11 +87,14 @@ export async function fetchUserPostcards(
   filter: string,
   page: number,
 ): Promise<MyPostcardApiResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/mypage/postcards?filter=${filter}&page=${page}`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${accessToken}` },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${BASE_URL}/api/v1/mypage/postcards?filter=${filter}&page=${page}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+    },
+  );
   if (!res.ok) throw new Error("유저 엽서 정보를 불러오지 못했습니다.");
   return res.json();
 }
@@ -141,4 +144,35 @@ export async function fetchPresignedUrl(
   );
   if (!res.ok) throw new Error("이미지 업로드 실패");
   return res.json();
+}
+
+// 엽서를 수정하는 함수
+export async function updatePostcard(
+  id: number,
+  payload: { imageUrl: string; content: string },
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/postcards/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("엽서 수정에 실패했습니다.");
+}
+
+// 엽서를 삭제하는 함수
+export async function deletePostcard(
+  id: number,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/postcards/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok) throw new Error("엽서 삭제에 실패했습니다.");
 }
