@@ -180,7 +180,6 @@ export function CommentItem({ authorId, profileImageUrl, commentId, nickname, co
           />
 
           <DeleteModal
-            targetType="COMMENT"
             authorId={authorId}
             isOpen={isDeleteModalOpen}
             onClose={() => setIsDeleteModalOpen(false)}

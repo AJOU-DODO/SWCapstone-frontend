@@ -32,16 +32,14 @@ export const getCommentsAdmin = async (nestId: number) => {
 };
 
 // 관리자 권한으로 둥지 삭제
-export const deleteNestAdmin = async (nestId: number, reason: string ) => {
-  const { data } = await api.delete(`/api/v1/admin/nests/${nestId}`, {
-    data: {reason} 
-  });
+export const deleteNestAdmin = async (nestId: number, reason?: string ) => {
+  const { data } = await api.delete(`/api/v1/admin/nests/${nestId}`, { data: {reason} });
   return data;
 };
 
 // 관리자 권한으로 댓글 삭제
-export const deleteCommentAdmin = async (commentId: number) => {
-  const { data } = await api.delete(`/api/v1/admin/comments/${commentId}`);
+export const deleteCommentAdmin = async (commentId: number, reason?: string) => {
+  const { data } = await api.delete(`/api/v1/admin/comments/${commentId}`, { data: {reason} });
   return data;
 };
 

@@ -4,18 +4,16 @@ import { useState } from "react";
 import UserSanctionModal from "@/components/admin/nest/UserSanctionModal";
 
 interface ConfirmModalProps {
-  targetType?: string;
   authorId: number;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason?: string) => void;
   title: string;
   message: string;
   isLoading?: boolean;
 }
 
 export default function DeleteModal({
-  targetType,
   authorId, 
   isOpen, 
   onClose, 
@@ -30,9 +28,6 @@ export default function DeleteModal({
   if (!isOpen) return null;
 
   const handleNextStep = () => {
-    if (!reason.trim() && targetType !== "COMMENT") {
-      return;
-    }
     setIsSanctionModalOpen(true);
   };
 
@@ -53,19 +48,17 @@ export default function DeleteModal({
           <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{message}</p>
         </div>
 
-        {targetType !== "COMMENT" && (
-          <div className="flex flex-col gap-1.5 text-left">
-            <label className="text-xs font-semibold text-gray-700 pl-0.5">삭제 및 제재 사유</label>
-            <input 
-              type="text"
-              placeholder="해당 콘텐츠를 삭제하는 사유를 입력하세요."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              disabled={isLoading}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-red-500 disabled:bg-gray-100"
-            />
-          </div>
-        )}
+        <div className="flex flex-col gap-1.5 text-left">
+          <label className="text-xs font-semibold text-gray-700 pl-0.5">삭제 및 제재 사유</label>
+          <input 
+            type="text"
+            placeholder="해당 콘텐츠를 삭제하는 사유를 입력하세요. (미입력시 기본값 적용)"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            disabled={isLoading}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-red-500 disabled:bg-gray-100"
+          />
+        </div>
 
         {/* 하단 버튼 영역 */}
         <div className="flex flex-row justify-end gap-2 mt-2">
@@ -78,7 +71,7 @@ export default function DeleteModal({
           </button>
           <button
             onClick={handleNextStep}
-            disabled={isLoading  || (targetType !== "COMMENT" && !reason.trim())}
+            disabled={isLoading}
             className="px-4 py-2 text-xs cursor-pointer font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-50"
           >
             확인

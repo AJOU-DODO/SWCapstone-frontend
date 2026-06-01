@@ -8,9 +8,7 @@ export const getReportPostcard = async (params?: { statuses?: string; sort?: str
 };
 
 // 관리자 권한으로 엽서 삭제
-export const deleteReportPostcard = async (postcardId: number, reason: string ) => {
-  const { data } = await api.delete(`/api/v1/admin/postcards/${postcardId}`, {
-    data: {reason} 
-  });
+export const deleteReportPostcard = async (postcardId: number, reason?: string ) => {
+  const { data } = await api.delete(`/api/v1/admin/postcards/${postcardId}`, { data: {reason} });
   return data;
 };
