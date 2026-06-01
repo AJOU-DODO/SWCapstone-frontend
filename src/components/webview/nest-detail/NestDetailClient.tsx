@@ -29,12 +29,14 @@ import { CommentItem } from "./CommentItem";
 import { ReportModal } from "./ReportModal";
 import { BackHeader } from "../BackHeader";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { DeleteCommentDialog } from "./DeleteCommentDialog";
 import {
   fetchNestDetail,
   postReaction,
   fetchComments,
   postComment,
   deleteNest,
+  deleteComment,
 } from "@/lib/api";
 import type {
   ReactionType,
@@ -80,6 +82,9 @@ export function NestDetailClient({ nestId }: Props) {
 
   // 삭제 확인 모달 상태 추가
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteCommentTarget, setDeleteCommentTarget] = useState<number | null>(
+    null,
+  );
 
   const [toast, setToast] = useState<{
     type: "success" | "error";
@@ -164,6 +169,18 @@ export function NestDetailClient({ nestId }: Props) {
     onSuccess: () => {
       setCommentText("");
       queryClient.invalidateQueries({ queryKey: ["comments", nestId, sortBy] });
+    },
+  });
+
+  // 댓글 삭제 mutation
+  const deleteCommentMutation = useMutation({
+    mutationFn: () => deleteComment(deleteCommentTarget!, accessToken),
+    onSuccess: () => {
+      setDeleteCommentTarget(null);
+      queryClient.invalidateQueries({ queryKey: ["comments", nestId, sortBy] });
+    },
+    onError: () => {
+      showToast("error", "댓글 삭제에 실패했습니다.");
     },
   });
 
@@ -410,6 +427,9 @@ export function NestDetailClient({ nestId }: Props) {
                   onReportClick={(type, targetId) =>
                     setReportTarget({ type, id: targetId })
                   }
+                  onDeleteClick={(commentId) =>
+                    setDeleteCommentTarget(commentId)
+                  }
                 />
               ))
             )}
@@ -464,12 +484,20 @@ export function NestDetailClient({ nestId }: Props) {
         }
       />
 
-      {/*둥지 삭제 확인 모달 */}
+      {/* 둥지 삭제 확인 모달 */}
       <DeleteConfirmDialog
         open={deleteConfirmOpen}
         isPending={deleteMutation.isPending}
         onClose={() => setDeleteConfirmOpen(false)}
         onConfirm={() => deleteMutation.mutate()}
+      />
+
+      {/* 댓글 삭제 확인 모달 */}
+      <DeleteCommentDialog
+        open={!!deleteCommentTarget}
+        isPending={deleteCommentMutation.isPending}
+        onClose={() => setDeleteCommentTarget(null)}
+        onConfirm={() => deleteCommentMutation.mutate()}
       />
     </div>
   );

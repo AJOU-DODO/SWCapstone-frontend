@@ -26,6 +26,7 @@ interface Props {
   sortBy: string;
   isChild?: boolean;
   onReportClick: (type: ReportType, targetId: number) => void;
+  onDeleteClick: (commentId: number) => void;
 }
 
 export function CommentItem({
@@ -35,6 +36,7 @@ export function CommentItem({
   sortBy,
   isChild = false,
   onReportClick,
+  onDeleteClick,
 }: Props) {
   const queryClient = useQueryClient();
   const [replyOpen, setReplyOpen] = useState(false);
@@ -83,14 +85,6 @@ export function CommentItem({
     mutationFn: () => updateComment(comment.id, editText, accessToken),
     onSuccess: () => {
       setIsEditing(false);
-      invalidateComments();
-    },
-  });
-
-  // 댓글 삭제
-  const deleteMutation = useMutation({
-    mutationFn: () => deleteComment(comment.id, accessToken),
-    onSuccess: () => {
       invalidateComments();
     },
   });
@@ -215,8 +209,7 @@ export function CommentItem({
                 </button>
                 <button
                   type="button"
-                  onClick={() => deleteMutation.mutate()}
-                  disabled={deleteMutation.isPending}
+                  onClick={() => onDeleteClick(comment.id)}
                   className="flex items-center gap-1 text-[10px] text-[#B0AC9C] hover:text-red-400 transition-colors"
                 >
                   <Trash2 className="w-3 h-3" />
@@ -260,6 +253,7 @@ export function CommentItem({
           sortBy={sortBy}
           isChild
           onReportClick={onReportClick}
+          onDeleteClick={onDeleteClick}
         />
       ))}
     </>
