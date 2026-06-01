@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ThumbsUp, AlertCircle, Send, MessageCircle } from "lucide-react";
+import {
+  ThumbsUp,
+  AlertCircle,
+  Send,
+  MessageCircle,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postComment, toggleCommentLike } from "@/lib/api";
+import { postComment, toggleCommentLike, updateComment } from "@/lib/api";
 import type { NestComment, ReportType } from "@/types";
 
 interface Props {
@@ -14,6 +21,9 @@ interface Props {
   sortBy: string;
   isChild?: boolean;
   onReportClick: (type: ReportType, targetId: number) => void;
+  onDeleteClick: (commentId: number) => void;
+  onEditSuccess: () => void;
+  onEditError: () => void;
 }
 
 export function CommentItem({
@@ -23,14 +33,23 @@ export function CommentItem({
   sortBy,
   isChild = false,
   onReportClick,
+  onDeleteClick,
+  onEditSuccess,
+  onEditError,
 }: Props) {
   const queryClient = useQueryClient();
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(comment.content);
   const [likeState, setLikeState] = useState({
     liked: comment.liked,
     likeCount: comment.likeCount,
   });
+
+  const invalidateComments = () => {
+    queryClient.invalidateQueries({ queryKey: ["comments", nestId, sortBy] });
+  };
 
   // 댓글 좋아요
   const likeMutation = useMutation({
@@ -56,13 +75,31 @@ export function CommentItem({
     onSuccess: () => {
       setReplyText("");
       setReplyOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["comments", nestId, sortBy] });
+      invalidateComments();
+    },
+  });
+
+  // 댓글 수정
+  const editMutation = useMutation({
+    mutationFn: () => updateComment(comment.id, editText, accessToken),
+    onSuccess: () => {
+      setIsEditing(false);
+      invalidateComments();
+      onEditSuccess();
+    },
+    onError: () => {
+      onEditError();
     },
   });
 
   const handleSendReply = () => {
     if (!replyText.trim() || replyMutation.isPending) return;
     replyMutation.mutate();
+  };
+
+  const handleEdit = () => {
+    if (!editText.trim() || editMutation.isPending) return;
+    editMutation.mutate();
   };
 
   return (
@@ -85,12 +122,44 @@ export function CommentItem({
             <p className="text-[11px] font-semibold text-[#5C5346] mb-1">
               {comment.nickname}
             </p>
-            <p className="text-xs text-[#3D3830] leading-relaxed">
-              {comment.content}
-            </p>
+            {/* 수정 모드 */}
+            {isEditing ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleEdit()}
+                  className="flex-1 text-xs text-[#3D3830] outline-none bg-transparent border-b border-[#E0DDD3]"
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={handleEdit}
+                  disabled={!editText.trim() || editMutation.isPending}
+                  className="w-5 h-5 rounded-full bg-[#5C5346] flex items-center justify-center disabled:opacity-40"
+                >
+                  <Send className="w-2.5 h-2.5 text-white" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditText(comment.content);
+                  }}
+                  className="text-[10px] text-[#B0AC9C]"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <p className="text-xs text-[#3D3830] leading-relaxed">
+                {comment.content}
+              </p>
+            )}
           </div>
 
-          {/* 좋아요 & 답글 & 신고 */}
+          {/* 좋아요 & 답글 & 신고 & 수정 & 삭제 */}
           <div className="flex items-center gap-3 mt-1.5 px-1">
             <button
               type="button"
@@ -126,6 +195,31 @@ export function CommentItem({
               <AlertCircle className="w-3 h-3" />
               신고
             </button>
+
+            {/* mine이 true일 때만 수정/삭제 버튼 표시 */}
+            {comment.mine && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditing(true);
+                    setEditText(comment.content);
+                  }}
+                  className="flex items-center gap-1 text-[10px] text-[#B0AC9C] hover:text-[#5C5346] transition-colors"
+                >
+                  <Pencil className="w-3 h-3" />
+                  수정
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDeleteClick(comment.id)}
+                  className="flex items-center gap-1 text-[10px] text-[#B0AC9C] hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  삭제
+                </button>
+              </>
+            )}
           </div>
 
           {/* 대댓글 입력창 */}
@@ -162,6 +256,9 @@ export function CommentItem({
           sortBy={sortBy}
           isChild
           onReportClick={onReportClick}
+          onDeleteClick={onDeleteClick}
+          onEditSuccess={onEditSuccess}
+          onEditError={onEditError}
         />
       ))}
     </>

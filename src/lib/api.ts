@@ -334,3 +334,34 @@ export async function deleteNest(
   });
   if (!res.ok) throw new Error("둥지 삭제에 실패했습니다.");
 }
+
+// 댓글을 수정하는 함수
+export async function updateComment(
+  commentId: number,
+  content: string,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/comments/${commentId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) throw new Error("댓글 수정에 실패했습니다.");
+}
+
+// 댓글을 삭제하는 함수
+export async function deleteComment(
+  commentId: number,
+  accessToken: string,
+): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/v1/nests/comments/${commentId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok) throw new Error("댓글 삭제에 실패했습니다.");
+}
