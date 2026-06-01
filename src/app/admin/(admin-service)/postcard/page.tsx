@@ -53,7 +53,6 @@ export function AdminPostcardPage(){
           const data = await getReportPostcard(params);
           setPostcard(data.data.content);
           setTotalPages(data.data.totalPages || 1);
-          console.log(data);
         } catch (error) {
           console.error('엽서 목록 로딩 실패:', error);
         } finally {

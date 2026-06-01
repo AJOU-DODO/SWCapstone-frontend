@@ -46,7 +46,6 @@ export default function PostcardGrid({postcards, triggerRefresh} : {postcards: P
         ))}
       </div>
 
-      {/* ➡️ 2. 사진 클릭 시 뜨는 대형 상세보기 모달 (라이트박스) */}
       {selectedPostcard && (
         <PostcardDetailModal
           postcard={selectedPostcard}
