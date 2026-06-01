@@ -74,11 +74,12 @@ export function useReportActions({ targetId, onSuccess }: UseReportActionsProps)
   };
 
   // 관리자 권한으로 둥지 강제 삭제
-  const handleNestDelete = async (reason: string) => {
+  const handleNestDelete = async (reason?: string) => {
     setIsLoading(true);
     try {
 
-      await deleteNestAdmin(targetId, reason);
+      if(reason) await deleteNestAdmin(targetId, reason);
+      else await deleteNestAdmin(targetId);
       
       if (onSuccess) onSuccess(); 
     } catch (error) {
@@ -90,11 +91,11 @@ export function useReportActions({ targetId, onSuccess }: UseReportActionsProps)
   };
 
   // 관리자 권한으로 댓글 강제 삭제
-  const handleCommentDelete = async () => {
+  const handleCommentDelete = async (reason?: string) => {
     setIsLoading(true);
     try {
 
-      await deleteCommentAdmin(targetId);
+      await deleteCommentAdmin(targetId, reason);
       
       if (onSuccess) onSuccess(); 
     } catch (error) {
@@ -106,7 +107,7 @@ export function useReportActions({ targetId, onSuccess }: UseReportActionsProps)
   };
 
   // 관리자 권한으로 엽서 강제 삭제
-  const handlePostcardDelete = async (reason: string) => {
+  const handlePostcardDelete = async (reason?: string) => {
     setIsLoading(true);
     try {
 
