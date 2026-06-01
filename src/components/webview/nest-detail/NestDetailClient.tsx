@@ -178,8 +178,10 @@ export function NestDetailClient({ nestId }: Props) {
     onSuccess: () => {
       setDeleteCommentTarget(null);
       queryClient.invalidateQueries({ queryKey: ["comments", nestId, sortBy] });
+      showToast("success", "댓글이 삭제되었습니다.");
     },
     onError: () => {
+      setDeleteCommentTarget(null);
       showToast("error", "댓글 삭제에 실패했습니다.");
     },
   });
@@ -429,6 +431,12 @@ export function NestDetailClient({ nestId }: Props) {
                   }
                   onDeleteClick={(commentId) =>
                     setDeleteCommentTarget(commentId)
+                  }
+                  onEditSuccess={() =>
+                    showToast("success", "댓글이 수정되었습니다.")
+                  }
+                  onEditError={() =>
+                    showToast("error", "댓글 수정에 실패했습니다.")
                   }
                 />
               ))

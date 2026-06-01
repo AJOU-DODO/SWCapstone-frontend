@@ -11,12 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  postComment,
-  toggleCommentLike,
-  updateComment,
-  deleteComment,
-} from "@/lib/api";
+import { postComment, toggleCommentLike, updateComment } from "@/lib/api";
 import type { NestComment, ReportType } from "@/types";
 
 interface Props {
@@ -27,6 +22,8 @@ interface Props {
   isChild?: boolean;
   onReportClick: (type: ReportType, targetId: number) => void;
   onDeleteClick: (commentId: number) => void;
+  onEditSuccess: () => void;
+  onEditError: () => void;
 }
 
 export function CommentItem({
@@ -37,6 +34,8 @@ export function CommentItem({
   isChild = false,
   onReportClick,
   onDeleteClick,
+  onEditSuccess,
+  onEditError,
 }: Props) {
   const queryClient = useQueryClient();
   const [replyOpen, setReplyOpen] = useState(false);
@@ -86,6 +85,10 @@ export function CommentItem({
     onSuccess: () => {
       setIsEditing(false);
       invalidateComments();
+      onEditSuccess();
+    },
+    onError: () => {
+      onEditError();
     },
   });
 
@@ -254,6 +257,8 @@ export function CommentItem({
           isChild
           onReportClick={onReportClick}
           onDeleteClick={onDeleteClick}
+          onEditSuccess={onEditSuccess}
+          onEditError={onEditError}
         />
       ))}
     </>
