@@ -12,7 +12,6 @@ import { ExchangedPostcard } from "@/types";
 import PostcardGrid from "@/components/webview/mypage/Postcard/PostcardGrid";
 import { ExchangeConfirmModal } from "@/components/webview/nest-detail/ExchangeConfirmModal";
 import { ExchangeResultModal } from "@/components/webview/nest-detail/ExchangeResultModal";
-import { accessedDynamicData } from "next/dist/server/app-render/dynamic-rendering";
 
 export default function Page() {
   const params = useParams();
