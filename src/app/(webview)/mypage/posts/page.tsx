@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import MyPageHeader from "@/components/webview/mypage/MyPageHeader";
 import PostCardTap from "@/components/webview/mypage/Postcard/PostcardTab";
 import PostcardGrid from "@/components/webview/mypage/Postcard/PostcardGrid";
@@ -24,7 +25,7 @@ const getFilter = (tab: "mine" | "sent" | "received") => {
 
 type ToastState = { type: "success" | "error"; message: string } | null;
 
-export default function Page() {
+function PostcardPageContent() {
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<"mine" | "sent" | "received">(
@@ -199,5 +200,13 @@ export default function Page() {
         }
       />
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <PostcardPageContent />
+    </Suspense>
   );
 }
