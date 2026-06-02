@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { togglePostcardReaction } from "@/lib/apiMypage";
 import type { PostcardReactionType } from "@/types/indexMypage";
 import { REACTION_LABELS } from "@/types/indexMypage";
@@ -18,8 +17,16 @@ export function PostcardReactions({
   accessToken,
   initialReaction = null,
 }: Props) {
+  const queryClient = useQueryClient();
   const [selectedReaction, setSelectedReaction] =
     useState<PostcardReactionType | null>(initialReaction);
+  const [prevPostcardId, setPrevPostcardId] = useState(postcardId);
+
+  // postcardId가 변경될 때 selectedReaction 동기화
+  if (postcardId !== prevPostcardId) {
+    setPrevPostcardId(postcardId);
+    setSelectedReaction(initialReaction ?? null);
+  }
 
   const reactionMutation = useMutation({
     mutationFn: (type: PostcardReactionType) =>
@@ -27,6 +34,9 @@ export function PostcardReactions({
     onMutate: (type) => {
       // 같은 리액션 클릭 시 취소, 다른 리액션 클릭 시 변경
       setSelectedReaction((prev) => (prev === type ? null : type));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userPostcard"] });
     },
     onError: () => {
       // 실패 시 이전 상태로 복구
