@@ -29,15 +29,15 @@ export default function PostcardEditModal({
 }: Props) {
   const queryClient = useQueryClient();
   const [content, setContent] = useState("");
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreview, setImagePreview] = useState(postcard?.imageUrl ?? "");
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // 수정 모달 열릴 때 기존 값으로 초기화
-  useEffect(() => {
-    if (postcard) {
-      setContent(postcard.content);
-      setImagePreview(postcard.imageUrl);
-    }
-  }, [postcard]);
+  if (postcard && !isInitialized) {
+    setContent(postcard.content);
+    setImagePreview(postcard.imageUrl);
+    setIsInitialized(true);
+  }
 
   // 이미지 수신 콜백 등록
   useEffect(() => {
@@ -51,6 +51,11 @@ export default function PostcardEditModal({
 
   const handleImageChange = () => {
     window.AndroidBridge?.requestImageUpload?.();
+  };
+
+  const handleClose = () => {
+    setIsInitialized(false);
+    onClose();
   };
 
   const updateMutation = useMutation({
@@ -88,7 +93,7 @@ export default function PostcardEditModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
@@ -128,7 +133,7 @@ export default function PostcardEditModal({
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={updateMutation.isPending}
               className="h-11 rounded-xl border-2 border-[#C8C4B0] bg-transparent text-[#54513E] text-sm font-semibold transition-all active:scale-95 disabled:opacity-50"
             >
