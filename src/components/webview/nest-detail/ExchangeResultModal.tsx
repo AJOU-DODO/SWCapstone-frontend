@@ -3,15 +3,22 @@
 import Image from "next/image";
 import { X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { PostcardReactions } from "../mypage/Postcard/PostcardReactions";
 import type { ExchangedPostcard } from "@/types";
 
 interface Props {
   open: boolean;
   postcard: ExchangedPostcard | null;
+  accessToken: string;
   onClose: () => void;
 }
 
-export function ExchangeResultModal({ open, postcard, onClose }: Props) {
+export function ExchangeResultModal({
+  open,
+  postcard,
+  accessToken,
+  onClose,
+}: Props) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="flex flex-col gap-4 bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl w-[calc(100vw-2rem)] max-w-sm px-6 py-8">
@@ -46,6 +53,13 @@ export function ExchangeResultModal({ open, postcard, onClose }: Props) {
             <p className="text-sm text-[#3D3830] leading-relaxed text-center">
               {postcard.content}
             </p>
+
+            {/* 리액션 */}
+            <PostcardReactions
+              postcardId={postcard.id}
+              accessToken={accessToken}
+              initialReaction={null}
+            />
           </>
         )}
       </DialogContent>

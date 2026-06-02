@@ -76,14 +76,19 @@ export default function Page() {
 
   // 엽서 교환 mutation
   const { mutate: exchange, isPending: isExchanging } = useMutation({
-    mutationFn: () => {
-      if (!selectedPostcard) throw new Error("선택된 엽서가 없습니다.");
-      return exchangePostcard(id, selectedPostcard!.id, accessToken);
+    mutationFn: (postcardId: number) => {
+      console.log("postcardId:", postcardId);
+      console.log("nestId:", id);
+      return exchangePostcard(id, postcardId, accessToken);
     },
     onSuccess: (data) => {
       setConfirmOpen(false);
       setExchangedPostcard(data.data);
       setResultOpen(true);
+    },
+    onError: (error) => {
+      console.error("교환 실패:", error);
+      alert(`교환 실패: ${error}`);
     },
   });
 
@@ -135,13 +140,16 @@ export default function Page() {
         postcard={selectedPostcard}
         isExchanging={isExchanging}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={() => exchange()}
+        onConfirm={() => {
+          if (selectedPostcard) exchange(selectedPostcard.id);
+        }}
       />
 
       {/* 교환 결과 모달 */}
       <ExchangeResultModal
         open={resultOpen}
         postcard={exchangedPostcard}
+        accessToken={accessToken}
         onClose={handleResultClose}
       />
     </div>

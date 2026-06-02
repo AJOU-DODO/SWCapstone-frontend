@@ -31,7 +31,7 @@ export interface UserDetailApiResponse {
   data: UserDetail;
 }
 
-//내가 쓴 글 
+//내가 쓴 글
 export interface MyNestDetail {
   id: number;
   title: string;
@@ -89,19 +89,19 @@ export interface MyPostcardApiResponse {
 
 // 프로필 업데이트
 export interface ProfileEditPayload {
-  nickname: string,
-  profileImageUrl: string,
-  bio: string
+  nickname: string;
+  profileImageUrl: string;
+  bio: string;
 }
 
 // 내 댓글
 export interface MyComment {
-  id: number,
-  nestId: number,
-  nestTitle: string,
-  content: string,
-  authorNickname: string,
-  createdAt: string
+  id: number;
+  nestId: number;
+  nestTitle: string;
+  content: string;
+  authorNickname: string;
+  createdAt: string;
 }
 
 export interface MyCommentsData {
@@ -122,7 +122,7 @@ export interface MyCommentsApiResponse {
 }
 
 // S3에 이미지 업로드. presignedUrl, fileUrl
-export interface imageUrl{
+export interface imageUrl {
   presignedUrl: string;
   fileUrl: string;
 }
@@ -132,3 +132,12 @@ export interface ImageUrlApiResponse {
   message: string | null;
   data: imageUrl;
 }
+
+export type PostcardReactionType = "TOUCHED" | "AWESOME" | "HAPPY" | "BEST";
+
+export const REACTION_LABELS: Record<PostcardReactionType, string> = {
+  TOUCHED: "🥹",
+  AWESOME: "🤩",
+  HAPPY: "😊",
+  BEST: "🏆",
+};
