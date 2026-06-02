@@ -11,6 +11,7 @@ import Spinner from "@/components/webview/Spinner";
 import { fetchUserPostcards } from "@/lib/apiMypage";
 import type { MyPostcard } from "@/types/indexMypage";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
 import { useState, useEffect, useMemo } from "react";
 
@@ -24,8 +25,14 @@ const getFilter = (tab: "mine" | "sent" | "received") => {
 type ToastState = { type: "success" | "error"; message: string } | null;
 
 export default function Page() {
+  const searchParams = useSearchParams();
+
   const [activeTab, setActiveTab] = useState<"mine" | "sent" | "received">(
-    "mine",
+    () => {
+      const tab = searchParams.get("tab");
+      if (tab === "sent" || tab === "received") return tab;
+      return "mine";
+    },
   );
   const [selectedPostcard, setSelectedPostcard] = useState<MyPostcard | null>(
     null,
