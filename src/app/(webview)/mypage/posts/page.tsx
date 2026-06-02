@@ -19,7 +19,7 @@ import { useState, useEffect, useMemo } from "react";
 // filter 매칭 함수
 const getFilter = (tab: "mine" | "sent" | "received") => {
   if (tab === "mine") return "CREATED_NOT_SHARED";
-  if (tab === "sent") return "CREATED_SHARED";
+  if (tab === "sent") return "CREATED_EXCHANGED";
   return "ACQUIRED";
 };
 
