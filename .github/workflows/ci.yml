@@ -1,8 +1,6 @@
 name: DODO CI Pipleline
 
 on:
-  push:
-    branches: ["main", "develop"]
   pull_request:
     branches: ["main", "develop"]
 
@@ -40,10 +38,3 @@ jobs:
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           exitOnceUploaded: true
-
-  deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Vercel Deployment via Hook
-        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
