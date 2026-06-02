@@ -326,3 +326,46 @@ export interface PostcardListData {
   number: number;
   empty: boolean;
 }
+
+
+export type InquiryType = "ACCOUNT" | "BUG" | "SUGGESTION" | "BUSINESS";
+export type InquiryStatus = "PENDING" | "COMPLETED";
+
+// 문의사항 리스트 
+export interface Inquiry {
+  id: number;
+  userId: number;
+  userNickname: string;
+  type: InquiryType;
+  typeDescription: string;
+  title: string;
+  status: InquiryStatus;
+  statusDescription: string;
+  createdAt: string;
+  answeredAt: string;
+}
+
+export interface InquiryData {
+  content: Inquiry[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  empty: boolean;
+}
+
+// 문의사항 상세보기
+export interface InquiryDetail {
+  id: number;
+  userId: number;
+  type: InquiryType;
+  typeDescription: string;
+  title: string;
+  content: string;
+  answer: string;
+  status: InquiryStatus;
+  statusDescription: string;
+  createdAt: string;
+  answeredAt: string;
+}
