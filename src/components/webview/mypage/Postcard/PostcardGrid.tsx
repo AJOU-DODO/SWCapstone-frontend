@@ -92,9 +92,9 @@ function PostcardItem({
         fill
         className="object-cover"
       />
-      {/* received 탭이고 reactionType이 있을 때만 하트 표시 */}
-      {activeTab === "received" && item.reactionType && (
-        <div className="absolute bottom-1.5 right-1.5 w-6 h-6 rounded-full bg-white/80 flex items-center justify-center">
+      {/* sent 탭이고 reactionType이 있을 때만 하트 표시 */}
+      {activeTab === "sent" && item.reactionType && (
+        <div className="absolute bottom-1.5 right-1.5 ">
           <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
         </div>
       )}
