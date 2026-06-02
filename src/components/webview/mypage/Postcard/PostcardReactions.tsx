@@ -47,14 +47,13 @@ export function PostcardReactions({
               type="button"
               onClick={() => reactionMutation.mutate(type)}
               disabled={reactionMutation.isPending}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-2xl transition-all active:scale-95 ${
+              className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-200 ease-in-out active:scale-95 ${
                 selectedReaction === type
-                  ? "bg-[#54513E] text-white"
+                  ? "bg-[#54513E] text-white scale-105"
                   : "bg-[#FAF7E4] text-[#54513E] hover:bg-[#F0EDE3]"
               } disabled:opacity-50`}
             >
               <span className="text-xl">{REACTION_LABELS[type]}</span>
-              <span className="text-[10px] font-medium">{type}</span>
             </button>
           ),
         )}
