@@ -42,17 +42,8 @@ jobs:
           exitOnceUploaded: true
 
   deploy:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel
-
-      - name: Deploy to Production
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --scope="${{ secrets.VERCEL_ORG_ID }}" --yes
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Trigger Vercel Deployment via Hook
+        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
