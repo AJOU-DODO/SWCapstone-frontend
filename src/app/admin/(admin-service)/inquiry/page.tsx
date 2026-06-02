@@ -3,7 +3,9 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 
+import InquiryTabButton from '@/components/admin/inquiry/InquiryTabButton';
 import InquiryTable from '@/components/admin/tables/InquiryTable';
+import Pagination from '@/components/admin/Pagination';
 import { Inquiry } from '@/types/indexAdmin';
 import { getInquiries } from '@/lib/adminApi/inquiry';
 import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
@@ -17,7 +19,7 @@ export default function Page() {
 
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
-  const status = searchParams.get('status') || 'PENDING';
+  const activeTab = searchParams.get('tab') || 'PENDING';
 
   const [refreshKey, setRefreshKey] = useState(0);
   const triggerRefresh = () => setRefreshKey(prev => prev + 1);
@@ -26,7 +28,7 @@ export default function Page() {
       const fetchInquiries = async () => {
         try {
           const params: { status?: string; page: number } = {
-            status: status,
+            status: activeTab,
             page: currentPage - 1
           };
   
@@ -39,11 +41,19 @@ export default function Page() {
       };
   
       fetchInquiries();
-    }, [searchParams, refreshKey]);
+    }, [activeTab, searchParams, refreshKey]);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
+      <div>
+        <InquiryTabButton/>
+      </div>
+
       <InquiryTable inquiries={inquiries} onRowClick={setSelectedInquiryId} selectedId={selectedInquiryId}/>
+
+      <div className="py-4 border-t">
+        <Pagination totalPages={totalPages}/>
+      </div>
     </div>
   );
 }
