@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export default function InquiryTabButton() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'PENDING'; // 기본값 'all'
+  const activeTab = searchParams.get('tab') || 'PENDING';
 
   const handleTabChange = (tab: string) => {
     router.push(`/admin/inquiry?tab=${tab}`);

@@ -50,10 +50,7 @@ export default async function InquiryDetailPage({ params, searchParams }: PagePr
         ← 목록으로
       </Link>
       
-      {/* 1. 문의 내용 출력 (정적 영역) */}
       <InquiryDetail inquiry={inquiry}/>
-
-      {/* 2. 답변 등록 창 (동적 영역: 클라이언트 컴포넌트에 ID만 넘겨줍니다) */}
       <AnswerForm inquiryId={id}/>
     </div>
   );

@@ -37,7 +37,7 @@ function InquiryPage() {
     };
 
     fetchInquiries();
-  }, [activeTab, searchParams]);
+  }, [activeTab, currentPage]);
 
   const handleRowClick = (id: number) => {
     setSelectedInquiryId(id);

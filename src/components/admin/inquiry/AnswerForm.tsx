@@ -61,6 +61,7 @@ export default function AnswerForm({ inquiryId }: AnswerFormProps) {
         </div>
         <button 
         type="submit"
+        disabled={isSubmitting || status === "success" || !answer.trim()}
         className="px-6 py-2.5 bg-[#54513E] text-white text-sm font-semibold 
                   rounded-lg shadow hover:bg-[#434031] active:scale-98 transition-all"
         >

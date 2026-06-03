@@ -41,8 +41,6 @@ export default function InquiryTable({ inquiries, onRowClick, selectedId }: Tabl
         </TableHeader>
         <TableBody>
           {inquiries.map((inquiry) => {
-            const isSelected = selectedId === inquiry.id;
-            
             return(
             <TableRow 
               key={inquiry.id} 
@@ -58,7 +56,7 @@ export default function InquiryTable({ inquiries, onRowClick, selectedId }: Tabl
                 <TableCell className="max-w-[150px] truncate">{"[" + inquiry.typeDescription + "]"} {inquiry.title}</TableCell>
                 <TableCell>{inquiry.statusDescription}</TableCell>
                 <TableCell>{new Date(inquiry.createdAt).toLocaleDateString()}</TableCell>
-                <TableCell>{new Date(inquiry.answeredAt).toLocaleDateString()}</TableCell>
+                <TableCell>{inquiry.answeredAt ? new Date(inquiry.answeredAt).toLocaleDateString()  : '----.--.--'}</TableCell>
             </TableRow>
           )})}
         </TableBody>
