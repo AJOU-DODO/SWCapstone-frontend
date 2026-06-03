@@ -3,21 +3,19 @@
 import { deleteSanctionUser } from '@/lib/adminApi/user';
 import { useState } from "react";
 
-interface UserSanctionModalProps {
+interface DeleteSanctionModalProps {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
   setIsUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function DeleteSanctionModal ({ userId, isOpen, onClose, setIsUpdated }: UserSanctionModalProps) {
+export default function DeleteSanctionModal ({ userId, isOpen, onClose, setIsUpdated }: DeleteSanctionModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     try {
       setIsLoading(true);
 
