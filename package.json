@@ -9,7 +9,10 @@
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic"
+    "chromatic": "npx chromatic",
+    "test": "vitest",
+    "test:run": "vitest run --project unit",
+    "test:coverage": "vitest run --project unit --coverage"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
