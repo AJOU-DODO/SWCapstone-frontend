@@ -45,23 +45,23 @@ export default function DeleteSanctionModal ({ userId, isOpen, onClose, setIsUpd
           다시 모든 서비스를 정상적으로 이용할 수 있습니다.
         </p>
 
-          <div className="flex flex-row justify-between gap-2 mt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              className="px-4 py-2 border border-gray-300 rounded-sm text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
-            >
-              취소
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading }
-              className="px-4 py-2 bg-[#54513E] text-white rounded-sm text-sm hover:bg-[#54513E]/90 disabled:bg-gray-400 font-medium transition-colors"
-            >
-              {isLoading ? "등록 중..." : "해제하기"}
-            </button>
-          </div>
+        <div className="flex flex-row justify-between gap-2 mt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isLoading}
+            className="px-4 py-2 border border-gray-300 rounded-sm text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isLoading }
+            className="px-4 py-2 bg-[#54513E] text-white rounded-sm text-sm hover:bg-[#54513E]/90 disabled:bg-gray-400 font-medium transition-colors"
+          >
+            {isLoading ? "등록 중..." : "해제하기"}
+          </button>
+        </div>
       </div>
     </div>
   )

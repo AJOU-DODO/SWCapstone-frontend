@@ -29,12 +29,17 @@ export default function UserTable({ users, onRowClick }: { users: User[]; onRowC
           {users.map((user) => (
             <TableRow 
             onClick={() => onRowClick(user)}
-            key={user.id} className="border-[#54513E]/50">
+            key={user.id} 
+            className={`border-[#54513E]/50 transition-colors cursor-pointer
+            ${user.isSanctioned 
+              ? "text-red-600 bg-red-50/50 hover:bg-red-100/70 data-[state=selected]:bg-red-100" 
+              : "hover:bg-muted/50"
+            }`}>
               <TableCell className="font-medium">{user.id}</TableCell>
               <TableCell>{user.nickname}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
-              <TableCell>{user.isSanctioned ? 'O' : 'X' }</TableCell>
+              <TableCell className={user.isSanctioned ? "font-bold" : ""}>{user.isSanctioned ? 'O' : 'X' }</TableCell>
               <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>{user.nestCount}</TableCell>
               <TableCell>{user.commentCount}</TableCell>
