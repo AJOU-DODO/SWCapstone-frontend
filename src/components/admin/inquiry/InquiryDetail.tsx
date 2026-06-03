@@ -18,7 +18,11 @@ export default async function InquiryDetail({ inquiry }:{inquiry: Inquiry}) {
         Q. {inquiry.content}
       </div>
       <div className="mt-4 p-4 border-t border-dashed border-[#54513E]">
-        A. {inquiry.answer}
+        A. {inquiry.answer ? (
+              inquiry.answer
+            ) : (
+              <span className="text-gray-400 italic">아직 답변이 등록되지 않았습니다.</span>
+            )}
       </div>
     </div>
   );
