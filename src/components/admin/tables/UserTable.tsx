@@ -9,7 +9,7 @@ import {
 
 import { User } from '@/types/indexAdmin';
 
-export default function UserTable({ users, onRowClick }: { users: User[]; onRowClick: (id: number) => void; }) {
+export default function UserTable({ users, onRowClick }: { users: User[]; onRowClick: (user: User) => void; }) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -28,7 +28,7 @@ export default function UserTable({ users, onRowClick }: { users: User[]; onRowC
         <TableBody>
           {users.map((user) => (
             <TableRow 
-            onClick={() => onRowClick(user.id)}
+            onClick={() => onRowClick(user)}
             key={user.id} className="border-[#54513E]/50">
               <TableCell className="font-medium">{user.id}</TableCell>
               <TableCell>{user.nickname}</TableCell>

@@ -6,6 +6,7 @@ import Pagination from '@/components/admin/Pagination';
 import SortSection from '@/components/admin/SortSection';
 import WhitelistModal from '@/components/admin/user/WhitelistModal';
 import UserSanctionModal from '@/components/admin/user/UserSanctionModal';
+import DeleteSanctionModal from '@/components/admin/user/DeleteSanctionModal';
 import { getUsers } from '@/lib/adminApi/user';
 import { User } from '@/types/indexAdmin';
 
@@ -17,7 +18,7 @@ function AdminUsersPage(){
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const searchParams = useSearchParams();
@@ -68,7 +69,7 @@ function AdminUsersPage(){
       </div>
 
       <div className="w-full h-full min-h-0 overflow-y-auto">
-        <UserTable users={users} onRowClick={(id) => setSelectedUserId(id)} />
+        <UserTable users={users} onRowClick={(user) => setSelectedUser(user)} />
       </div>
 
       <div className="mt-6 py-4 border-t">
@@ -82,13 +83,22 @@ function AdminUsersPage(){
         />
       )}
 
-      {selectedUserId !== null && (
-        <UserSanctionModal 
-          isOpen={true}
-          userId={selectedUserId}
-          onClose={() => setSelectedUserId(null)}
-          setIsUpdated={setRefreshTrigger}
-        />
+      {selectedUser !== null && (
+        selectedUser.isSanctioned ? (
+          <DeleteSanctionModal 
+            isOpen={true}
+            userId={selectedUser.id}
+            onClose={() => setSelectedUser(null)}
+            setIsUpdated={setRefreshTrigger}
+          />
+        ) : (
+          <UserSanctionModal 
+            isOpen={true}
+            userId={selectedUser.id}
+            onClose={() => setSelectedUser(null)}
+            setIsUpdated={setRefreshTrigger}
+          />
+        )
       )}
 
     </div>
