@@ -13,6 +13,12 @@ export const sanctionUser = async ({ userId, body }: { userId: number; body: Use
   return data;
 };
 
+// 유저 제재 취소
+export const deleteSanctionUser = async ({ userId }: { userId: number;} ) => {
+  const { data } = await api.delete(`/api/v1/admin/users/${userId}/sanction`);
+  return data;
+};
+
 // 화이트리스트 이메일 목록 조회
 export const getWhitelists = async () => {
   const { data } = await api.get('/api/v1/admin/whitelists');
