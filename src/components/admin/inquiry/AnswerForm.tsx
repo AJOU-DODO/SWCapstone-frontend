@@ -8,9 +8,12 @@ interface AnswerFormProps {
   inquiryId: number;
 }
 
+type SubmitStatus = "idle" | "success" | "error";
+
 export default function AnswerForm({ inquiryId }: AnswerFormProps) {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,6 +21,7 @@ export default function AnswerForm({ inquiryId }: AnswerFormProps) {
     if (!answer.trim()) return;
 
     setIsSubmitting(true);
+    setStatus("idle");
 
     try {
       await publishAnswer(inquiryId, answer);
@@ -26,6 +30,7 @@ export default function AnswerForm({ inquiryId }: AnswerFormProps) {
       router.refresh();
     } catch (error) {
       console.error("답변 등록 실패:", error);
+      setStatus("error")
     } finally {
       setIsSubmitting(false);
     }
@@ -37,7 +42,7 @@ export default function AnswerForm({ inquiryId }: AnswerFormProps) {
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        disabled={isSubmitting}
+        disabled={isSubmitting || status === "success"}
         placeholder="답변을 입력하세요."
         className="w-full min-h-[160px] p-4 border border-gray-300 rounded-lg shadow-sm 
                  focus:ring-2 focus:ring-[#54513E] focus:border-[#54513E] outline-none 
@@ -45,7 +50,15 @@ export default function AnswerForm({ inquiryId }: AnswerFormProps) {
       />
 
       {/* 2. 전송 버튼 */}
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <div className="text-sm font-medium">
+          {status === "success" && (
+            <span className="text-green-600">✓ 답변이 성공적으로 등록되었습니다.</span>
+          )}
+          {status === "error" && (
+            <span className="text-red-500">✕ 답변 등록에 실패했습니다. 다시 시도해 주세요.</span>
+          )}
+        </div>
         <button 
         type="submit"
         className="px-6 py-2.5 bg-[#54513E] text-white text-sm font-semibold 
