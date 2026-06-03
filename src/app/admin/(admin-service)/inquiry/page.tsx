@@ -8,23 +8,17 @@ import InquiryTable from '@/components/admin/tables/InquiryTable';
 import Pagination from '@/components/admin/Pagination';
 import { Inquiry } from '@/types/indexAdmin';
 import { getInquiries } from '@/lib/adminApi/inquiry';
-import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
 
-export default function Page() {
+function InquiryPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedInquiryId, setSelectedInquiryId] = useState<number | null>(null);
 
   const router = useRouter();
 
-  const { updateQuery } = useUpdateQuery();
-
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const activeTab = searchParams.get('tab') || 'PENDING';
-
-  const [refreshKey, setRefreshKey] = useState(0);
-  const triggerRefresh = () => setRefreshKey(prev => prev + 1);
 
   useEffect(() => {
     const fetchInquiries = async () => {
@@ -43,7 +37,7 @@ export default function Page() {
     };
 
     fetchInquiries();
-  }, [activeTab, searchParams, refreshKey]);
+  }, [activeTab, searchParams]);
 
   const handleRowClick = (id: number) => {
     setSelectedInquiryId(id);
@@ -68,5 +62,13 @@ export default function Page() {
         <Pagination totalPages={totalPages}/>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">목록을 로딩 중입니다...</div>}>
+      <InquiryPage />
+    </Suspense>
   );
 }
