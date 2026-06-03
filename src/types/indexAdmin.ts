@@ -359,6 +359,7 @@ export interface InquiryData {
 export interface InquiryDetail {
   id: number;
   userId: number;
+  userNickname: string;
   type: InquiryType;
   typeDescription: string;
   title: string;
@@ -368,4 +369,11 @@ export interface InquiryDetail {
   statusDescription: string;
   createdAt: string;
   answeredAt: string;
+}
+
+export interface InquiryDetailResponse {
+  status: string;
+  code: string;
+  message: string | null;
+  data: InquiryDetail;
 }
