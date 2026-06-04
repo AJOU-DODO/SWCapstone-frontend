@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin, AlertCircle, Loader2 } from "lucide-react";
 import {
@@ -35,10 +35,32 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
   const [warning, setWarning] = useState(false);
   const { setLoadedDraftId } = useNestEditorStore();
 
+  // ✅ 웹뷰 viewport 실측 (vh 단위 회피)
+  const [vh, setVh] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const measure = () => {
+      const h = window.visualViewport?.height ?? window.innerHeight;
+      if (h > 0) setVh(h);
+    };
+    // scroll-lock/포지셔닝 안정화 후 측정
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(measure),
+    );
+    window.visualViewport?.addEventListener("resize", measure);
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.visualViewport?.removeEventListener("resize", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [open]);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["drafts"],
     queryFn: () => fetchDrafts(accessToken),
-    enabled: open, // 모달이 열릴 때만 fetch
+    enabled: open,
     staleTime: 0,
   });
 
@@ -69,9 +91,15 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
     onClose();
   };
 
+  // 실측 전에는 안전한 폴백(px) 사용
+  const maxH = vh ? Math.round(vh * 0.75) : 560;
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
-      <DialogContent className="flex flex-col gap-0 p-0 bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl max-h-[75vh] w-[calc(100vw-2rem)] max-w-md fixed top-0 bottom-0 left-0 right-0 m-auto translate-x-0 translate-y-0 h-fit">
+      <DialogContent
+        style={{ maxHeight: maxH }}
+        className="flex flex-col gap-0 p-0 overflow-hidden bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl w-[calc(100vw-2rem)] max-w-md"
+      >
         {/* 헤더 */}
         <DialogHeader className="px-5 pt-5 pb-4 border-b border-[#E0DDD3] shrink-0">
           <DialogTitle className="text-base font-semibold text-[#3D3830] text-left">
@@ -80,7 +108,7 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
         </DialogHeader>
 
         {/* 목록 */}
-        <div className="flex-1 overflow-y-auto px-5 py-3 space-y-2 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-3 space-y-2">
           {isLoading ? (
             <div className="flex justify-center py-10">
               <Loader2 className="w-5 h-5 animate-spin text-[#8B8070]" />
@@ -107,7 +135,6 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
                       : "border-[#E0DDD3] bg-white hover:border-[#C8C4B0]"
                   }`}
                 >
-                  {/* 체크박스 */}
                   <div
                     className={`shrink-0 mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
                       selected
@@ -132,13 +159,10 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
                     )}
                   </div>
 
-                  {/* 내용 */}
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-1 text-[10px] text-[#8B8070]">
                       <MapPin className="w-2.5 h-2.5 shrink-0" />
-                      <span>
-                        {formatCoord(draft.latitude, draft.longitude)}
-                      </span>
+                      <span>{formatCoord(draft.latitude, draft.longitude)}</span>
                     </div>
                     <p className="text-xs text-[#3D3830] leading-relaxed line-clamp-2">
                       {draft.content ?? (
@@ -147,7 +171,6 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
                     </p>
                   </div>
 
-                  {/* 날짜 */}
                   <span className="shrink-0 text-[10px] text-[#B0AC9C] mt-0.5">
                     {formatDate(draft.createdAt)}
                   </span>
@@ -157,15 +180,13 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
           )}
         </div>
 
-        {/* 경고 메시지 */}
         {warning && (
-          <div className="mx-5 flex items-center gap-1.5 text-xs text-red-400">
+          <div className="mx-5 flex items-center gap-1.5 text-xs text-red-400 shrink-0">
             <AlertCircle className="w-3.5 h-3.5 shrink-0" />
             임시저장 게시물을 선택하지 않으셨습니다.
           </div>
         )}
 
-        {/* 하단 버튼 */}
         <DialogFooter className="px-5 pb-8 pt-3 grid grid-cols-2 gap-3 border-t border-[#E0DDD3] shrink-0">
           <button
             type="button"
