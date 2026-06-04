@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default function MypageHeader({ title }: { title: string }) {
   return (
-    <header className="sticky top-0 z-50 bg-[#FAF7E4] flex items-center h-12 px-4 border-b border-[#54513E]">
+    <header className="sticky top-0 bg-[#FAF7E4] flex items-center h-12 px-4 border-b border-[#54513E]">
       <Link href="/mypage" className="mr-4 px-2 py-1 rounded">
         <ArrowLeft size={24} strokeWidth={2.5} className="text-gray-700" />
       </Link>

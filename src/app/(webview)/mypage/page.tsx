@@ -126,8 +126,8 @@ export default function Page() {
   };
 
   const handleCancelEdit = () => {
-  setBase64(""); 
-};
+    setBase64(""); 
+  };
 
   return (
     <div>
