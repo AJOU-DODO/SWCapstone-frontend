@@ -377,3 +377,60 @@ export interface InquiryDetailResponse {
   message: string | null;
   data: InquiryDetail;
 }
+
+// 광고주 권한 부여시 필요한 정보 (광고 개수, 기간)
+export interface AdvertiserAuthorityPayload {
+  allowedAdCount: number;
+  expiredAt: string; //datetime
+}
+
+// 광고주 정보
+export interface AdvertiserList{
+  userId: number;
+  email: string;
+  nickname: string;
+  allowedAdCount: number;
+  expiredAt: string;
+  createdAt: string;
+}
+
+export type AdvertiseStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export type GetAdvertisementStatus = "ALL" | "ACTIVE" | "DELETED";
+
+// 승인 대기중인 광고
+export interface PendingAdvertisement {
+  id: number;
+  advertiserId: number;
+  advertiserNickname: string;
+  title: string;
+  content: string;
+  latitude: number;
+  longitude: number;
+  unlockRadius: number;
+  imageUrls: string[];
+  categoryIds: number[];
+  categoryNames: string[];
+  status: AdvertiseStatus;
+  rejectReason: string | null;
+  createdAt: string;
+}
+
+// 광고 승인시 필요한 정보
+export interface AdvertisementPayload {
+  expiredAt: string; //datetime
+  priorityScore: number;
+}
+
+// 게시중인 광고
+export interface Advertisement {
+  id: number;
+  title: string;
+  advertiserNickname: string;
+  expiredAt: string;
+  priorityScore: number;
+  impressions: number; //누적 노출수
+  clicks: number; //누적 클릭수
+  createdAt: string;
+  deletedAt: string;
+}

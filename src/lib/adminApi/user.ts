@@ -36,3 +36,9 @@ export const deleteWhitelist = async (id: number) => {
   const { data } = await api.delete(`/api/v1/admin/whitelists/${id}`);
   return data;
 };
+
+// 이메일로 유저 검색
+export const getUserByEmail = async (email: string) => {
+  const { data } = await api.get(`/api/v1/admin/ads/users/search`, { params: { email: email }});
+  return data;
+};
