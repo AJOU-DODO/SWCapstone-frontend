@@ -9,9 +9,10 @@ interface Props {
   userStats: UserStatistics | undefined;
   userDetail: UserDetail | undefined;
   onSave: (nickname: string, bio: string) => Promise<boolean>;
+  onCancelEdit: () => void;
 }
 
-export default function UserDetail({ userStats, userDetail, onSave }: Props) {
+export default function UserDetail({ userStats, userDetail, onSave, onCancelEdit }: Props) {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -21,6 +22,11 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
     if (success) {
       setIsEditModalOpen(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsEditModalOpen(false);
+    onCancelEdit();
   };
 
   return (
@@ -74,7 +80,7 @@ export default function UserDetail({ userStats, userDetail, onSave }: Props) {
           {/* 프로필 수정시 팝업화면 */}
           <ProfileEditModal 
             isOpen={isEditModalOpen} 
-            onClose={() => setIsEditModalOpen(false)}
+            onClose={() => handleCloseModal()}
             onSave={handleSaveSubmit}
             initialData={{
               nickname: userDetail?.nickname || "",

@@ -125,9 +125,13 @@ export default function Page() {
     }
   };
 
+  const handleCancelEdit = () => {
+  setBase64(""); 
+};
+
   return (
     <div>
-      <UserDetail userStats={statsData?.data} userDetail={updatedUserData?.data as Detail} onSave={handleSave}/>
+      <UserDetail userStats={statsData?.data} userDetail={updatedUserData?.data as Detail} onSave={handleSave} onCancelEdit={handleCancelEdit}/>
       <MenuButtons/>
       <MyNestList nestsData={allNests} fetchNextPage={fetchNextPage} hasNextPage={hasNextPage} isFetchingNextPage={isFetchingNextPage}/>
     </div>
