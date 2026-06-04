@@ -35,7 +35,6 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
   const [warning, setWarning] = useState(false);
   const { setLoadedDraftId } = useNestEditorStore();
 
-  // ✅ 웹뷰 viewport 실측 (vh 단위 회피)
   const [vh, setVh] = useState<number | null>(null);
 
   useEffect(() => {
@@ -44,7 +43,7 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
       const h = window.visualViewport?.height ?? window.innerHeight;
       if (h > 0) setVh(h);
     };
-    // scroll-lock/포지셔닝 안정화 후 측정
+
     const raf = requestAnimationFrame(() =>
       requestAnimationFrame(measure),
     );
@@ -91,7 +90,6 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
     onClose();
   };
 
-  // 실측 전에는 안전한 폴백(px) 사용
   const maxH = vh ? Math.round(vh * 0.75) : 560;
 
   return (

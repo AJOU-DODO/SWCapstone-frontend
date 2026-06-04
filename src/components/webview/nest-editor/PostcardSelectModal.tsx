@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Mail, Loader2 } from "lucide-react";
 import {
@@ -30,6 +30,24 @@ export function PostcardSelectModal({
     null,
   );
   const [warning, setWarning] = useState(false);
+
+  const [vh, setVh] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const measure = () => {
+      const h = window.visualViewport?.height ?? window.innerHeight;
+      if (h > 0) setVh(h);
+    };
+    const raf = requestAnimationFrame(() => requestAnimationFrame(measure));
+    window.visualViewport?.addEventListener("resize", measure);
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.visualViewport?.removeEventListener("resize", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [open]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["userPostcard", accessToken],
@@ -62,9 +80,14 @@ export function PostcardSelectModal({
     onClose();
   };
 
+  const maxH = vh ? Math.round(vh * 0.75) : 560;
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
-      <DialogContent className="flex flex-col gap-0 p-0 bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl max-h-[75vh] w-[calc(100vw-2rem)] max-w-md">
+      <DialogContent
+        style={{ maxHeight: maxH }}
+        className="flex flex-col gap-0 p-0 overflow-hidden bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl w-[calc(100vw-2rem)] max-w-md"
+      >
         <DialogHeader className="px-5 pt-5 pb-4 border-b border-[#E0DDD3] shrink-0">
           <DialogTitle className="text-base font-semibold text-[#3D3830] text-left">
             엽서 선택
@@ -72,7 +95,7 @@ export function PostcardSelectModal({
         </DialogHeader>
 
         {/* 엽서 목록 */}
-        <div className="flex-1 overflow-y-auto px-5 py-3 space-y-2 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-3 space-y-2">
           {isLoading ? (
             <div className="flex justify-center py-10">
               <Loader2 className="w-5 h-5 animate-spin text-[#8B8070]" />
@@ -142,7 +165,7 @@ export function PostcardSelectModal({
 
         {/* 경고 메시지 */}
         {warning && (
-          <div className="mx-5 flex items-center gap-1.5 text-xs text-red-400">
+          <div className="mx-5 flex items-center gap-1.5 text-xs text-red-400 shrink-0">
             엽서를 선택해주세요.
           </div>
         )}
