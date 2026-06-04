@@ -56,7 +56,7 @@ export default function Page() {
       isSubmitting: false,
       errors: {},
     });
-    window.location.href = "/nest-editor"
+    router.push("/nest-editor");
   };
 
   if (isLoading) return <div className="p-5 text-center text-sm text-gray-400">불러오는 중...</div>;
