@@ -71,7 +71,7 @@ export function DraftListModal({ accessToken, open, onClose, onLoad }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
-      <DialogContent className="flex flex-col gap-0 p-0 bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl max-h-[75dvh] w-[calc(100vw-2rem)] max-w-md">
+      <DialogContent className="flex flex-col gap-0 p-0 bg-[#F7F4EC] border-[#E0DDD3] rounded-3xl max-h-[75vh] w-[calc(100vw-2rem)] max-w-md fixed top-0 bottom-0 left-0 right-0 m-auto translate-x-0 translate-y-0 h-fit">
         {/* 헤더 */}
         <DialogHeader className="px-5 pt-5 pb-4 border-b border-[#E0DDD3] shrink-0">
           <DialogTitle className="text-base font-semibold text-[#3D3830] text-left">
