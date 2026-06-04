@@ -22,7 +22,9 @@ function formatCoord(lat: number | null | undefined, lng: number | null | undefi
 export default function Page() {
   const router = useRouter();
 
-  const [accessToken] = useState<string>(() => {
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaG9paGgyNjYwQGFqb3UuYWMua3IiLCJ1aWQiOiJ5a245WkpsRyIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzgwNTgzNjMzLCJleHAiOjE3ODA1ODU0MzN9.m1QniNilR6YKwMiS43kfy6PDDjneySGhWE8FfzrBcsA";
+
+  /*const [accessToken] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     try {
       const token = window.AndroidBridge.getAccessToken();
@@ -30,7 +32,7 @@ export default function Page() {
     } catch {
       return "";
     }
-  });
+  });*/
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["drafts", accessToken],
