@@ -8,6 +8,7 @@ import UserDetail from '@/components/webview/mypage/UserDetail';
 import MenuButtons from "@/components/webview/mypage/MenuButtons";
 import MyNestList from "@/components/webview/mypage/MyNestList";
 import Spinner from "@/components/webview/Spinner";
+import { UserDetail as Detail } from "@/types/indexMypage";
 
 export default function Page() {
   const [Base64, setBase64] = useState<string>("");
@@ -77,10 +78,13 @@ export default function Page() {
   }
 
   const updatedUserData = {
-    ...userData, // 기존 닉네임, 바이오 등 유지
+  ...userData,
+  data: {
+    ...userData?.data,
     profileImageUrl: Base64 || userData?.data.profileImageUrl
-  };
+  } 
 
+};
   const handleSave = async (nickname: string, bio: string) => {
     try {
       let finalImageUrl = userData?.data.profileImageUrl;
@@ -123,7 +127,7 @@ export default function Page() {
 
   return (
     <div>
-      <UserDetail userStats={statsData?.data} userDetail={updatedUserData?.data} onSave={handleSave}/>
+      <UserDetail userStats={statsData?.data} userDetail={updatedUserData?.data as Detail} onSave={handleSave}/>
       <MenuButtons/>
       <MyNestList nestsData={allNests} fetchNextPage={fetchNextPage} hasNextPage={hasNextPage} isFetchingNextPage={isFetchingNextPage}/>
     </div>
