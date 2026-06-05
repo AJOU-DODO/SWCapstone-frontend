@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import AdvertiseTabButton from '@/components/admin/advertise/AdvertiseTabButton';
+import AdvertiserList from '@/components/admin/advertise/AdvertiserList';
 import ActiveAdvertisementTable from '@/components/admin/tables/ActiveAdvertisementTable';
 import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
 import Pagination from '@/components/admin/Pagination';
@@ -14,6 +15,7 @@ export default function Page() {
   const [advertisement, setAdvertisement] = useState<Advertisement[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedAdId, setSelectedAdId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -52,8 +54,13 @@ export default function Page() {
         <AdvertiseTabButton/>
       </div>
 
-      <div className="flex flex-row items-center gap-5">
+      <div className="flex flex-row items-center justify-between gap-5">
         <IncludeDeletedToggle label="삭제된 광고 보기" trueValue="DELETED" falseValue="ACTIVE"/>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className='border-2 border-[#54513E] rounded-sm px-2 py-1 hover:bg-[#54513E]/30'>
+            광고주 리스트
+        </button>
       </div>
 
       <ActiveAdvertisementTable ads={advertisement} onRowClick={handleRowClick} selectedId={selectedAdId}/>
@@ -61,6 +68,13 @@ export default function Page() {
       <div className="py-4 border-t">
         <Pagination totalPages={totalPages}/>
       </div>
+
+      {isModalOpen && (
+        <AdvertiserList 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+        />
+      )}
 
     </div>
   );
