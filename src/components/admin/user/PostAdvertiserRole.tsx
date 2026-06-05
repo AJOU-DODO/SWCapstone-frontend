@@ -12,6 +12,7 @@ interface UserSanctionModalProps {
 
 export default function PostAdvertiserRole ({ userId, isOpen, onClose, setIsUpdated }: UserSanctionModalProps) {
   const [adCount, setAdCount] = useState(0);
+  const [expiryDate, setExpiryDate] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -24,7 +25,7 @@ export default function PostAdvertiserRole ({ userId, isOpen, onClose, setIsUpda
       
       const payload = {
         allowedAdCount: adCount,
-        expiredAt: new Date().toISOString(),
+        expiredAt: new Date(`${expiryDate}T23:59:59.999Z`).toISOString(),
       };
 
       await addAdvertiserAuthority({ userId, body: payload });
@@ -64,6 +65,20 @@ export default function PostAdvertiserRole ({ userId, isOpen, onClose, setIsUpda
               }}
               disabled={isLoading}
               required
+              className="w-full border-2 border-[#54513E]/50 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[#54513E] disabled:bg-gray-100"
+            />
+          </div>
+
+          {/* 만료일 입력창 */}
+          <div className="flex flex-col gap-1.5 text-left mt-4">
+            <label className="text-xs font-semibold text-[#54513E] pl-0.5">권한 만료일 선택</label>
+            <input 
+              type="date"
+              value={expiryDate}
+              onChange={(e) => setExpiryDate(e.target.value)}
+              disabled={isLoading}
+              required
+              min={new Date().toISOString().split("T")[0]} 
               className="w-full border-2 border-[#54513E]/50 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[#54513E] disabled:bg-gray-100"
             />
           </div>
