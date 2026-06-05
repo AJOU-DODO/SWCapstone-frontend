@@ -11,10 +11,16 @@ import {
 
 import { useSearchParams, usePathname } from "next/navigation";
 
-export default function Paginaition({ totalPages }: { totalPages: number }) {
+interface PaginationProps {
+  totalPages: number;
+  currentPage?: number;
+  onPageChange?: (pageNumber: number) => void;
+}
+
+export default function Paginaition({ totalPages, currentPage: modalCurrentPage, onPageChange }: PaginationProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const currentPage = Number(searchParams.get("page")) || 1;
+  const currentPage = modalCurrentPage ?? (Number(searchParams.get("page")) || 1)
 
   //페이지 버튼은 5개씩 보여준다
   const displayRange = 5;
@@ -27,9 +33,18 @@ export default function Paginaition({ totalPages }: { totalPages: number }) {
   }
 
   const createPageURL = (pageNumber: number | string) => {
+    if (onPageChange) return "#";
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`; 
+  };
+
+  const handlePageClick = (e: React.MouseEvent, pageTarget: number) => {
+    if (onPageChange) {
+      e.preventDefault();
+      onPageChange(pageTarget);
+    }
   };
 
   return (
@@ -39,6 +54,7 @@ export default function Paginaition({ totalPages }: { totalPages: number }) {
         <PaginationItem>
           <PaginationPrevious 
             href={createPageURL(startPage - 1)}
+            onClick={(e) => handlePageClick(e, startPage - 1)}
             className={startPage === 1 ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
@@ -48,6 +64,7 @@ export default function Paginaition({ totalPages }: { totalPages: number }) {
             <PaginationLink 
               href={createPageURL(page)}
               isActive={page === currentPage}
+              onClick={(e) => handlePageClick(e, page)}
               className={page === currentPage ? "bg-[#2B6340] text-white hover:bg-green-700 hover:text-white" : "hover:bg-transparent"}
             >
               {page}
@@ -59,6 +76,7 @@ export default function Paginaition({ totalPages }: { totalPages: number }) {
         <PaginationItem>
           <PaginationNext 
             href={createPageURL(endPage + 1)}
+            onClick={(e) => handlePageClick(e, endPage + 1)}
             className={endPage >= totalPages ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
