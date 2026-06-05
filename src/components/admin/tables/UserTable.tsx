@@ -9,7 +9,7 @@ import {
 
 import { User } from '@/types/indexAdmin';
 
-export default function UserTable({ users, onRowClick }: { users: User[]; onRowClick: (user: User) => void; }) {
+export default function UserTable({ users, onRowClick, onRoleClick }: { users: User[]; onRowClick: (user: User) => void; onRoleClick: (user: User) => void; }) {
   return (
     <div className="border border-t-[#54513E] border-x-0 border-b-[#54513E]/50 [&_th]:text-center [&_td]:text-center">
       <Table>
@@ -38,7 +38,17 @@ export default function UserTable({ users, onRowClick }: { users: User[]; onRowC
               <TableCell className="font-medium">{user.id}</TableCell>
               <TableCell>{user.nickname}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
+              <TableCell>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRoleClick(user);
+                  }}
+                  className="w-24 px-2 py-1 rounded border-2 border-[#54513E] bg-[#54513E]/10 hover:bg-[#54513E]/30 text-xs font-medium transition-colors"
+                >
+                  {user.role}
+                </button>
+              </TableCell>
               <TableCell className={user.isSanctioned ? "font-bold" : ""}>{user.isSanctioned ? 'O' : 'X' }</TableCell>
               <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>{user.nestCount}</TableCell>

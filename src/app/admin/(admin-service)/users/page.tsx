@@ -7,6 +7,7 @@ import SortSection from '@/components/admin/SortSection';
 import WhitelistModal from '@/components/admin/user/WhitelistModal';
 import UserSanctionModal from '@/components/admin/user/UserSanctionModal';
 import DeleteSanctionModal from '@/components/admin/user/DeleteSanctionModal';
+import PostAdvertiserRole from '@/components/admin/user/PostAdvertiserRole';
 import { getUsers, getUserByEmail } from '@/lib/adminApi/user';
 import { User } from '@/types/indexAdmin';
 
@@ -19,6 +20,7 @@ function AdminUsersPage(){
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedRoleUser, setSelectedRoleUser] = useState<User | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const searchParams = useSearchParams();
@@ -81,7 +83,7 @@ function AdminUsersPage(){
       </div>
 
       <div className="w-full h-full min-h-0 overflow-y-auto">
-        <UserTable users={users} onRowClick={(user) => setSelectedUser(user)} />
+        <UserTable users={users} onRowClick={(user) => setSelectedUser(user)} onRoleClick={(user) => setSelectedRoleUser(user)}/>
       </div>
 
       <div className="mt-6 py-4 border-t">
@@ -111,6 +113,14 @@ function AdminUsersPage(){
             setIsUpdated={setRefreshTrigger}
           />
         )
+      )}
+
+      {selectedRoleUser !== null && (
+        <PostAdvertiserRole
+          isOpen={true}
+          userId={selectedRoleUser.id}
+          onClose={() => setSelectedRoleUser(null)}
+          setIsUpdated={setRefreshTrigger}/>
       )}
 
     </div>
