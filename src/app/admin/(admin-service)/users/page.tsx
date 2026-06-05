@@ -7,7 +7,7 @@ import SortSection from '@/components/admin/SortSection';
 import WhitelistModal from '@/components/admin/user/WhitelistModal';
 import UserSanctionModal from '@/components/admin/user/UserSanctionModal';
 import DeleteSanctionModal from '@/components/admin/user/DeleteSanctionModal';
-import { getUsers } from '@/lib/adminApi/user';
+import { getUsers, getUserByEmail } from '@/lib/adminApi/user';
 import { User } from '@/types/indexAdmin';
 
 import { useEffect, useState, Suspense } from "react";
@@ -24,6 +24,7 @@ function AdminUsersPage(){
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const sort = searchParams.get('sort') || 'createdAt,desc';
+  const searchQuery = searchParams.get('search') || null;
 
   //정렬 옵션
   const sortOptions = [
@@ -37,6 +38,17 @@ function AdminUsersPage(){
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        if (searchQuery) {
+          const res = await getUserByEmail(searchQuery);
+          if (res.data) {
+            setUsers(res.data);
+          } else {
+            setUsers([]);
+          }
+          setTotalPages(1);
+          return;
+        }
+
         const params: { sort?: string; page: number } = {
           sort: sort,
           page: currentPage - 1
@@ -51,12 +63,12 @@ function AdminUsersPage(){
     };
 
     fetchUsers();
-  }, [searchParams, refreshTrigger]);
+  }, [currentPage, sort, searchQuery, refreshTrigger]);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
       <div className="justify-between items-center">
-        <SearchBar placeholder='유저 ID 혹은 유저 name 검색' /> 
+        <SearchBar placeholder='이메일로 유저 검색' /> 
       </div>
 
       <div className='flex flex-row justify-between'>
