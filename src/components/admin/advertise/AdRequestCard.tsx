@@ -2,7 +2,7 @@ import { PendingAdvertisement } from '@/types/indexAdmin';
 
 interface AdRequestCardProps {
   ad: PendingAdvertisement;
-  onClick: () => void; // 👈 아무것도 반환하지 않는 기본 클릭 함수 타입
+  onClick: () => void;
 }
 
 export default function AdRequestCard({ ad, onClick }: AdRequestCardProps) {

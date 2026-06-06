@@ -2,20 +2,15 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
 import { AdNestDetailHeader } from '@/types/indexAdmin';
-import { useReportActions } from "@/hooks/admin/useReportActions";
-import DeleteModal from "@/components/admin/nest/DeleteModal";
+import AdDeleteButton from "@/components/admin/advertise/AdDeleteButton";
 
-export default function AdDetailHeader ({ header }: { header: AdNestDetailHeader; }) {
+export default function AdDetailHeader ({ header, listUrl}: { header: AdNestDetailHeader; listUrl: string}) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { handleNestDelete, isLoading: isDeleteLoading } = useReportActions({
-    targetId: header.nestId,
-    onSuccess: () => {
-      setIsDeleteModalOpen(false);
-    }
-  });
+  const router = useRouter();
 
   return (
   <div className="flex flex-row justify-between items-start md:items-end gap-4 p-4 border-b bg-[#E8E4CD] w-full">
@@ -50,7 +45,7 @@ export default function AdDetailHeader ({ header }: { header: AdNestDetailHeader
     
     <div 
     className="flex flex-row gap-2 items-end flex-shrink-0 w-full md:w-auto justify-end">
-      {!header.deleted && (
+      {header.deleted && (
         <>
           <button 
           onClick={() => setIsDeleteModalOpen(true)}
@@ -60,13 +55,12 @@ export default function AdDetailHeader ({ header }: { header: AdNestDetailHeader
         </>
       )}
 
-      <DeleteModal
-        authorId={header.authorId}
+      <AdDeleteButton
+        nestId={header.nestId}
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleNestDelete}
-        isLoading={isDeleteLoading}
-        title="게시물 삭제 확인"
+        onSuccess={() => router.push(listUrl)}
+        title="광고 삭제 확인"
         message="정말로 이 콘텐츠를 삭제하시겠습니까?"
       />
     </div>
