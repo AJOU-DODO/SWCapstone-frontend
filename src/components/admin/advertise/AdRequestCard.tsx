@@ -6,7 +6,6 @@ interface AdRequestCardProps {
 }
 
 export default function AdRequestCard({ ad, onClick }: AdRequestCardProps) {
-  console.log(ad);
   return (
     <div onClick={onClick} className="flex flex-col bg-white rounded-2xl border border-[#2B6340] border-2 p-5 shadow-sm hover:shadow-md transition-shadow duration-200 w-full h-fit text-left gap-3 cursor-pointer">
       <h4 className="text-base font-bold text-gray-900 truncate">
