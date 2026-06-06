@@ -34,8 +34,11 @@ export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,
             targetId: postcard.postcardId,
           });
 
-          if (response && response.otherReportContents) {
-            setDisplayReason(`기타: ${response.otherReportContents}`);
+          console.log(response);
+
+          if (response && response.data.otherReportContents) {
+            const actualReason = response.data.otherReportContents[0];
+            setDisplayReason(`기타: ${actualReason}`);
           }
         } catch (error) {
           console.error("신고 상세 조회 실패:", error);
