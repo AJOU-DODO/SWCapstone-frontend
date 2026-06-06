@@ -1,8 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect, use, Suspense } from "react";
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, use } from "react";
 
 import { getNestDetailAdmin } from '@/lib/adminApi/nest';
 import { NestDetail, AdNestDetailHeader, NestDetailBody } from '@/types/indexAdmin';
@@ -99,7 +98,7 @@ export default function AdsDetailPage({ params, searchParams }: PageProps) {
       </Link>
 
       <div className='flex flex-col'>
-        {header && <AdDetailHeader header={header}/>}
+        {header && <AdDetailHeader header={header} listUrl={listUrl}/>}
         {body && <NestBody body={body} />}
       </div>
       
