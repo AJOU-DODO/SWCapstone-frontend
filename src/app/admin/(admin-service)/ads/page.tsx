@@ -76,6 +76,8 @@ export default function Page() {
   const [selectedAdId, setSelectedAdId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const router = useRouter();
+
   const [selectedPendingAd, setSelectedPendingAd] = useState<PendingAdvertisement | null>(null);
 
   const searchParams = useSearchParams();
@@ -118,7 +120,12 @@ export default function Page() {
   const handleRowClick = (id: number) => {
     setSelectedAdId(id);
     
-    console.log(selectedAdId);
+    const currentQueries = searchParams.toString();
+    const targetUrl = currentQueries 
+      ? `/admin/ads/${id}?${currentQueries}` 
+      : `/admin/ads/${id}`;
+
+    router.push(targetUrl);
   };
 
 

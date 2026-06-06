@@ -199,6 +199,18 @@ export interface NestDetailHeader {
   deleted: boolean;
 }
 
+// 광고 둥지 상세보기 헤더
+export interface AdNestDetailHeader {
+  authorId: number;
+  profileImageUrl: string;
+  nestId: number;
+  authorNickname: string;
+  createdAt: string;
+  latitude: number;
+  longitude: number;
+  deleted: boolean;
+}
+
 // 둥지 상세보기 바디
 export interface NestDetailBody {
   imageUrls: string[];
