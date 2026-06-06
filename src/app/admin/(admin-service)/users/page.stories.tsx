@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { http, HttpResponse } from 'msw';
-import { expect, screen, userEvent, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 import Page from './page';
 import { User } from '@/types/indexAdmin';
 
@@ -50,6 +50,10 @@ const defaultHandlers = [
     });
   }),
 ];
+
+const advertiserRoleHandler = http.post('/api/v1/admin/ads/advertisers/:userId', () => {
+  return HttpResponse.json({ status: 'OK', code: '200', message: null, data: null });
+});
 
 const meta: Meta<typeof Page> = {
   title: 'Admin/Users/ListPage',
@@ -162,11 +166,9 @@ export const OpenSanctionModal: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // 첫 번째 유저 행 클릭
     const firstRow = await canvas.findByText('홍길동');
     await userEvent.click(firstRow);
 
-    // 제재 모달이 열렸는지 확인 (UserSanctionModal 안의 텍스트로 확인)
     await expect(await screen.findByText('유저 제재 처리')).toBeInTheDocument();
   },
 };
@@ -183,17 +185,115 @@ export const CloseSanctionModal: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // 첫 번째 유저 행 클릭
     const firstRow = await canvas.findByText('홍길동');
     await userEvent.click(firstRow);
 
-    // 모달 열렸는지 확인
     await expect(await screen.findByText('유저 제재 처리')).toBeInTheDocument();
 
-    // 닫기 버튼 클릭
     const closeButton = await screen.findByRole('button', { name: '취소' });
     await userEvent.click(closeButton);
 
     await expect(screen.queryByText('유저 제재 처리')).not.toBeInTheDocument();
+  },
+};
+
+/**
+ * 8. 역할 셀 클릭 → 광고주 권한 부여 모달 열기
+ */
+export const OpenAdvertiserRoleModal: Story = {
+  parameters: {
+    msw: {
+      handlers: [...defaultHandlers, advertiserRoleHandler],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('홍길동');
+
+    const roleCell = canvas.getAllByText('USER')[0];
+    await userEvent.click(roleCell);
+
+    await waitFor(() =>
+      expect(body.getByText('광고주 권한 부여')).toBeInTheDocument()
+    );
+    await expect(
+      body.getByPlaceholderText('부여할 광고 게시글 수를 입력하세요 (숫자)')
+    ).toBeInTheDocument();
+  },
+};
+
+/**
+ * 9. 광고주 권한 부여 모달 — 취소 버튼으로 닫기
+ */
+export const CloseAdvertiserRoleModal: Story = {
+  parameters: {
+    msw: {
+      handlers: [...defaultHandlers, advertiserRoleHandler],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('홍길동');
+
+    const roleCell = canvas.getAllByText('USER')[0];
+    await userEvent.click(roleCell);
+
+    await waitFor(() =>
+      expect(body.getByText('광고주 권한 부여')).toBeInTheDocument()
+    );
+
+    await userEvent.click(body.getByRole('button', { name: '취소' }));
+
+    await waitFor(() =>
+      expect(body.queryByText('광고주 권한 부여')).not.toBeInTheDocument()
+    );
+  },
+};
+
+/**
+ * 10. 광고주 권한 부여 모달 — 폼 입력 후 제출
+ *     adCount === 0 이면 권한부여 버튼 disabled, 입력 후 활성화 확인
+ */
+export const SubmitAdvertiserRoleModal: Story = {
+  parameters: {
+    msw: {
+      handlers: [...defaultHandlers, advertiserRoleHandler],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('홍길동');
+
+    const roleCell = canvas.getAllByText('USER')[0];
+    await userEvent.click(roleCell);
+
+    await waitFor(() =>
+      expect(body.getByText('광고주 권한 부여')).toBeInTheDocument()
+    );
+
+    const submitBtn = body.getByRole('button', { name: '권한부여' });
+    await expect(submitBtn).toBeDisabled();
+
+    const countInput = body.getByPlaceholderText('부여할 광고 게시글 수를 입력하세요 (숫자)');
+    await userEvent.clear(countInput);
+    await userEvent.type(countInput, '3');
+
+    const dateInput = canvasElement.ownerDocument.querySelector<HTMLInputElement>(
+      'input[type="date"]'
+    )!;
+    await userEvent.type(dateInput, '2027-12-31');
+
+    await waitFor(() => expect(submitBtn).toBeEnabled());
+
+    await userEvent.click(submitBtn);
+    await waitFor(() =>
+      expect(body.queryByText('광고주 권한 부여')).not.toBeInTheDocument()
+    );
   },
 };
