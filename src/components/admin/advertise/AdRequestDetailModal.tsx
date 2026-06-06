@@ -2,6 +2,8 @@
 
 import { PendingAdvertisement } from '@/types/indexAdmin';
 
+import ApproveButton from "@/components/admin/advertise/ApproveButton";
+
 interface AdDetailModalProps {
   ad: PendingAdvertisement;
   onClose: () => void;
@@ -87,12 +89,13 @@ export default function AdDetailModal({ ad, onClose }: AdDetailModalProps) {
           >
             반려하기
           </button>
-          <button 
-            onClick={() => alert("승인 프로세스")} 
-            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors"
-          >
-            승인하기
-          </button>
+          <ApproveButton 
+            adId={ad.id} 
+            onSuccess={() => {
+              onClose();
+              window.location.reload();
+            }}
+          />
         </div>
       </div>
     </div>
