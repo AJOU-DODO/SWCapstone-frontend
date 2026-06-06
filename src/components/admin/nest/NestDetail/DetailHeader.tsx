@@ -48,7 +48,7 @@ export default function DetailHeader ({ header, triggerRefresh, onClose }: { hea
         {new Date(header.createdAt).toLocaleDateString()} {/*생성일*/}
       </div>
     </div>
-    <div className="flex flex-row gap-6 md:gap-8 text-xs text-gray-500 flex-1 justify-start md:justify-center whitespace-nowrap pb-0.5">
+    <div className="flex flex-col gap-1 text-[11px] leading-tight text-gray-500 justify-center flex-1 min-w-0 px-2 items-end text-right">
       <div>
         최초 신고일: {header.firstReportedAt ? new Date(header.firstReportedAt).toLocaleDateString() : "--.--.--"}
       </div>
