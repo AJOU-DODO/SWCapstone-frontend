@@ -68,5 +68,11 @@ function CallbackContent() {
     }
   }, [searchParams, router]);
   
-  return <div>구글 로그인 처리 중입니다...</div>;
+  return (
+  <div className="fixed inset-0 flex items-center justify-center bg-[#E8E4CD] z-[9999]">
+    <span className="text-sm font-semibold text-[#2B6340] animate-pulse">
+      구글 로그인 처리 중입니다...
+    </span>
+  </div>
+);;
 }
