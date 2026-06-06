@@ -38,17 +38,13 @@ import {
   deleteNest,
   deleteComment,
 } from "@/lib/api";
+import { formatDate } from "@/utils/formatters";
 import type {
   ReactionType,
   CommentSortType,
   ReportType,
   NestComment,
 } from "@/types";
-
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-}
 
 const SORT_LABELS: Record<CommentSortType, string> = {
   LIKE: "좋아요순",
