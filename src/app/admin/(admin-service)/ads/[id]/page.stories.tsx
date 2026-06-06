@@ -106,27 +106,27 @@ export const Default: Story = {
   },
 };
 
-// 2. deleted: false — 삭제 버튼 미노출
-export const WithoutDeleteButton: Story = {
-  args: { header: mockHeader, body: mockBody },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.queryByRole('button', { name: '삭제' })).not.toBeInTheDocument();
-  },
-};
-
-// 3. deleted: true — 삭제 버튼 노출
+// 2. deleted: false (활성 게시글) — 삭제 버튼 노출
 export const WithDeleteButton: Story = {
-  args: { header: mockHeaderDeleted, body: mockBody },
+  args: { header: mockHeader, body: mockBody },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('button', { name: '삭제' })).toBeInTheDocument();
   },
 };
 
-// 4. 삭제 버튼 클릭 → 삭제 확인 모달 열기
-export const OpenDeleteModal: Story = {
+// 3. deleted: true (삭제된 게시글) — 삭제 버튼 미노출
+export const WithoutDeleteButton: Story = {
   args: { header: mockHeaderDeleted, body: mockBody },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByRole('button', { name: '삭제' })).not.toBeInTheDocument();
+  },
+};
+
+// 4. 삭제 버튼 클릭 → 삭제 확인 모달 열기 (활성 게시글)
+export const OpenDeleteModal: Story = {
+  args: { header: mockHeader, body: mockBody },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -144,9 +144,9 @@ export const OpenDeleteModal: Story = {
   },
 };
 
-// 5. 삭제 모달 — 취소 버튼으로 닫기
+// 5. 삭제 모달 — 취소 버튼으로 닫기 (활성 게시글)
 export const CloseDeleteModal: Story = {
-  args: { header: mockHeaderDeleted, body: mockBody },
+  args: { header: mockHeader, body: mockBody },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
