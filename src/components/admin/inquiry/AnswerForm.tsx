@@ -6,18 +6,15 @@ import { publishAnswer } from "@/lib/adminApi/inquiry";
 
 interface AnswerFormProps {
   inquiryId: number;
-  hasAnswer?: boolean;
 }
 
 type SubmitStatus = "idle" | "success" | "error";
 
-export default function AnswerForm({ inquiryId, hasAnswer = false, }: AnswerFormProps) {
+export default function AnswerForm({ inquiryId}: AnswerFormProps) {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const router = useRouter();
-
-  const isReadOnly = hasAnswer || isSubmitting || status === "success";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,12 +43,11 @@ export default function AnswerForm({ inquiryId, hasAnswer = false, }: AnswerForm
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        disabled={isReadOnly}
+        disabled={isSubmitting || status === "success"}
         placeholder="답변을 입력하세요."
-        className={`w-full min-h-[160px] p-4 border border-gray-300 rounded-lg shadow-sm 
+        className="w-full min-h-[160px] p-4 border border-gray-300 rounded-lg shadow-sm 
                  focus:ring-2 focus:ring-[#54513E] focus:border-[#54513E] outline-none 
-                 transition-all text-sm resize-none bg-white text-gray-800
-                 ${isReadOnly ? "bg-gray-100 text-gray-500" : "bg-white"}`}
+                 transition-all text-sm resize-none bg-white text-gray-800"
       />
 
       {/* 2. 전송 버튼 */}
@@ -65,17 +61,15 @@ export default function AnswerForm({ inquiryId, hasAnswer = false, }: AnswerForm
           )}
         </div>
 
-        {!hasAnswer && (
-          <button 
-            type="submit"
-            disabled={isReadOnly || !answer.trim()}
-            className="px-6 py-2.5 bg-[#54513E] text-white text-sm font-semibold 
-                      rounded-lg shadow hover:bg-[#434031] active:scale-98 transition-all
-                      disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "등록 중..." : "답변 등록"}
-          </button>
-        )}
+        <button 
+          type="submit"
+          disabled={isSubmitting || status === "success" || !answer.trim()}
+          className="px-6 py-2.5 bg-[#54513E] text-white text-sm font-semibold 
+                    rounded-lg shadow hover:bg-[#434031] active:scale-98 transition-all
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? "등록 중..." : "답변 등록"}
+        </button>
       </div>
     </form>
   );

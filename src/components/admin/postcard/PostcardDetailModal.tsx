@@ -34,8 +34,6 @@ export default function PostcardDetailModal({ postcard, onClose, triggerRefresh,
             targetId: postcard.postcardId,
           });
 
-          console.log(response);
-
           if (response && response.data.otherReportContents) {
             const actualReason = response.data.otherReportContents[0];
             setDisplayReason(`기타: ${actualReason}`);
