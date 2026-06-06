@@ -103,7 +103,6 @@ export default function Page() {
       try {
         const data = await getAdvertisementList();
         setpendingAdvertisement(data.data);
-        console.log(data);
       } catch (error) {
         console.error('광고 신청 목록 로딩 실패:', error);
       } 
