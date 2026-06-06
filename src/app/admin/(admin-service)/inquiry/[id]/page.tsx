@@ -51,7 +51,7 @@ export default async function InquiryDetailPage({ params, searchParams }: PagePr
       </Link>
       
       <InquiryDetail inquiry={inquiry}/>
-      <AnswerForm inquiryId={id}/>
+      <AnswerForm inquiryId={id} hasAnswer={!!inquiry.answer}/>
     </div>
   );
 }
