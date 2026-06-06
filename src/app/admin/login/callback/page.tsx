@@ -74,5 +74,5 @@ function CallbackContent() {
       구글 로그인 처리 중입니다...
     </span>
   </div>
-);;
+);
 }
