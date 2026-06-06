@@ -45,7 +45,7 @@ export default function AdDetailHeader ({ header, listUrl}: { header: AdNestDeta
     
     <div 
     className="flex flex-row gap-2 items-end flex-shrink-0 w-full md:w-auto justify-end">
-      {header.deleted && (
+      {!header.deleted && (
         <>
           <button 
           onClick={() => setIsDeleteModalOpen(true)}
