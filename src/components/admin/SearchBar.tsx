@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface SearchBarProps {
   placeholder?: string; 
@@ -13,25 +13,25 @@ export default function SearchBar({ placeholder = "검색어를 입력하세요"
   const router = useRouter();
   const searchParams = useSearchParams();
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isSelfPush = useRef(false);
 
-  const urlKeyword = searchParams.get("search") || "";
-  const [keyword, setKeyword] = useState(urlKeyword);
-  
-  // 이전 URL 값을 기억할 Ref
-  const prevUrlKeyword = useRef(urlKeyword);
+  const [keyword, setKeyword] = useState(searchParams.get("search") || "");
 
-  if (prevUrlKeyword.current !== urlKeyword) {
-    setKeyword(urlKeyword);
-    prevUrlKeyword.current = urlKeyword; // 동기화 후 마킹
-  }
+  useEffect(() => {
+    if (isSelfPush.current) {
+      isSelfPush.current = false;
+      return;
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setKeyword(searchParams.get("search") || "");
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setKeyword(value); // 내 input 창은 즉시 업데이트
+    setKeyword(value);
 
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
-    // 디바운스 시작
     debounceTimer.current = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
 
@@ -42,7 +42,7 @@ export default function SearchBar({ placeholder = "검색어를 입력하세요"
         params.delete("search");
       }
 
-      prevUrlKeyword.current = value.trim();
+      isSelfPush.current = true;
       router.push(`?${params.toString()}`);
     }, 500);
   };
