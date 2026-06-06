@@ -21,7 +21,6 @@ export default function AdvertiserList ({ isOpen, onClose }: WhitelistModalProps
       try {
 
         const data = await getAdvertisers({ page: modalPage - 1 });
-        console.log(modalPage);
         setadvertiserList(data.data.content);
         setTotalPages(data.data.totalPages || 1);
       } catch (error) {

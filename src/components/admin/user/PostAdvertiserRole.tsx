@@ -78,7 +78,13 @@ export default function PostAdvertiserRole ({ userId, isOpen, onClose, setIsUpda
               onChange={(e) => setExpiryDate(e.target.value)}
               disabled={isLoading}
               required
-              min={new Date().toISOString().split("T")[0]} 
+              min={(() => {
+                  const today = new Date();
+                  const yyyy = today.getFullYear();
+                  const mm = String(today.getMonth() + 1).padStart(2, '0');
+                  const dd = String(today.getDate()).padStart(2, '0');
+                  return `${yyyy}-${mm}-${dd}`;
+                })()}
               className="w-full border-2 border-[#54513E]/50 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[#54513E] disabled:bg-gray-100"
             />
           </div>
@@ -95,7 +101,7 @@ export default function PostAdvertiserRole ({ userId, isOpen, onClose, setIsUpda
             </button>
             <button
               type="submit"
-              disabled={isLoading || adCount === 0}
+              disabled={isLoading || adCount <= 0}
               className="px-4 py-2 bg-[#54513E] text-white rounded-sm text-sm hover:bg-[#54513E]/90 disabled:bg-gray-400 font-medium transition-colors"
             >
               {isLoading ? "등록 중..." : "권한부여"}
