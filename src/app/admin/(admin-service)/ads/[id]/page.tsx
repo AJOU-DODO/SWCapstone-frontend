@@ -26,7 +26,6 @@ export default function AdsDetailPage({ params, searchParams }: PageProps) {
 
   const queryString = searchObj.toString();
 
-  const [detailData, setDetailData] = useState<NestDetail | null>(null);
   const [header, setHeader] = useState<AdNestDetailHeader| null>(null);
   const [body, setBody] = useState<NestDetailBody | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -36,7 +35,6 @@ export default function AdsDetailPage({ params, searchParams }: PageProps) {
       try {
         setIsLoading(true);
         const data = await getNestDetailAdmin(nestId);
-        setDetailData(data);
 
         setHeader({
           authorId: data.data.authorId,
@@ -59,15 +57,6 @@ export default function AdsDetailPage({ params, searchParams }: PageProps) {
         });
       } catch (error) {
         console.error("광고 상세 정보 로딩 실패:", error);
-        setIsLoading(false);
-        return (
-        <div className="p-6 text-center space-y-4">
-          <p className="text-red-500 font-semibold">광고 세부내용을 불러오는 데 실패했습니다.</p>
-          <Link href="/admin/ads" className="text-sm text-[#54513E] underline">
-            목록으로 이동
-          </Link>
-        </div>
-      );
       } finally {
         setIsLoading(false);
       }

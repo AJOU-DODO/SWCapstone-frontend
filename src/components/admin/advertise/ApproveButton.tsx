@@ -51,8 +51,6 @@ export default function ApproveButton({ adId, onSuccess }: ApproveButtonProps) {
       };
 
       await approveAdvertisement(params);
-
-      console.log(finalExposureRate);
       
       setIsFormOpen(false);
       onSuccess(); 
@@ -96,7 +94,13 @@ export default function ApproveButton({ adId, onSuccess }: ApproveButtonProps) {
               <input
                 type="date"
                 value={expiryDate}
-                min={new Date().toISOString().split("T")[0]} 
+                min={(() => {
+                  const today = new Date();
+                  const yyyy = today.getFullYear();
+                  const mm = String(today.getMonth() + 1).padStart(2, '0');
+                  const dd = String(today.getDate()).padStart(2, '0');
+                  return `${yyyy}-${mm}-${dd}`;
+                })()}
                 onChange={(e) => setExpiryDate(e.target.value)}
                 className="w-full px-3 py-2 border border-[#54513E]/50 rounded-xl text-sm focus:outline-none focus:border-[#2B6340] border-2 font-medium"
                 required
