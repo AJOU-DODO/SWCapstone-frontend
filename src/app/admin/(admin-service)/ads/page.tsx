@@ -5,31 +5,41 @@ import { useSearchParams, useRouter } from 'next/navigation';
 
 import AdvertiseTabButton from '@/components/admin/advertise/AdvertiseTabButton';
 import AdvertiserList from '@/components/admin/advertise/AdvertiserList';
+import AdRequestCard from "@/components/admin/advertise/AdRequestCard";
+import AdRequestDetailModal from '@/components/admin/advertise/AdRequestDetailModal';
 import ActiveAdvertisementTable from '@/components/admin/tables/ActiveAdvertisementTable';
 import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
+
 import Pagination from '@/components/admin/Pagination';
 import { Advertisement, GetAdvertisementStatus, PendingAdvertisement } from '@/types/indexAdmin';
 import { getAdvertisements, getAdvertisementList } from '@/lib/adminApi/advertise';
-import AdRequestCard from "@/components/admin/advertise/AdRequestCard";
 
 const MOCKDATA: PendingAdvertisement[] = [{
             "id": 1,
             "advertiserId": 22,
             "advertiserNickname": "test kando",
             "title": "[광고] 광고 타이틀 수정 테스트 ",
-            "content": "광고 수정 테스트",
+            "content": "국방상 또는 국민경제상 긴절한 필요로 인하여 법률이 정하는 경우를 제외하고는, 사영기업을 국유 또는 공유로 이전하거나 그 경영을 통제 또는 관리할 수 없다. 국민경제자문회의의 조직·직무범위 기타 필요한 사항은 법률로 정한다. 국가는 여자의 복지와 권익의 향상을 위하여 노력하여야 한다. 형사피해자는 법률이 정하는 바에 의하여 당해 사건의 재판절차에서 진술할 수 있다.나는 헌법을 준수하고 국가를 보위하며 조국의 평화적 통일과 국민의 자유와 복리의 증진 및 민족문화의 창달에 노력하여 대통령으로서의 직책을 성실히 수행할 것을 국민 앞에 엄숙히 선서합니다. 공공필요에 의한 재산권의 수용·사용 또는 제한 및 그에 대한 보상은 법률로써 하되, 정당한 보상을 지급하여야 한다. 국방상 또는 국민경제상 긴절한 필요로 인하여 법률이 정하는 경우를 제외하고는, 사영기업을 국유 또는 공유로 이전하거나 그 경영을 통제 또는 관리할 수 없다. 국민경제자문회의의 조직·직무범위 기타 필요한 사항은 법률로 정한다. 국가는 여자의 복지와 권익의 향상을 위하여 노력하여야 한다. 형사피해자는 법률이 정하는 바에 의하여 당해 사건의 재판절차에서 진술할 수 있다.나는 헌법을 준수하고 국가를 보위하며 조국의 평화적 통일과 국민의 자유와 복리의 증진 및 민족문화의 창달에 노력하여 대통령으로서의 직책을 성실히 수행할 것을 국민 앞에 엄숙히 선서합니다. 공공필요에 의한 재산권의 수용·사용 또는 제한 및 그에 대한 보상은 법률로써 하되, 정당한 보상을 지급하여야 한다.",
             "latitude": 37.2844251,
             "longitude": 127.0442344,
             "unlockRadius": 200,
             "imageUrls": [
                 "https://loremflickr.com/400/400?lock=5104974706822147",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
+                "https://loremflickr.com/400/400?lock=1021099861210573",
                 "https://loremflickr.com/400/400?lock=1021099861210573"
             ],
             "categoryIds": [
                 4
             ],
             "categoryNames": [
-                "조깅"
+                "조깅", "풍경", "언덕"
             ],
             "status": "PENDING",
             "rejectReason": null,
@@ -65,6 +75,8 @@ export default function Page() {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedAdId, setSelectedAdId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedPendingAd, setSelectedPendingAd] = useState<PendingAdvertisement | null>(null);
 
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -151,7 +163,7 @@ export default function Page() {
       <div className="flex flex-col gap-4 overflow-y-auto min-h-0 w-full items-center">
       <div className="w-full flex flex-col gap-4">
         {MOCKDATA.map((item) => (
-          <AdRequestCard key={item.id} ad={item} />
+          <AdRequestCard key={item.id} onClick={() => setSelectedPendingAd(item)} ad={item} />
         ))}
       </div>
     </div>
@@ -160,10 +172,10 @@ export default function Page() {
         <Pagination totalPages={totalPages}/>
       </div>
 
-      {isModalOpen && (
-        <AdvertiserList 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
+      {selectedPendingAd && (
+        <AdRequestDetailModal 
+          ad={selectedPendingAd} 
+          onClose={() => setSelectedPendingAd(null)} // 닫으면 다시 null로 만들어 모달을 닫습니다.
         />
       )}
 

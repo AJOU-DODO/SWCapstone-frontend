@@ -1,11 +1,14 @@
-"use client";
-
 import { PendingAdvertisement } from '@/types/indexAdmin';
 
-export default function AdRequestCard({ ad }:{ad: PendingAdvertisement}) {
+interface AdRequestCardProps {
+  ad: PendingAdvertisement;
+  onClick: () => void; // 👈 아무것도 반환하지 않는 기본 클릭 함수 타입
+}
+
+export default function AdRequestCard({ ad, onClick }: AdRequestCardProps) {
   console.log(ad);
   return (
-    <div className="flex flex-col bg-white rounded-2xl border border-[#2B6340] border-2 p-5 shadow-sm hover:shadow-md transition-shadow duration-200 w-full h-fit text-left gap-3 cursor-pointer">
+    <div onClick={onClick} className="flex flex-col bg-white rounded-2xl border border-[#2B6340] border-2 p-5 shadow-sm hover:shadow-md transition-shadow duration-200 w-full h-fit text-left gap-3 cursor-pointer">
       <h4 className="text-base font-bold text-gray-900 truncate">
         {ad.title}
       </h4>
