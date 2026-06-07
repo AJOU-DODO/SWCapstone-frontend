@@ -36,12 +36,12 @@ describe("formatCoord", () => {
 
 describe("formatDateToISO", () => {
   it("Date 객체를 YYYY-MM-DD 형식으로 변환해야 한다", () => {
-    const date = new Date("2026-04-24T00:00:00.000Z");
+    const date = new Date(2026, 3, 24);
     expect(formatDateToISO(date)).toBe("2026-04-24");
   });
 
   it("월과 일이 한 자리일 때 0을 붙여야 한다", () => {
-    const date = new Date("2026-01-05T00:00:00.000Z");
+    const date = new Date(2026, 0, 5);
     expect(formatDateToISO(date)).toBe("2026-01-05");
   });
 });
