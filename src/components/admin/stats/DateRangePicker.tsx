@@ -20,6 +20,7 @@ export default function DateRangePicker({
       <input
         type="date"
         value={startDate}
+        max={endDate || undefined}
         onChange={(e) => onStartDateChange(e.target.value)}
         className="border border-gray-300 rounded-md px-3 py-1.5 text-sm"
       />
@@ -27,6 +28,7 @@ export default function DateRangePicker({
       <input
         type="date"
         value={endDate}
+        min={startDate || undefined}
         onChange={(e) => onEndDateChange(e.target.value)}
         className="border border-gray-300 rounded-md px-3 py-1.5 text-sm"
       />
