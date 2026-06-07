@@ -6,6 +6,7 @@ import {
   getStatsSummary,
   getPostcardRatio,
 } from "@/lib/adminApi/stats";
+import { getDefaultDateRange } from "@/utils/formatters";
 import type {
   StatsTrend,
   StatsSummary,
@@ -15,17 +16,8 @@ import SummaryCard from "@/components/admin/stats/SummaryCard";
 import TrendChart from "@/components/admin/stats/TrendChart";
 import PostcardRatioCard from "@/components/admin/stats/PostcardRatioCard";
 
-const formatDate = (date: Date) => date.toISOString().split("T")[0];
-
-const getDefaultDates = () => {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(start.getDate() - 6);
-  return { start: formatDate(start), end: formatDate(end) };
-};
-
 function StatsPage() {
-  const defaultDates = getDefaultDates();
+  const defaultDates = getDefaultDateRange();
 
   const [startDate, setStartDate] = useState(defaultDates.start);
   const [endDate, setEndDate] = useState(defaultDates.end);
