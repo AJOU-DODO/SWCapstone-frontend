@@ -55,7 +55,7 @@ export interface NoticeDetailApiResponse {
   data: NoticeDetail;
 }
 
-// 유저 
+// 유저
 export interface User {
   id: number;
   nickname: string;
@@ -131,10 +131,13 @@ export interface CategoryOrder {
   sortOrder: number;
 }
 
-export type ReportReasonType = "pendingAbuseCount" | "pendingAdvertisementCount" | "pendingOtherCount" | "pendingSpamCount";
+export type ReportReasonType =
+  | "pendingAbuseCount"
+  | "pendingAdvertisementCount"
+  | "pendingOtherCount"
+  | "pendingSpamCount";
 
-export type ReportTargetType = 'NEST' | 'COMMENT' | 'POSTCARD';
-
+export type ReportTargetType = "NEST" | "COMMENT" | "POSTCARD";
 
 // 둥지 전체 조회 (리스트)
 export interface NestList {
@@ -303,12 +306,12 @@ export interface ReportDetail {
   targetId: number;
   stats: {
     [key in ReportReasonType]?: number;
-  }
+  };
   otherReportContents: string[];
 }
 
 export interface ReportDetailRequest {
-  targetType:ReportTargetType;
+  targetType: ReportTargetType;
   targetId: number;
 }
 
@@ -339,11 +342,10 @@ export interface PostcardListData {
   empty: boolean;
 }
 
-
 export type InquiryType = "ACCOUNT" | "BUG" | "SUGGESTION" | "BUSINESS";
 export type InquiryStatus = "PENDING" | "COMPLETED";
 
-// 문의사항 리스트 
+// 문의사항 리스트
 export interface Inquiry {
   id: number;
   userId: number;
@@ -397,7 +399,7 @@ export interface AdvertiserAuthorityPayload {
 }
 
 // 광고주 정보
-export interface AdvertiserList{
+export interface AdvertiserList {
   userId: number;
   email: string;
   nickname: string;
@@ -445,4 +447,29 @@ export interface Advertisement {
   clicks: number; //누적 클릭수
   createdAt: string;
   deletedAt: string;
+}
+
+// 트래픽 트렌드
+export interface StatsTrend {
+  date: string;
+  nestCount: number;
+  commentCount: number;
+  postcardCount: number;
+}
+
+// 어드민 현황판 요약 통계
+export interface StatsSummary {
+  totalNests: number;
+  todayNests: number;
+  totalComments: number;
+  todayComments: number;
+  totalPostcards: number;
+  todayPostcards: number;
+}
+
+// 엽서 교환 비율
+export interface PostcardRatio {
+  totalGenerated: number;
+  totalDelivered: number;
+  deliveryRatio: number;
 }
