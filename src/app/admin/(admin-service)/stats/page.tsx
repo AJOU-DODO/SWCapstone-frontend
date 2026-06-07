@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import {
   getStatsTrends,
   getStatsSummary,
@@ -16,9 +16,9 @@ import SummaryCard from "@/components/admin/stats/SummaryCard";
 import TrendChart from "@/components/admin/stats/TrendChart";
 import PostcardRatioCard from "@/components/admin/stats/PostcardRatioCard";
 
-function StatsPage() {
-  const defaultDates = getDefaultDateRange();
+const defaultDates = getDefaultDateRange();
 
+function StatsPage() {
   const [startDate, setStartDate] = useState(defaultDates.start);
   const [endDate, setEndDate] = useState(defaultDates.end);
   const [ratioStartDate, setRatioStartDate] = useState("");
@@ -43,10 +43,11 @@ function StatsPage() {
     fetchSummary();
   }, []);
 
-  const fetchTrends = async () => {
+  const fetchTrends = useCallback(async (start: string, end: string) => {
     setIsTrendsLoading(true);
     try {
-      const params = startDate && endDate ? { startDate, endDate } : undefined;
+      const params =
+        start && end ? { startDate: start, endDate: end } : undefined;
       const data = await getStatsTrends(params);
       setTrends(data.data);
     } catch (error) {
@@ -54,15 +55,13 @@ function StatsPage() {
     } finally {
       setIsTrendsLoading(false);
     }
-  };
+  }, []);
 
-  const fetchRatio = async () => {
+  const fetchRatio = useCallback(async (start: string, end: string) => {
     setIsRatioLoading(true);
     try {
       const params =
-        ratioStartDate && ratioEndDate
-          ? { startDate: ratioStartDate, endDate: ratioEndDate }
-          : undefined;
+        start && end ? { startDate: start, endDate: end } : undefined;
       const data = await getPostcardRatio(params);
       setRatio(data.data);
     } catch (error) {
@@ -70,12 +69,12 @@ function StatsPage() {
     } finally {
       setIsRatioLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchTrends();
-    fetchRatio();
-  }, []);
+    fetchTrends(defaultDates.start, defaultDates.end);
+    fetchRatio("", "");
+  }, [fetchTrends, fetchRatio]);
 
   return (
     <div className="p-10 pr-20 flex flex-col gap-8">
@@ -120,7 +119,7 @@ function StatsPage() {
         isLoading={isTrendsLoading}
         onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
-        onSearch={fetchTrends}
+        onSearch={() => fetchTrends(startDate, endDate)}
       />
 
       {/* 엽서 교환 비율 */}
@@ -131,7 +130,7 @@ function StatsPage() {
         isLoading={isRatioLoading}
         onStartDateChange={setRatioStartDate}
         onEndDateChange={setRatioEndDate}
-        onSearch={fetchRatio}
+        onSearch={() => fetchRatio(ratioStartDate, ratioEndDate)}
       />
     </div>
   );
