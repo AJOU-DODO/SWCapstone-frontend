@@ -20,6 +20,7 @@ function AdvertisementPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedAdId, setSelectedAdId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const router = useRouter();
 
@@ -60,7 +61,7 @@ function AdvertisementPage() {
     } else {
       fetchAdvertisement();
     }
-  }, [activeTab, currentPage, includeDeleted]);
+  }, [activeTab, currentPage, includeDeleted, refreshKey]);
 
   const handleRowClick = (id: number) => {
     setSelectedAdId(id);
@@ -127,6 +128,10 @@ function AdvertisementPage() {
         <AdRequestDetailModal 
           ad={selectedPendingAd} 
           onClose={() => setSelectedPendingAd(null)}
+          onRefresh={() => {
+            setSelectedPendingAd(null);
+            setRefreshKey(prev => prev + 1);
+          }}
         />
       )}
 

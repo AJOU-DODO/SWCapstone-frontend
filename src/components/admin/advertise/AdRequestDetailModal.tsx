@@ -8,9 +8,10 @@ import RejectButton from "@/components/admin/advertise/RejectButton";
 interface AdDetailModalProps {
   ad: PendingAdvertisement;
   onClose: () => void;
+  onRefresh: () => void;
 }
 
-export default function AdDetailModal({ ad, onClose }: AdDetailModalProps) {
+export default function AdDetailModal({ ad, onClose, onRefresh }: AdDetailModalProps) {
   return (
     // 배경 레이어 (바깥 클릭 시 닫힘)
     <div 
@@ -86,17 +87,11 @@ export default function AdDetailModal({ ad, onClose }: AdDetailModalProps) {
         <div className="flex justify-end gap-2 border-t border-gray-100 pt-3">
           <RejectButton 
             adId={ad.id}
-            onSuccess={() => {
-              onClose();
-              window.location.reload();
-            }}
+            onSuccess={() => onRefresh()}
           />
           <ApproveButton 
             adId={ad.id} 
-            onSuccess={() => {
-              onClose();
-              window.location.reload();
-            }}
+            onSuccess={() => onRefresh()}
           />
         </div>
       </div>
