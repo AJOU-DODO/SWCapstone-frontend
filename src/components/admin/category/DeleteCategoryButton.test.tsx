@@ -9,11 +9,15 @@ vi.mock("@/lib/adminApi/category", () => ({
 }));
 
 const mockRefresh = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    refresh: mockRefresh,
-  }),
-}));
+vi.mock("next/navigation", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("next/navigation")>();
+  return {
+    ...actual,
+    useRouter: () => ({
+      refresh: mockRefresh,
+    }),
+  };
+});
 
 describe("DeleteCategoryButton 전체 로직 및 이벤트 전파 정밀 테스트", () => {
   const mockCategory: Category = {
@@ -26,6 +30,7 @@ describe("DeleteCategoryButton 전체 로직 및 이벤트 전파 정밀 테스�
   };
 
   beforeEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllMocks();
   });
 
@@ -159,13 +164,10 @@ describe("DeleteCategoryButton 전체 로직 및 이벤트 전파 정밀 테스�
     fireEvent.click(screen.getByRole("button", { name: "삭제" }));
     fireEvent.click(screen.getByRole("button", { name: "확인 및 삭제" }));
 
-    // API가 정확한 인자로 찔렸는지 검증
     await waitFor(() => {
       expect(deleteCategory).toHaveBeenCalledWith(42);
+      expect(mockRefresh).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText("카테고리 삭제 확인")).not.toBeInTheDocument();
     });
-
-    // 화면 동기화 인터랙션 흐름 최종 확인
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText("카테고리 삭제 확인")).not.toBeInTheDocument();
   });
 });

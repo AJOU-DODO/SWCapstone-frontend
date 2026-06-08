@@ -3,7 +3,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function NoticeTabs() {
+export default function NoticeTab() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
