@@ -1,4 +1,5 @@
 import type { AdNest, AdStatistics } from "@/types/indexAdvertiser";
+import { formatDate } from "@/utils/formatters";
 
 interface Props {
   nest: AdNest;
@@ -9,7 +10,16 @@ export default function AdStatisticsCard({ nest, stats }: Props) {
   return (
     <div className="bg-white rounded-xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-3">
-        <p className="font-semibold text-gray-800">{nest.title}</p>
+        <div className="flex flex-col gap-1">
+          <p className="font-semibold text-gray-800">
+            {stats?.title ?? nest.title}
+          </p>
+          {stats?.expiredAt && (
+            <p className="text-xs text-gray-400">
+              만료일: {formatDate(stats.expiredAt)}
+            </p>
+          )}
+        </div>
         <span className="text-xs px-2.5 py-1 rounded-full bg-green-100 text-green-700 font-medium">
           게시 중
         </span>
