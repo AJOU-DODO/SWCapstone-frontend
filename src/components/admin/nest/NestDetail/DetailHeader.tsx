@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { NestDetailHeader } from '@/types/indexAdmin';
-import { useReportActions } from "@/hooks/admin/useReportActions";
+import { useReportActions } from "@/lib/hooks/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
 import DeleteModal from "@/components/admin/nest/DeleteModal";
 

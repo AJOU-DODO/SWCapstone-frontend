@@ -5,7 +5,7 @@ import Image from "next/image";
 
 import { ThumbsUp, AlertTriangle, ShieldCheck, Trash2, CornerDownRight } from "lucide-react";
 import { NestComment } from '@/types/indexAdmin';
-import { useReportActions } from "@/hooks/admin/useReportActions";
+import { useReportActions } from "@/lib/hooks/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
 import DeleteModal from "@/components/admin/nest/DeleteModal";
 

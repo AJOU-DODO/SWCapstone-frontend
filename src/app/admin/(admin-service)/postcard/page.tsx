@@ -13,7 +13,7 @@ import PostcardGrid from '@/components/admin/postcard/PostcardGrid';
 import PostcardSkeleton from '@/components/admin/postcard/PostcardSkeleton';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label";
-import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
+import { useUpdateQuery } from "@/lib/hooks/useUpdateQuery";
 
 //정렬 옵션
 const sortOptions = [

@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 
 import { NestList, ReportedNestList, ReportedCommentList } from '@/types/indexAdmin';
 import { getNestsAdmin, getReportedNests, getReportedComments } from '@/lib/adminApi/nest';
-import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
+import { useUpdateQuery } from "@/lib/hooks/useUpdateQuery";
 
 //전체 둥지 정렬 옵션
 const nestSortOptions = [

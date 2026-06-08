@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 import { PostcardList } from "@/types/indexAdmin";
-import { useReportActions } from "@/hooks/admin/useReportActions";
+import { useReportActions } from "@/lib/hooks/useReportActions";
 import RejectModal from "@/components/admin/nest/RejectModal";
 import DeleteModal from "@/components/admin/nest/DeleteModal";
 import { getReportDetail } from '@/lib/adminApi/nest';
