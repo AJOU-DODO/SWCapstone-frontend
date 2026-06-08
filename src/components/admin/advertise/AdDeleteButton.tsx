@@ -13,7 +13,7 @@ interface ConfirmModalProps {
   message: string;
 }
 
-export default function DeleteModal({ nestId,  isOpen,  onClose,  onSuccess, title,  message }: ConfirmModalProps) {
+export default function AdDeleteButton({ nestId,  isOpen,  onClose,  onSuccess, title,  message }: ConfirmModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   if (!isOpen) return null;
 
