@@ -65,3 +65,23 @@ export const getCategories = async () => {
   const { data } = await api.get("/api/v1/categories");
   return data;
 };
+
+// 이미지 업로드용 URL 발급
+export const getPresignedUrls = async (fileNames: string[]) => {
+  const { data } = await api.post(
+    "/api/v1/files/presigned-url/bulk",
+    fileNames,
+  );
+  return data;
+};
+
+// 이미지 S3에 업로드
+export const uploadImageToS3 = async (presignedUrl: string, file: File) => {
+  await fetch(presignedUrl, {
+    method: "PUT",
+    body: file,
+    headers: {
+      "Content-Type": file.type,
+    },
+  });
+};

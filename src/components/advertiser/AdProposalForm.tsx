@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getCategories } from "@/lib/apiAdvertiser";
+import {
+  getCategories,
+  getPresignedUrls,
+  uploadImageToS3,
+} from "@/lib/apiAdvertiser";
 import MapPicker from "./MapPicker";
+import { X, ImagePlus } from "lucide-react";
+import Image from "next/image";
 
 interface Category {
   id: number;
@@ -36,7 +42,13 @@ export default function AdProposalForm({
   onSubmit,
 }: Props) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [categories, setCategories] = useState<Category[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
   const [form, setForm] = useState<AdProposalFormData>({
     title: initialData?.title ?? "",
     content: initialData?.content ?? "",
@@ -46,6 +58,12 @@ export default function AdProposalForm({
     imageUrls: initialData?.imageUrls ?? [""],
     categoryIds: initialData?.categoryIds ?? [],
   });
+
+  useEffect(() => {
+    if (initialData?.imageUrls && initialData.imageUrls.length > 0) {
+      setPreviews(initialData.imageUrls);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -59,6 +77,16 @@ export default function AdProposalForm({
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      previews.forEach((preview) => {
+        if (preview.startsWith("blob:")) {
+          URL.revokeObjectURL(preview);
+        }
+      });
+    };
+  }, [previews]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -66,23 +94,28 @@ export default function AdProposalForm({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUrlChange = (index: number, value: string) => {
-    setForm((prev) => {
-      const newUrls = [...prev.imageUrls];
-      newUrls[index] = value;
-      return { ...prev, imageUrls: newUrls };
-    });
-  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files ?? []);
+    if (selected.length === 0) return;
 
-  const addImageUrl = () => {
-    setForm((prev) => ({ ...prev, imageUrls: [...prev.imageUrls, ""] }));
-  };
-
-  const removeImageUrl = (index: number) => {
-    setForm((prev) => ({
+    setFiles((prev) => [...prev, ...selected]);
+    setPreviews((prev) => [
       ...prev,
-      imageUrls: prev.imageUrls.filter((_, i) => i !== index),
-    }));
+      ...selected.map((file) => URL.createObjectURL(file)),
+    ]);
+
+    // input 초기화 (같은 파일 재선택 가능하도록)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const removeFile = (index: number) => {
+    if (previews[index].startsWith("blob:")) {
+      URL.revokeObjectURL(previews[index]);
+      setFiles((prev) => prev.filter((_, i) => i !== index));
+    }
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const toggleCategory = (id: number) => {
@@ -93,6 +126,44 @@ export default function AdProposalForm({
         : [...prev.categoryIds, id],
     }));
   };
+
+  const handleSubmit = async () => {
+    setIsUploading(true);
+    try {
+      let imageUrls: string[] = [];
+
+      // 기존 S3 URL 유지 + 새 파일 업로드
+      const existingUrls = previews.filter((p) => !p.startsWith("blob:"));
+
+      if (files.length > 0) {
+        const fileNames = files.map(
+          (file, i) => `ad_${Date.now()}_${i}.${file.name.split(".").pop()}`,
+        );
+        const presignedData = await getPresignedUrls(fileNames);
+
+        await Promise.all(
+          presignedData.data.map((item: { presignedUrl: string }, i: number) =>
+            uploadImageToS3(item.presignedUrl, files[i]),
+          ),
+        );
+
+        const newUrls = presignedData.data.map(
+          (item: { fileUrl: string }) => item.fileUrl,
+        );
+        imageUrls = [...existingUrls, ...newUrls];
+      } else {
+        imageUrls = existingUrls;
+      }
+
+      onSubmit({ ...form, imageUrls });
+    } catch (error) {
+      console.error("이미지 업로드 실패:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const isPending = isSubmitting || isUploading;
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm flex flex-col gap-5">
@@ -188,37 +259,51 @@ export default function AdProposalForm({
         </div>
       </div>
 
-      {/* 이미지 URL */}
+      {/* 이미지 업로드 */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">이미지 URL</label>
-        <div className="flex flex-col gap-2">
-          {form.imageUrls.map((url, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => handleImageUrlChange(index, e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#538752]/30"
+        <label className="text-sm font-medium text-gray-700">이미지</label>
+        <div className="flex flex-wrap gap-2">
+          {/* 미리보기 */}
+          {previews.map((preview, index) => (
+            <div
+              key={index}
+              className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200"
+            >
+              <Image
+                src={preview}
+                alt={`미리보기 ${index + 1}`}
+                fill
+                className="object-cover"
+                unoptimized={preview.startsWith("blob:")}
               />
-              {form.imageUrls.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeImageUrl(index)}
-                  className="text-red-400 hover:text-red-600 text-sm transition-colors"
-                >
-                  삭제
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => removeFile(index)}
+                className="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
+              >
+                <X className="w-3 h-3 text-white" />
+              </button>
             </div>
           ))}
+
+          {/* 파일 추가 버튼 */}
           <button
             type="button"
-            onClick={addImageUrl}
-            className="text-[#538752] text-sm hover:underline text-left"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-1 hover:border-[#538752] hover:bg-gray-50 transition-colors"
           >
-            + 이미지 URL 추가
+            <ImagePlus className="w-5 h-5 text-gray-400" />
+            <span className="text-[10px] text-gray-400">추가</span>
           </button>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
       </div>
 
@@ -230,18 +315,18 @@ export default function AdProposalForm({
         <button
           type="button"
           onClick={() => router.back()}
-          disabled={isSubmitting}
+          disabled={isPending}
           className="flex-1 h-11 rounded-lg border-2 border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           취소
         </button>
         <button
           type="button"
-          onClick={() => onSubmit(form)}
-          disabled={isSubmitting}
+          onClick={handleSubmit}
+          disabled={isPending}
           className="flex-1 h-11 rounded-lg bg-[#538752] text-white text-sm font-semibold hover:bg-[#2B6340] transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? "처리 중..." : submitLabel}
+          {isPending ? "처리 중..." : submitLabel}
         </button>
       </div>
     </div>
