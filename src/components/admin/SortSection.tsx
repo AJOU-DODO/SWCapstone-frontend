@@ -1,6 +1,6 @@
 "use client"
 
-import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
+import { useUpdateQuery } from "@/lib/hooks/useUpdateQuery";
 import SortFilterGroup from "@/components/admin/SortFilterGroup";
 
 export interface SortOption {

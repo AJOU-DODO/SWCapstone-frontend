@@ -1,6 +1,6 @@
 "use client";
 
-import { useUpdateQuery } from "@/hooks/admin/useUpdateQuery";
+import { useUpdateQuery } from "@/lib/hooks/useUpdateQuery";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
