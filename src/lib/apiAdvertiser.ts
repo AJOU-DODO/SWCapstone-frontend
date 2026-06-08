@@ -59,3 +59,9 @@ export const getAdStatistics = async (nestId: number) => {
   );
   return data;
 };
+
+// 카테고리 목록 조회
+export const getCategories = async () => {
+  const { data } = await api.get("/api/v1/categories");
+  return data;
+};
