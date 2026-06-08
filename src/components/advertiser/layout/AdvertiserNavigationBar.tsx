@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { name: "대시보드", path: "/advertiser" },
   { name: "광고 신청", path: "/advertiser/proposals/new" },
-  { name: "신청 내역", path: "/advertiser/proposals" },
-  { name: "성과 통계", path: "/advertiser/statistics" },
 ];
 
 export default function AdvertiserNavigationBar() {
