@@ -4,7 +4,7 @@ import InquiryTabButton from "./InquiryTabButton";
 
 // Next.js 내비게이션 모킹 감방 구축
 const mockPush = vi.fn();
-let mockGetParam = vi.fn();
+const mockGetParam = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
