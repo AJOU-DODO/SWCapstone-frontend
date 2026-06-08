@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 // Next.js 내비게이션 훅 모킹
 const mockPush = vi.fn();
-let mockGetParam = vi.fn();
+const mockGetParam = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
