@@ -60,7 +60,7 @@ describe('DeleteButton 공지사항 삭제 컴포넌트 단위 테스트', () =>
     fireEvent.click(cancelButton);
 
     // 모달이 사라졌는지 확인
-    expect(screen.queryByText('정raw 삭제하시겠습니까?')).not.toBeInTheDocument();
+    expect(screen.queryByText('정말 삭제하시겠습니까?')).not.toBeInTheDocument();
   });
 
   // ══════════════════════════════════════════════════════════════
