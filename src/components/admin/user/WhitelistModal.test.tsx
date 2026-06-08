@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import WhitelistModal from "./WhitelistModal";
 import { getWhitelists, deleteWhitelist } from "@/lib/adminApi/user";
 
-// 1. 화이트리스트 관련 API 레이어 전원 모킹
+// 1. 화이트리스트 관련 API 레이어 전원 목킹
 vi.mock("@/lib/adminApi/user", () => ({
   getWhitelists: vi.fn(),
   deleteWhitelist: vi.fn(),
@@ -38,34 +38,31 @@ describe("WhitelistModal 메인 데이터 라이프사이클 및 하위 모달 �
   };
 
   beforeEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllMocks();
   });
-
 
   // ══════════════════════════════════════════════════════════════
   // TEST 1: [데이터 로드] 마운트 시 비동기 목록 패칭 및 바인딩
   // ══════════════════════════════════════════════════════════════
   it("컴포넌트가 열리면 자동으로 화이트리스트 조회를 요청하고 획득한 데이터를 목록에 뿌려야 한다", async () => {
-    vi.mocked(getWhitelists).mockResolvedValueOnce(mockData as any);
+    vi.mocked(getWhitelists).mockResolvedValue(mockData as any);
 
     render(<WhitelistModal {...defaultProps} />);
 
-    // 1. useEffect가 백엔드를 올바르게 호출했는지 검증
     expect(getWhitelists).toHaveBeenCalledTimes(1);
 
-    // 2. 받아온 목 데이터 정보가 화면에 도메인 가공을 거쳐 안착했는지 추적
     await waitFor(() => {
       expect(screen.getByText("user1@test.com")).toBeInTheDocument();
       expect(screen.getByText("user2@test.com")).toBeInTheDocument();
     });
   });
 
-
   // ══════════════════════════════════════════════════════════════
   // TEST 2: [예외 분기 플레이스홀더] 데이터가 없을 때 빈 화면 방어
   // ══════════════════════════════════════════════════════════════
   it("서버로부터 내려온 화이트리스트 배열이 0개일 때는 데이터 테이블 대신 빈 안내 문구를 출력해야 한다", async () => {
-    vi.mocked(getWhitelists).mockResolvedValueOnce({ data: [] } as any);
+    vi.mocked(getWhitelists).mockResolvedValue({ data: [] } as any);
 
     render(<WhitelistModal {...defaultProps} />);
 
@@ -75,21 +72,22 @@ describe("WhitelistModal 메인 데이터 라이프사이클 및 하위 모달 �
     expect(screen.queryByText("번호")).not.toBeInTheDocument();
   });
 
-
   // ══════════════════════════════════════════════════════════════
-  // TEST 3: [하위 연동 락: 삭제] DeleteConfirmModal 트리거 연쇄 반응
+  // TEST 3: [교정 완료] 안심하고 무한 반복 돌려도 성공하는 결정론적 테스트
   // ══════════════════════════════════════════════════════════════
   it("특정 행의 삭제 버튼을 누르면 삭제 확인 팝업이 연결되어 노출되고, 최종 확정 시 API를 찔러야 한다", async () => {
+    // 확실하게 데이터셋이 박히도록 엄격하게 목 바인딩
     vi.mocked(getWhitelists).mockResolvedValue(mockData as any);
-    vi.mocked(deleteWhitelist).mockResolvedValueOnce({} as any);
+    vi.mocked(deleteWhitelist).mockResolvedValue({ success: true } as any);
 
     render(<WhitelistModal {...defaultProps} />);
 
-    // 데이터가 뿌려질 때까지 대기 후 1번 유저의 삭제 버튼 타격
     await waitFor(() => {
-      const deleteButtons = screen.getAllByRole("button", { name: "삭제" });
-      fireEvent.click(deleteButtons[0]); // 첫 번째 인덱스(id: 1) 타격
+      expect(screen.queryByText("user1@test.com")).toBeInTheDocument();
     });
+
+    const deleteButtons = screen.getAllByRole("button", { name: "삭제" });
+    fireEvent.click(deleteButtons[0]);
 
     // 1. 하위 DeleteConfirmModal이 열렸는지 감시
     expect(screen.getByTestId("mock-delete-modal")).toBeInTheDocument();
@@ -98,25 +96,23 @@ describe("WhitelistModal 메인 데이터 라이프사이클 및 하위 모달 �
     fireEvent.click(screen.getByRole("button", { name: "목-확인" }));
 
     // 3. 부모 상태에 걸려있던 id: 1을 완벽하게 인식해서 API 레이어로 쏘았는지 대조
-    expect(deleteWhitelist).toHaveBeenCalledWith(1);
+    await waitFor(() => {
+      expect(deleteWhitelist).toHaveBeenCalledWith(1);
+    });
   });
-
 
   // ══════════════════════════════════════════════════════════════
   // TEST 4: [하위 연동 락: 등록] + 버튼 클릭 시 PostWhitelistModal 마운트
   // ══════════════════════════════════════════════════════════════
   it("우하단 플러스(+) 단추를 누르면 이메일을 추가할 수 있는 PostWhitelistModal이 화면에 나타나야 한다", async () => {
-    vi.mocked(getWhitelists).mockResolvedValueOnce({ data: [] } as any);
+    vi.mocked(getWhitelists).mockResolvedValue({ data: [] } as any);
     render(<WhitelistModal {...defaultProps} />);
 
-    // 초기에는 등록 창이 열려있지 않아야 함
     expect(screen.queryByTestId("mock-post-modal")).not.toBeInTheDocument();
 
-    // 플로팅 플러스 버튼 타격
     const plusButton = screen.getByRole("button", { name: "+" });
     fireEvent.click(plusButton);
 
-    // 상태값이 동기화되어 하위 모달 인터페이스가 트리거 되었는지 검증
     expect(screen.getByTestId("mock-post-modal")).toBeInTheDocument();
   });
 });
