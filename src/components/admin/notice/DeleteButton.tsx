@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { deleteNotice } from '@/lib/adminApi/notice';
 
-export default function PublishButton({ id }: { id: number }) {
+export default function DeleteButton({ id }: { id: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
