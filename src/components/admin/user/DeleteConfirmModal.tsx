@@ -7,7 +7,7 @@ interface DeleteConfirmModalProps {
 }
 
 export default function DeleteConfirmModal({ isOpen, onClose, onConfirm }: DeleteConfirmModalProps) {
-  // 안전장치: isOpen이 false면 아무것도 렌더링하지 않음
+
   if (!isOpen) return null;
 
   return (
