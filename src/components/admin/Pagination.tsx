@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  Pagination,
+  Pagination as ShadcnPagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
@@ -17,7 +17,7 @@ interface PaginationProps {
   onPageChange?: (pageNumber: number) => void;
 }
 
-export default function Paginaition({ totalPages, currentPage: modalCurrentPage, onPageChange }: PaginationProps) {
+export default function Pagination({ totalPages, currentPage: modalCurrentPage, onPageChange }: PaginationProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const currentPage = modalCurrentPage ?? (Number(searchParams.get("page")) || 1)
@@ -48,7 +48,7 @@ export default function Paginaition({ totalPages, currentPage: modalCurrentPage,
   };
 
   return (
-    <Pagination>
+    <ShadcnPagination>
       <PaginationContent>
         {/* 이전 페이지 버튼 */}
         <PaginationItem>
@@ -81,6 +81,6 @@ export default function Paginaition({ totalPages, currentPage: modalCurrentPage,
           />
         </PaginationItem>
       </PaginationContent>
-    </Pagination>
+    </ShadcnPagination>
   );
 }
