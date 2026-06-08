@@ -56,6 +56,7 @@ export default function CreateCategoryModal({ isOpen, onClose }: CreateCategoryM
               <input
                 type="text"
                 value={name}
+                disabled={isLoading}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="카테고리 입력"
                 autoFocus
@@ -69,6 +70,7 @@ export default function CreateCategoryModal({ isOpen, onClose }: CreateCategoryM
             <button
               type="button"
               onClick={onClose}
+              disabled={isLoading}
               className="flex-1 py-3 rounded-xl font-bold text-gray-400 hover:bg-gray-50 transition-colors"
             >
               취소

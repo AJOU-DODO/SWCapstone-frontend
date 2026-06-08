@@ -111,7 +111,7 @@ export interface Category {
   name: string;
   sortOrder: number;
   createdAt: string;
-  deletedAt: string;
+  deletedAt: string | null;
   nestCount: number;
 }
 
