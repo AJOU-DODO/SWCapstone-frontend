@@ -37,16 +37,18 @@ export default function UserSanctionModal ({ userId, isOpen, onClose, onConfirm 
 
     try {
       setIsLoading(true);
+
+      const trimmedReason = reason.trim();
       
       const payload = {
         sanctionType: sanctionType,
-        reason: reason.trim(),
+        reason: trimmedReason,
       };
 
       await sanctionUser({ userId, body: payload });
       
       setReason("");
-      onConfirm(reason);
+      onConfirm(trimmedReason);
       onClose();
 
     } catch (error) {

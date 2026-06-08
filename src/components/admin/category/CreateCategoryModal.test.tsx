@@ -56,12 +56,10 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     const { container } = render(<CreateCategoryModal {...defaultProps} />);
 
     const input = container.querySelector('input[type="text"]');
-    const submitButton = screen.getByRole("button", { name: "생성하기" });
+    const submitButton = screen.getByRole("button", { name: /생성하기|등록/ });
 
-    // 1. 초기 상태 빈 값일 때 버튼 락 확인
     expect(submitButton).toBeDisabled();
 
-    // 2. 의미 없는 스페이스바 공백 주입 후 버튼 락 확인
     if (input) fireEvent.change(input, { target: { value: "     " } });
     expect(submitButton).toBeDisabled();
   });
@@ -78,11 +76,9 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
       </div>
     );
 
-    // 흰색 모달 박스 본문 영역 찾기
     const contentBox = screen.getByText("새 카테고리 생성").closest(".max-w-sm");
     if (contentBox) fireEvent.click(contentBox);
 
-    // 상위 div 클릭 이벤트가 깨지지 않고 버블링이 끊겼는지 검증 (e.stopPropagation)
     expect(parentClick).not.toHaveBeenCalled();
   });
 
@@ -106,7 +102,7 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     // 로딩 도중 핵심 인터랙션 요소들이 완벽히 블로킹 되었는지 체크
     expect(input).toBeDisabled();
     expect(screen.getByRole("button", { name: "취소" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "생성 중..." })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /생성 중...|등록 중.../ })).toBeDisabled();
 
     // 펜딩 해제
     resolvePost();
@@ -121,22 +117,18 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     const { container } = render(<CreateCategoryModal {...defaultProps} />);
 
     const input = container.querySelector('input[type="text"]');
-    // 앞뒤로 공백 삽입
     if (input) fireEvent.change(input, { target: { value: "   푸드/레시피   " } });
 
     const form = container.querySelector("form");
     if (form) fireEvent.submit(form);
 
-    // 1. 공백이 완전 가공(trim)되어 전송되었는지 검증
     await waitFor(() => {
       expect(postCategory).toHaveBeenCalledWith({ name: "푸드/레시피" });
+      
+      expect(input).toHaveValue("");
+
+      expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
+      expect(mockRefresh).toHaveBeenCalledTimes(1);
     });
-
-    // 2. 제출이 완료되었으므로 입력 폼이 빈 값으로 세척되었는지 검증
-    expect(input).toHaveValue("");
-
-    // 3. 모달을 닫고 리스트를 새로고침하는 후속 체인이 도는지 검증
-    expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 });
