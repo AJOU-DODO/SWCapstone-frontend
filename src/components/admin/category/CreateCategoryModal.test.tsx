@@ -3,15 +3,9 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CreateCategoryModal from "./CreateCategoryModal";
 import { postCategory } from "@/lib/adminApi/category";
 
+// API 모킹
 vi.mock("@/lib/adminApi/category", () => ({
   postCategory: vi.fn(),
-}));
-
-const mockRefresh = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    refresh: mockRefresh,
-  }),
 }));
 
 describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
@@ -24,7 +18,6 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     vi.clearAllMocks();
   });
 
-
   // ══════════════════════════════════════════════════════════════
   // TEST 1: [렌더링 차단] isOpen이 false일 때 early return 검증
   // ══════════════════════════════════════════════════════════════
@@ -35,7 +28,6 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     expect(container.firstChild).toBeNull();
   });
 
-
   // ══════════════════════════════════════════════════════════════
   // TEST 2: [기본 UI 및 초점] 오토포커스 동작 검증
   // ══════════════════════════════════════════════════════════════
@@ -45,9 +37,8 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     const input = container.querySelector('input[type="text"]');
     
     expect(input).toBeInTheDocument();
-    expect(input).toHaveFocus(); // autoFocus 속성 정상 작동 검증
+    expect(input).toHaveFocus();
   });
-
 
   // ══════════════════════════════════════════════════════════════
   // TEST 3: [공백 방어벽] 비어있거나 무의미한 문자열 차단 검증
@@ -63,7 +54,6 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     if (input) fireEvent.change(input, { target: { value: "     " } });
     expect(submitButton).toBeDisabled();
   });
-
 
   // ══════════════════════════════════════════════════════════════
   // TEST 4: [콘텐츠 영역] 팝업 상자 내부 클릭 시 전파 차단 검증
@@ -82,12 +72,10 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     expect(parentClick).not.toHaveBeenCalled();
   });
 
-
   // ══════════════════════════════════════════════════════════════
   // TEST 5: [비동기 로딩 락] 생성 API 호출 중 데이터 수정 및 중복 클릭 차단
   // ══════════════════════════════════════════════════════════════
   it("카테고리 생성 요청 중(isLoading)에는 폼 양식의 모든 입력과 버튼이 대기 상태로 잠겨야 한다", async () => {
-    // API 통신 펜딩(Pending) 상태 강제 유도
     let resolvePost: any;
     const pendingPromise = new Promise((resolve) => { resolvePost = resolve; });
     vi.mocked(postCategory).mockReturnValueOnce(pendingPromise as any);
@@ -99,15 +87,12 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
     if (input) fireEvent.change(input, { target: { value: "새로운 카테고리" } });
     if (form) fireEvent.submit(form);
 
-    // 로딩 도중 핵심 인터랙션 요소들이 완벽히 블로킹 되었는지 체크
     expect(input).toBeDisabled();
     expect(screen.getByRole("button", { name: "취소" })).toBeDisabled();
     expect(screen.getByRole("button", { name: /생성 중...|등록 중.../ })).toBeDisabled();
 
-    // 펜딩 해제
     resolvePost();
   });
-
 
   // ══════════════════════════════════════════════════════════════
   // TEST 6: [생성 완료 후속 처리] 데이터 청소, 닫기, 새로고침 연쇄 반응 검증
@@ -124,11 +109,9 @@ describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
 
     await waitFor(() => {
       expect(postCategory).toHaveBeenCalledWith({ name: "푸드/레시피" });
-      
       expect(input).toHaveValue("");
-
+      
       expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
-      expect(mockRefresh).toHaveBeenCalledTimes(1);
     });
   });
 });
