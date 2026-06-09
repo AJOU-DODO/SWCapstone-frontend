@@ -77,11 +77,15 @@ export const getPresignedUrls = async (fileNames: string[]) => {
 
 // 이미지 S3에 업로드
 export const uploadImageToS3 = async (presignedUrl: string, file: File) => {
-  await fetch(presignedUrl, {
+  const res = await fetch(presignedUrl, {
     method: "PUT",
     body: file,
     headers: {
       "Content-Type": file.type,
     },
   });
+
+  if (!res.ok) {
+    throw new Error(`이미지 업로드에 실패했습니다. (상태 코드: ${res.status})`);
+  }
 };
