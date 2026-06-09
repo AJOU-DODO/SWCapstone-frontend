@@ -8,7 +8,7 @@ import CreateCategoryModal from '@/components/admin/category/CreateCategoryModal
 
 import { Category, CategoryOrder } from '@/types/indexAdmin';
 import { getCategories, updateCategoryOrder } from '@/lib/adminApi/category';
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { useSearchParams } from 'next/navigation';
 
 import {
@@ -99,7 +99,7 @@ function AdminCategoryPage(){
     })
   );
 
-  const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
     try {
       const data = await getCategories({ includeDeleted, sortBy });
       setCategories(data.data);
@@ -107,11 +107,11 @@ function AdminCategoryPage(){
     } catch (error) {
       console.error('카테고리 목록 로딩 실패:', error);
     }
-  };
+  }, [includeDeleted, sortBy]);
 
   useEffect(() => {
     fetchCategories();
-  }, [searchParams]);
+  }, [fetchCategories]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const draggedCategory = categories.find((c) => c.id === event.active.id);
