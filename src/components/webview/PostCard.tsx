@@ -85,7 +85,7 @@ export default function PostCard({ post, selectNest, index }: PostCardProps) {
           {/* 엽서 아이콘 */}
           {post.hasPostcard && (
             <div className="absolute top-3 left-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
-              <Mail className="w-4 h-4 text-[#D4A853]" />
+              <Mail className="w-4 h-4 text-[#3C5A3E]" />
             </div>
           )}
 
