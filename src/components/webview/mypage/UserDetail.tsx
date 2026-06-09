@@ -4,6 +4,7 @@ import type { UserStatistics, UserDetail} from "@/types/indexMypage";
 import { useState } from "react";
 import Image from 'next/image';
 import ProfileEditModal from '@/components/webview/mypage/ProfileEditModal';
+import { maskEmail } from "@/lib/maskEmail";
 
 interface Props {
   userStats: UserStatistics | undefined;
@@ -59,7 +60,7 @@ export default function UserDetail({ userStats, userDetail, onSave, onCancelEdit
       {/* 유저 정보 */}
       <div className="text-center flex flex-cols items-center justify-between pl-8 pr-8">
         <h2 className="text-xl font-bold text-gray-900">{userDetail?.nickname}</h2>
-        <p className="text-sm text-gray-500">{userDetail?.email}</p>
+        <p className="text-sm text-gray-500">{maskEmail(userDetail?.email ?? "")}</p>
       </div>
       {/* 자기소개 (Bio) */}
         {userDetail?.bio && (
