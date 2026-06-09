@@ -26,6 +26,11 @@ export interface AdProposalFormData {
   categoryIds: number[];
 }
 
+interface ImageItem {
+  url: string;
+  file: File | null;
+}
+
 interface Props {
   initialData?: Partial<AdProposalFormData>;
   isSubmitting: boolean;
@@ -43,12 +48,14 @@ export default function AdProposalForm({
 }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const activeBlobUrls = useRef<string[]>([]);
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [images, setImages] = useState<ImageItem[]>(
+    initialData?.imageUrls?.map((url) => ({ url, file: null })) ?? [],
+  );
+
+  const activeBlobUrls = useRef<Set<string>>(new Set());
 
   const [form, setForm] = useState<AdProposalFormData>({
     title: initialData?.title ?? "",
@@ -59,12 +66,6 @@ export default function AdProposalForm({
     imageUrls: initialData?.imageUrls ?? [""],
     categoryIds: initialData?.categoryIds ?? [],
   });
-
-  useEffect(() => {
-    if (initialData?.imageUrls && initialData.imageUrls.length > 0) {
-      setPreviews(initialData.imageUrls);
-    }
-  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -97,24 +98,25 @@ export default function AdProposalForm({
     const selected = Array.from(e.target.files ?? []);
     if (selected.length === 0) return;
 
-    const newBlobUrls = selected.map((file) => URL.createObjectURL(file));
-    activeBlobUrls.current = [...activeBlobUrls.current, ...newBlobUrls];
+    const newImages = selected.map((file) => {
+      const url = URL.createObjectURL(file);
+      activeBlobUrls.current.add(url);
+      return { url, file };
+    });
 
-    setFiles((prev) => [...prev, ...selected]);
-    setPreviews((prev) => [...prev, ...newBlobUrls]);
+    setImages((prev) => [...prev, ...newImages]);
 
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const removeFile = (index: number) => {
-    const preview = previews[index];
-    if (preview.startsWith("blob:")) {
-      activeBlobUrls.current = activeBlobUrls.current.filter(
-        (url) => url !== preview,
-      );
-      setFiles((prev) => prev.filter((_, i) => i !== index));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+  const removeFile = (index: number) => {
+    const target = images[index];
+    if (target.file) {
+      URL.revokeObjectURL(target.url);
+      activeBlobUrls.current.delete(target.url);
+    }
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const toggleCategory = (id: number) => {
@@ -129,29 +131,32 @@ export default function AdProposalForm({
   const handleSubmit = async () => {
     setIsUploading(true);
     try {
-      let imageUrls: string[] = [];
+      const existingUrls = images
+        .filter((img) => img.file === null)
+        .map((img) => img.url);
 
-      // 기존 S3 URL 유지 + 새 파일 업로드
-      const existingUrls = previews.filter((p) => !p.startsWith("blob:"));
+      const newFiles = images
+        .filter((img) => img.file !== null)
+        .map((img) => img.file as File);
 
-      if (files.length > 0) {
-        const fileNames = files.map(
+      let imageUrls: string[] = [...existingUrls];
+
+      if (newFiles.length > 0) {
+        const fileNames = newFiles.map(
           (file, i) => `ad_${Date.now()}_${i}.${file.name.split(".").pop()}`,
         );
         const presignedData = await getPresignedUrls(fileNames);
 
         await Promise.all(
           presignedData.data.map((item: { presignedUrl: string }, i: number) =>
-            uploadImageToS3(item.presignedUrl, files[i]),
+            uploadImageToS3(item.presignedUrl, newFiles[i]),
           ),
         );
 
         const newUrls = presignedData.data.map(
           (item: { fileUrl: string }) => item.fileUrl,
         );
-        imageUrls = [...existingUrls, ...newUrls];
-      } else {
-        imageUrls = existingUrls;
+        imageUrls = [...imageUrls, ...newUrls];
       }
 
       onSubmit({ ...form, imageUrls });
@@ -263,17 +268,17 @@ export default function AdProposalForm({
         <label className="text-sm font-medium text-gray-700">이미지</label>
         <div className="flex flex-wrap gap-2">
           {/* 미리보기 */}
-          {previews.map((preview, index) => (
+          {images.map((image, index) => (
             <div
               key={index}
               className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200"
             >
               <Image
-                src={preview}
+                src={image.url}
                 alt={`미리보기 ${index + 1}`}
                 fill
                 className="object-cover"
-                unoptimized={preview.startsWith("blob:")}
+                unoptimized={image.file !== null}
               />
               <button
                 type="button"
