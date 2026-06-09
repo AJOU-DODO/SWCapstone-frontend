@@ -1,173 +1,118 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import DeleteCategoryButton from "./DeleteCategoryButton";
-import { deleteCategory } from "@/lib/adminApi/category";
-import { Category } from "@/types/indexAdmin";
+import CreateCategoryModal from "./CreateCategoryModal";
+import { postCategory } from "@/lib/adminApi/category";
 
+// API 모킹
 vi.mock("@/lib/adminApi/category", () => ({
-  deleteCategory: vi.fn(),
+  postCategory: vi.fn(),
 }));
 
-const mockRefresh = vi.fn();
-vi.mock("next/navigation", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("next/navigation")>();
-  return {
-    ...actual,
-    useRouter: () => ({
-      refresh: mockRefresh,
-    }),
-  };
-});
 
-describe("DeleteCategoryButton 전체 로직 및 이벤트 전파 정밀 테스트", () => {
-  const mockCategory: Category = {
-    id: 42,
-    name: "리빙/인테리어",
-    sortOrder: 3,
-    createdAt: "2026-01-01T00:00:00.000Z",
-    deletedAt: null,
-    nestCount: 2,
+describe("CreateCategoryModal 생성 로직 및 컴포넌트 테스트", () => {
+  const defaultProps = {
+    isOpen: true,
+    onClose: vi.fn(),
   };
 
   beforeEach(() => {
-    vi.restoreAllMocks();
     vi.clearAllMocks();
   });
 
+  // ══════════════════════════════════════════════════════════════
+  // TEST 1: [렌더링 차단] isOpen이 false일 때 early return 검증
+  // ══════════════════════════════════════════════════════════════
+  it("isOpen 프롭이 false이면 모달의 그 어떤 요소도 화면에 렌더링되지 않아야 한다", () => {
+    const { container } = render(<CreateCategoryModal {...defaultProps} isOpen={false} />);
+
+    expect(screen.queryByText("새 카테고리 생성")).not.toBeInTheDocument();
+    expect(container.firstChild).toBeNull();
+  });
 
   // ══════════════════════════════════════════════════════════════
-  // TEST 1: [초기 렌더링] 닫힘 상태 기본 UI 확인
+  // TEST 2: [기본 UI 및 초점] 오토포커스 동작 검증
   // ══════════════════════════════════════════════════════════════
-  it("초기 상태에서는 모달이 닫혀있고 트리거 버튼만 노출되어야 한다", () => {
-    render(<DeleteCategoryButton category={mockCategory} />);
+  it("모달이 열리면 입력창이 정상 노출되며 문서의 초점(Focus)이 인풋창에 가 있어야 한다", () => {
+    const { container } = render(<CreateCategoryModal {...defaultProps} />);
+
+    const input = container.querySelector('input[type="text"]');
     
-    expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
-    expect(screen.queryByText("카테고리 삭제 확인")).not.toBeInTheDocument();
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveFocus();
   });
 
+  // ══════════════════════════════════════════════════════════════
+  // TEST 3: [공백 방어벽] 비어있거나 무의미한 문자열 차단 검증
+  // ══════════════════════════════════════════════════════════════
+  it("카테고리 이름에 공백만 입력했거나 빈 값일 경우 생성하기 버튼이 비활성화되어야 한다", () => {
+    const { container } = render(<CreateCategoryModal {...defaultProps} />);
+
+    const input = container.querySelector('input[type="text"]');
+    const submitButton = screen.getByRole("button", { name: /생성하기|등록/ });
+
+    expect(submitButton).toBeDisabled();
+
+    if (input) fireEvent.change(input, { target: { value: "     " } });
+    expect(submitButton).toBeDisabled();
+  });
 
   // ══════════════════════════════════════════════════════════════
-  // TEST 2: [트리거 버튼 클릭] 모달 오픈 및 상위 이벤트 버블링 차단
+  // TEST 4: [콘텐츠 영역] 팝업 상자 내부 클릭 시 전파 차단 검증
   // ══════════════════════════════════════════════════════════════
-  it("삭제 버튼 클릭 시 모달이 열리고 부모 요소로 클릭 이벤트가 전파되지 않는다", () => {
+  it("모달 내부 콘텐츠 박스를 클릭하면 상위 레이어로 이벤트가 전파되지 않는다", () => {
     const parentClick = vi.fn();
     render(
       <div onClick={parentClick}>
-        <DeleteCategoryButton category={mockCategory} />
+        <CreateCategoryModal {...defaultProps} />
       </div>
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "삭제" }));
-
-    // 팝업 생성 및 e.stopPropagation() 방어망 확인
-    expect(screen.getByText("카테고리 삭제 확인")).toBeInTheDocument();
-    expect(parentClick).not.toHaveBeenCalled();
-  });
-
-
-  // ══════════════════════════════════════════════════════════════
-  // TEST 3: [백드롭 클릭] 어두운 배경 터치 시 창 닫힘 및 버블링 차단
-  // ══════════════════════════════════════════════════════════════
-  it("모달 백드롭(어두운 배경) 클릭 시 모달이 닫히고 부모로 이벤트가 전파되지 않는다", () => {
-    const parentClick = vi.fn();
-    render(
-      <div onClick={parentClick}>
-        <DeleteCategoryButton category={mockCategory} />
-      </div>
-    );
-
-    // 모달 열기
-    fireEvent.click(screen.getByRole("button", { name: "삭제" }));
-
-    // 백드롭(가장 바깥 fixed div) 찾아서 클릭 트리거
-    const backdrop = screen.getByText("카테고리 삭제 확인").closest(".fixed");
-    if (backdrop) fireEvent.click(backdrop);
-
-    expect(screen.queryByText("카테고리 삭제 확인")).not.toBeInTheDocument();
-    expect(parentClick).not.toHaveBeenCalled();
-  });
-
-
-  // ══════════════════════════════════════════════════════════════
-  // TEST 4: [콘텐츠 영역 보호] 흰색 팝업 본문 클릭 시 오작동 방지
-  // ══════════════════════════════════════════════════════════════
-  it("모달 내부 콘텐츠 상자를 클릭하면 이벤트 전파가 차단되며 모달이 닫히지 않는다", () => {
-    const parentClick = vi.fn();
-    render(
-      <div onClick={parentClick}>
-        <DeleteCategoryButton category={mockCategory} />
-      </div>
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "삭제" }));
-
-    // 흰색 패널 컨테이너 본문 클릭
-    const contentBox = screen.getByText("카테고리 삭제 확인").parentElement;
+    const contentBox = screen.getByText("새 카테고리 생성").closest(".max-w-sm");
     if (contentBox) fireEvent.click(contentBox);
 
-    // 닫히지 않고 그대로 열려있어야 정상
-    expect(screen.getByText("카테고리 삭제 확인")).toBeInTheDocument();
     expect(parentClick).not.toHaveBeenCalled();
   });
 
-
   // ══════════════════════════════════════════════════════════════
-  // TEST 5: [취소 버튼 클릭] 작업 철회 및 버블링 차단
+  // TEST 5: [비동기 로딩 락] 생성 API 호출 중 데이터 수정 및 중복 클릭 차단
   // ══════════════════════════════════════════════════════════════
-  it("취소 버튼을 클릭하면 모달이 닫히고 부모로 이벤트가 전파되지 않는다", () => {
-    const parentClick = vi.fn();
-    render(
-      <div onClick={parentClick}>
-        <DeleteCategoryButton category={mockCategory} />
-      </div>
-    );
+  it("카테고리 생성 요청 중(isLoading)에는 폼 양식의 모든 입력과 버튼이 대기 상태로 잠겨야 한다", async () => {
+    let resolvePost: any;
+    const pendingPromise = new Promise((resolve) => { resolvePost = resolve; });
+    vi.mocked(postCategory).mockReturnValueOnce(pendingPromise as any);
 
-    fireEvent.click(screen.getByRole("button", { name: "삭제" }));
-    fireEvent.click(screen.getByRole("button", { name: "취소" }));
+    const { container } = render(<CreateCategoryModal {...defaultProps} />);
+    const input = container.querySelector('input[type="text"]');
+    const form = container.querySelector("form");
 
-    expect(screen.queryByText("카테고리 삭제 확인")).not.toBeInTheDocument();
-    expect(parentClick).not.toHaveBeenCalled();
-  });
+    if (input) fireEvent.change(input, { target: { value: "새로운 카테고리" } });
+    if (form) fireEvent.submit(form);
 
-
-  // ══════════════════════════════════════════════════════════════
-  // TEST 6: [비동기 로딩 락] API 통신 중 중복 클릭 차단 제어벽 검증
-  // ══════════════════════════════════════════════════════════════
-  it("삭제 요청 중(isLoading)에는 화면의 모든 관련 버튼들이 비활성화(disabled)되어야 한다", async () => {
-    // API 프로미스를 펜딩(Pending) 상태로 묶어두기
-    let resolveDelete: any;
-    const delayPromise = new Promise((resolve) => { resolveDelete = resolve; });
-    vi.mocked(deleteCategory).mockReturnValueOnce(delayPromise as any);
-
-    render(<DeleteCategoryButton category={mockCategory} />);
-
-    fireEvent.click(screen.getByRole("button", { name: "삭제" }));
-    fireEvent.click(screen.getByRole("button", { name: "확인 및 삭제" }));
-
-    // 로딩 처리 순간 세 종류의 버튼이 전부 락이 걸렸는지 엄격하게 대조
-    expect(screen.getByRole("button", { name: "삭제 중..." })).toBeDisabled();
+    expect(input).toBeDisabled();
     expect(screen.getByRole("button", { name: "취소" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "삭제" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /생성 중...|등록 중.../ })).toBeDisabled();
 
-    // 묶어둔 프로미스 해제
-    resolveDelete();
+    resolvePost();
   });
 
-
   // ══════════════════════════════════════════════════════════════
-  // TEST 7: [성공 사이클 완료] 데이터 반영, 모달 청소 및 라우터 갱신
+  // TEST 6: [생성 완료 후속 처리] 데이터 청소, 닫기, 새로고침 연쇄 반응 검증
   // ══════════════════════════════════════════════════════════════
-  it("삭제가 성공적으로 완료되면 모달이 닫히고 리스트가 새로고침되어야 한다", async () => {
-    vi.mocked(deleteCategory).mockResolvedValueOnce({} as any);
-    render(<DeleteCategoryButton category={mockCategory} />);
+  it("정상 등록 시 양 끝 공백이 잘린 데이터로 API를 호출하고 폼 리셋, 창 닫기, 리스트 갱신이 실행된다", async () => {
+    vi.mocked(postCategory).mockResolvedValueOnce({} as any);
+    const { container } = render(<CreateCategoryModal {...defaultProps} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "삭제" }));
-    fireEvent.click(screen.getByRole("button", { name: "확인 및 삭제" }));
+    const input = container.querySelector('input[type="text"]');
+    if (input) fireEvent.change(input, { target: { value: "   푸드/레시피   " } });
+
+    const form = container.querySelector("form");
+    if (form) fireEvent.submit(form);
 
     await waitFor(() => {
-      expect(deleteCategory).toHaveBeenCalledWith(42);
-      expect(mockRefresh).toHaveBeenCalledTimes(1);
-      expect(screen.queryByText("카테고리 삭제 확인")).not.toBeInTheDocument();
+      expect(postCategory).toHaveBeenCalledWith({ name: "푸드/레시피" });
+      expect(input).toHaveValue("");
+      
+      expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
     });
   });
 });
