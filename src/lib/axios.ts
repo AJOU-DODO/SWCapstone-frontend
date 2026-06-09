@@ -45,6 +45,15 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      const usedToken = originalRequest.headers.Authorization?.replace('Bearer ', '');
+      const currentToken = getCookie('accessToken');
+
+
+      if (currentToken && currentToken !== usedToken) {
+        originalRequest.headers.Authorization = `Bearer ${currentToken}`;
+        return api(originalRequest);
+      }
+
       const refreshToken = getCookie('refreshToken');
       if (!refreshToken) {
         window.location.href = '/admin/login';
