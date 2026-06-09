@@ -33,9 +33,11 @@ import { CSS } from '@dnd-kit/utilities';
 function SortableCategoryCard({
   category,
   isDndEnabled,
+  onRefresh,
 }: {
   category: Category;
   isDndEnabled: boolean;
+  onRefresh: () => void;
 }) {
   const {
     attributes,
@@ -63,7 +65,7 @@ function SortableCategoryCard({
       {...attributes}
       {...listeners}
     >
-      <CategoryCard category={category} />
+      <CategoryCard category={category} onRefresh={onRefresh} />
     </div>
   );
 }
@@ -97,16 +99,17 @@ function AdminCategoryPage(){
     })
   );
 
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories({ includeDeleted, sortBy });
+      setCategories(data.data);
+      setSavedCategories(data.data);
+    } catch (error) {
+      console.error('카테고리 목록 로딩 실패:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories({ includeDeleted, sortBy });
-        setCategories(data.data);
-        setSavedCategories(data.data);
-      } catch (error) {
-        console.error('카테고리 목록 로딩 실패:', error);
-      }
-    };
     fetchCategories();
   }, [searchParams]);
 
@@ -182,6 +185,7 @@ function AdminCategoryPage(){
                   key={category.id}
                   category={category}
                   isDndEnabled={isDndEnabled}
+                  onRefresh={fetchCategories}
                 />
               ))}
             </div>
@@ -232,6 +236,7 @@ function AdminCategoryPage(){
         <CreateCategoryModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          onRefresh={fetchCategories}
         />
       </div>
     </div>

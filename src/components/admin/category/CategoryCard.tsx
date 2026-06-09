@@ -3,17 +3,14 @@
 import { Category, CategoryName } from '@/types/indexAdmin';
 import { updateCategory } from '@/lib/adminApi/category';
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import EditCategoryButton from '@/components/admin/category/EditCategoryButton';
 import DeleteCategoryButton from '@/components/admin/category/DeleteCategoryButton';
 
-export default function CategoryCard({ category }: { category: Category }) {
+export default function CategoryCard({ category, onRefresh }: { category: Category; onRefresh?: () => void; }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(category.name);
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
 
   const isSaveDisabled = editName.trim() === "" || isLoading;
   const isDeleted = category.deletedAt !== null;
@@ -30,7 +27,7 @@ export default function CategoryCard({ category }: { category: Category }) {
 
       const res = await updateCategory(category.id, body);
 
-      router.refresh();
+      onRefresh?.();
       setIsEditing(false);
     } catch (error) {
       console.error(error);
@@ -109,7 +106,7 @@ export default function CategoryCard({ category }: { category: Category }) {
                       setIsEditing(true);
                     }} 
                   />
-                  <DeleteCategoryButton category={category} />
+                  <DeleteCategoryButton category={category} onRefresh={onRefresh} />
                 </>
               )}
             </div>
