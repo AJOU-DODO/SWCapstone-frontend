@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { postCategory } from '@/lib/adminApi/category';
 
 interface CreateCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onRefresh?: () => void;
 }
 
-export default function CreateCategoryModal({ isOpen, onClose }: CreateCategoryModalProps) {
-  const router = useRouter();
+export default function CreateCategoryModal({ isOpen, onClose, onRefresh }: CreateCategoryModalProps) {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,7 +25,7 @@ export default function CreateCategoryModal({ isOpen, onClose }: CreateCategoryM
       
       setName("");
       onClose();
-      router.refresh(); // 리스트 갱신
+      onRefresh?.();
     } catch (error) {
       console.error("카테고리 생성 실패:", error);
     } finally {

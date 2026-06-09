@@ -3,15 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Category } from "@/types/indexAdmin";
 import { deleteCategory } from '@/lib/adminApi/category';
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface DeleteCategoryButtonProps {
   category: Category;
+  onRefresh?: () => void;
 }
 
-export default function DeleteCategoryButton({ category }: DeleteCategoryButtonProps) {
-  const router = useRouter();
+export default function DeleteCategoryButton({ category, onRefresh }: DeleteCategoryButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +22,7 @@ export default function DeleteCategoryButton({ category }: DeleteCategoryButtonP
       await deleteCategory(category.id);
 
       setIsOpen(false);
-      router.refresh();
+      onRefresh?.();
     } catch (error) {
       console.error("삭제 실패:", error);
     } finally {
