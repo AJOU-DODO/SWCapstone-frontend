@@ -43,6 +43,7 @@ export default function AdProposalForm({
 }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const activeBlobUrls = useRef<string[]>([]);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -79,13 +80,11 @@ export default function AdProposalForm({
 
   useEffect(() => {
     return () => {
-      previews.forEach((preview) => {
-        if (preview.startsWith("blob:")) {
-          URL.revokeObjectURL(preview);
-        }
+      activeBlobUrls.current.forEach((url) => {
+        URL.revokeObjectURL(url);
       });
     };
-  }, [previews]);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -98,21 +97,21 @@ export default function AdProposalForm({
     const selected = Array.from(e.target.files ?? []);
     if (selected.length === 0) return;
 
-    setFiles((prev) => [...prev, ...selected]);
-    setPreviews((prev) => [
-      ...prev,
-      ...selected.map((file) => URL.createObjectURL(file)),
-    ]);
+    const newBlobUrls = selected.map((file) => URL.createObjectURL(file));
+    activeBlobUrls.current = [...activeBlobUrls.current, ...newBlobUrls];
 
-    // input 초기화 (같은 파일 재선택 가능하도록)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    setFiles((prev) => [...prev, ...selected]);
+    setPreviews((prev) => [...prev, ...newBlobUrls]);
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const removeFile = (index: number) => {
-    if (previews[index].startsWith("blob:")) {
-      URL.revokeObjectURL(previews[index]);
+    const preview = previews[index];
+    if (preview.startsWith("blob:")) {
+      activeBlobUrls.current = activeBlobUrls.current.filter(
+        (url) => url !== preview,
+      );
       setFiles((prev) => prev.filter((_, i) => i !== index));
     }
     setPreviews((prev) => prev.filter((_, i) => i !== index));
