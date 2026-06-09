@@ -54,6 +54,7 @@ export default function AdProposalForm({
   const [images, setImages] = useState<ImageItem[]>(
     initialData?.imageUrls?.map((url) => ({ url, file: null })) ?? [],
   );
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const activeBlobUrls = useRef<Set<string>>(new Set());
 
@@ -130,38 +131,42 @@ export default function AdProposalForm({
 
   const handleSubmit = async () => {
     setIsUploading(true);
+    setLocalError(null);
     try {
       const existingUrls = images
-        .filter((img) => img.file === null)
+        .filter((img) => !img.file)
         .map((img) => img.url);
-
-      const newFiles = images
-        .filter((img) => img.file !== null)
+      const filesToUpload = images
+        .filter((img) => img.file)
         .map((img) => img.file as File);
 
-      let imageUrls: string[] = [...existingUrls];
+      let imageUrls: string[] = [];
 
-      if (newFiles.length > 0) {
-        const fileNames = newFiles.map(
-          (file, i) => `ad_${Date.now()}_${i}.${file.name.split(".").pop()}`,
+      if (filesToUpload.length > 0) {
+        const fileNames = filesToUpload.map(
+          (file, i) =>
+            `ad_${Date.now()}_${i}.${file.name.split(".").pop() || ""}`,
         );
         const presignedData = await getPresignedUrls(fileNames);
 
         await Promise.all(
           presignedData.data.map((item: { presignedUrl: string }, i: number) =>
-            uploadImageToS3(item.presignedUrl, newFiles[i]),
+            uploadImageToS3(item.presignedUrl, filesToUpload[i]),
           ),
         );
 
         const newUrls = presignedData.data.map(
           (item: { fileUrl: string }) => item.fileUrl,
         );
-        imageUrls = [...imageUrls, ...newUrls];
+        imageUrls = [...existingUrls, ...newUrls];
+      } else {
+        imageUrls = existingUrls;
       }
 
       onSubmit({ ...form, imageUrls });
     } catch (error) {
       console.error("이미지 업로드 실패:", error);
+      setLocalError("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsUploading(false);
     }
@@ -309,6 +314,8 @@ export default function AdProposalForm({
             className="hidden"
           />
         </div>
+        {/* 이미지 업로드 에러 */}
+        {localError && <p className="text-sm text-red-500">{localError}</p>}
       </div>
 
       {/* 에러 메시지 */}
