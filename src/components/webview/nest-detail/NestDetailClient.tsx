@@ -284,6 +284,13 @@ export function NestDetailClient({ nestId }: Props) {
             </h1>
           )}
 
+          {/* 광고 배지 */}
+          {nest.ad && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-black/10 text-[#5C5346] text-[10px] font-bold tracking-wider">
+              AD
+            </span>
+          )}
+
           {/* 본문 */}
           <p className="text-sm text-[#3D3830] leading-relaxed whitespace-pre-wrap">
             {nest.content}
