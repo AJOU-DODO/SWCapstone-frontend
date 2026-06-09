@@ -46,7 +46,7 @@ export default function PostCard({ post, selectNest, index }: PostCardProps) {
         {/* 이미지 영역 */}
         <div className="w-full aspect-video rounded-2xl overflow-hidden relative">
           {/* skeleton */}
-          {!imageLoaded && (
+          {post.thumbnailUrl && !imageLoaded && (
             <div className="absolute inset-0 bg-[#F0EBE0] animate-pulse rounded-2xl" />
           )}
 
