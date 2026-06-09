@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, userEvent, expect } from '@storybook/test';
-import type { UserStatistics, UserDetail as UserDetailType } from "@/types/indexMypage";
+import type { UserDetail as UserDetailType } from "@/types/indexMypage";
 import UserDetail from './UserDetail';
 
 const meta: Meta<typeof UserDetail> = {

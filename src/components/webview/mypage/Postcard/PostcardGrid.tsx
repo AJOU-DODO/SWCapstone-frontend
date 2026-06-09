@@ -1,7 +1,7 @@
 // 엽서 표시 컴포넌트 (3개씩 표시)
 import Image from "next/image";
 import type { MyPostcard } from "@/types/indexMypage";
-import { ImagePlus, Images, Heart } from "lucide-react";
+import { ImagePlus, Heart } from "lucide-react";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import Spinner from "@/components/webview/Spinner";
