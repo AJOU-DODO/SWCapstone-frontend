@@ -57,6 +57,12 @@ export default function PostCard({ post, selectNest, index }: PostCardProps) {
             </div>
           )}
         </div>
+        {/* AD 마크 - 여기에 추가 */}
+        {post.ad && (
+          <div className="absolute top-3 right-3 z-10 px-2 py-0.5 rounded-full bg-black/50 text-white text-[10px] font-bold tracking-wider">
+            AD
+          </div>
+        )}
 
         {/* 카테고리 칩 */}
         {post.categoryNames.length > 0 && (
