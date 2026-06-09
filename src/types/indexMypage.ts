@@ -1,5 +1,4 @@
 //마이페이지를 위한 index
-//추후 index.ts에 합쳐질 예정
 
 //유저 활동 정보
 export interface UserStatistics {
