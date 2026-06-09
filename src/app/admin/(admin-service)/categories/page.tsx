@@ -162,7 +162,7 @@ function AdminCategoryPage(){
 
       <div className='flex flex-row justify-between'>
         <SortSection options={sortOptions} defaultSort='sortOrder' disableToggle={true} />
-        <IncludeDeletedToggle label="삭제된 카테고리 제외"/>
+        <IncludeDeletedToggle label="삭제된 카테고리 제외" trueValue="false" falseValue="true"/>
       </div>
 
       <div className="h-full overflow-y-auto pr-2">
