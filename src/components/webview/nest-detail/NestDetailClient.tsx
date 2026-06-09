@@ -455,7 +455,7 @@ export function NestDetailClient({ nestId }: Props) {
       </div>
 
       {/* 댓글 입력창 - 하단 고정 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#F7F4EC] border-t border-[#E0DDD3] px-4 py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FAF7E4] border-t border-[#E0DDD3] px-4 py-3">
         <div className="flex items-center gap-2 bg-white border border-[#E0DDD3] rounded-2xl px-3.5 py-2">
           <MessageCircle className="w-4 h-4 text-[#B0AC9C] shrink-0" />
           <input
