@@ -298,14 +298,16 @@ export function NestDetailClient({ nestId }: Props) {
                 type="button"
                 onClick={() => reactionMutation.mutate("LIKE")}
                 disabled={reactionMutation.isPending}
-                className={`flex items-center gap-1.5 transition-colors ${
+                className={`flex items-center gap-1.5 transition-colors active:scale-95 ${
                   localReaction === "LIKE"
-                    ? "text-[#5C5346]"
+                    ? "text-[#E8856A]"
                     : "text-[#B0AC9C] hover:text-[#8B8070]"
                 }`}
               >
                 <ThumbsUp
-                  className={`w-5 h-5 ${localReaction === "LIKE" ? "fill-[#5C5346]" : ""}`}
+                  className={`w-5 h-5 transition-transform ${
+                    localReaction === "LIKE" ? "fill-[#E8856A] scale-110" : ""
+                  }`}
                 />
                 <span className="text-xs font-medium">{displayLikeCount}</span>
               </button>
@@ -313,14 +315,18 @@ export function NestDetailClient({ nestId }: Props) {
                 type="button"
                 onClick={() => reactionMutation.mutate("DISLIKE")}
                 disabled={reactionMutation.isPending}
-                className={`flex items-center gap-1.5 transition-colors ${
+                className={`flex items-center gap-1.5 transition-all active:scale-95 ${
                   localReaction === "DISLIKE"
-                    ? "text-red-400"
+                    ? "text-[#6A9FD8]"
                     : "text-[#B0AC9C] hover:text-[#8B8070]"
                 }`}
               >
                 <ThumbsDown
-                  className={`w-5 h-5 ${localReaction === "DISLIKE" ? "fill-red-400" : ""}`}
+                  className={`w-5 h-5 transition-transform ${
+                    localReaction === "DISLIKE"
+                      ? "fill-[#6A9FD8] scale-110"
+                      : ""
+                  }`}
                 />
                 <span className="text-xs font-medium">
                   {displayDislikeCount}
