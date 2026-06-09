@@ -28,7 +28,14 @@ const accessMaxAge = 60 * 30;
 const refreshMaxAge = 60 * 60 * 24 * 7;
 
 // reissue 중복 호출 방지 락
-let refreshPromise: Promise<any> | null = null;
+interface ReissueResponse {
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
+let refreshPromise: Promise<{ data: ReissueResponse }> | null = null;
 
 api.interceptors.response.use(
   (response) => response,
