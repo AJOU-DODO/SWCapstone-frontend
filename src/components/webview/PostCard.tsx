@@ -27,13 +27,14 @@ export default function PostCard({ post, selectNest, index }: PostCardProps) {
     }
   }, [post.id, post.unlocked, router]);
 
-  // staggered animation - index에 따라 딜레이
+  // staggered animation
   useEffect(() => {
+    if (visible) return;
     const timer = setTimeout(() => {
       setVisible(true);
     }, index * 80);
     return () => clearTimeout(timer);
-  }, [index]);
+  }, [index, visible]);
 
   return (
     <div
