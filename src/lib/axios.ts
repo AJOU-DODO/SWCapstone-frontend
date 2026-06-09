@@ -16,7 +16,6 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
-// 모든 요청에 accessToken 자동으로 헤더에 추가
 api.interceptors.request.use((config) => {
   const token = getCookie('accessToken');
   if (token) {
@@ -28,7 +27,9 @@ api.interceptors.request.use((config) => {
 const accessMaxAge = 60 * 30;
 const refreshMaxAge = 60 * 60 * 24 * 7;
 
-// 토큰 만료 시 토큰 갱신 후 재시도
+// reissue 중복 호출 방지 락
+let refreshPromise: Promise<any> | null = null;
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -39,26 +40,29 @@ api.interceptors.response.use(
 
       const refreshToken = getCookie('refreshToken');
       if (!refreshToken) {
-        // 리프레시 토큰도 없으면 로그인 페이지로
         window.location.href = '/admin/login';
         return Promise.reject(error);
       }
 
       try {
-        const { data } = await axios.post(`${BASE_URL}/api/v1/auth/reissue`, {
-          refreshToken,
-        });
+        // 이미 reissue 중이면 같은 Promise 재사용
+        if (!refreshPromise) {
+          refreshPromise = axios
+            .post(`${BASE_URL}/api/v1/auth/reissue`, { refreshToken })
+            .finally(() => {
+              refreshPromise = null;
+            });
+        }
 
+        const { data } = await refreshPromise;
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data.data;
 
-        setCookie('accessToken', newAccessToken, accessMaxAge);       // 30분
-        setCookie('refreshToken', newRefreshToken, refreshMaxAge); // 7일
+        setCookie('accessToken', newAccessToken, accessMaxAge);
+        setCookie('refreshToken', newRefreshToken, refreshMaxAge);
 
-        // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch {
-        // 갱신 실패 시 로그인 페이지로
         window.location.href = '/admin/login';
         return Promise.reject(error);
       }
