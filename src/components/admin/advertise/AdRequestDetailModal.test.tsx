@@ -25,6 +25,8 @@ describe("AdDetailModal 데이터 예외 방어 단위 테스트", () => {
     createdAt: "2026-06-08T11:00:00.000Z",
   };
 
+  const mockOnRefresh = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -39,11 +41,10 @@ describe("AdDetailModal 데이터 예외 방어 단위 테스트", () => {
       imageUrls: ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
     };
 
-    render(<AdDetailModal ad={adWithImages} onClose={vi.fn()} />);
+    render(<AdDetailModal ad={adWithImages} onClose={vi.fn()} onRefresh={mockOnRefresh} />);
 
     expect(screen.getByText("첨부 이미지")).toBeInTheDocument();
     
-    // 승인/반려 버튼과 이미지 2개를 포함해서 총 4개의 엘리먼트가 잡히는지 검증
     const images = screen.getAllByRole("img");
     expect(images).toHaveLength(2);
     expect(images[0]).toHaveAttribute("src", "https://example.com/img1.jpg");
@@ -59,12 +60,10 @@ describe("AdDetailModal 데이터 예외 방어 단위 테스트", () => {
       imageUrls: [], // 이미지가 완전히 없는 상태
     };
 
-    // 렌더링 시 map 연산 오류로 인한 백화현상(Crash)이 발생하지 않는지 방어벽 검증
     expect(() => {
-      render(<AdDetailModal ad={adWithoutImages} onClose={vi.fn()} />);
+      render(<AdDetailModal ad={adWithoutImages} onClose={vi.fn()} onRefresh={mockOnRefresh} />);
     }).not.toThrow();
 
-    // 화면에 '첨부 이미지' 섹션 자체가 그려지지 않았는지 확인
     expect(screen.queryByText("첨부 이미지")).not.toBeInTheDocument();
   });
 });
