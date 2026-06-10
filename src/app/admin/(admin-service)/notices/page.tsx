@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter } from 'next/navigation';
 
-import SearchBar from '@/components/admin/SearchBar';
 import Pagination from '@/components/admin/Pagination';
 import NoticeTable from '@/components/admin/tables/NoticeTable';
 import NoticeTab from '@/components/admin/notice/NoticeTab';
