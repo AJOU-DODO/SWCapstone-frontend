@@ -105,7 +105,7 @@ export default function CategoryClient() {
   const isLoading = isCategoriesLoading || isInterestsLoading;
 
   return (
-    <div className="min-h-screen bg-[#F7F4EC] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7E4] flex flex-col">
       {/* 토스트 */}
       {toast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#5C5346] text-white text-sm font-medium shadow-lg whitespace-nowrap">
@@ -231,7 +231,7 @@ export default function CategoryClient() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-3 bg-[#F7F4EC] border-t border-[#E0DDD3] flex justify-center">
+      <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-3 bg-[#FAF7E4] border-t border-[#E0DDD3] flex justify-center">
         <button
           type="button"
           onClick={handleComplete}
