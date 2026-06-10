@@ -9,6 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+import { Suspense } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 
 interface PaginationProps {
@@ -17,7 +18,7 @@ interface PaginationProps {
   onPageChange?: (pageNumber: number) => void;
 }
 
-export default function Pagination({ totalPages, currentPage: modalCurrentPage, onPageChange }: PaginationProps) {
+function PaginationInner({ totalPages, currentPage: modalCurrentPage, onPageChange }: PaginationProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const currentPage = modalCurrentPage ?? (Number(searchParams.get("page")) || 1)
@@ -82,5 +83,13 @@ export default function Pagination({ totalPages, currentPage: modalCurrentPage, 
         </PaginationItem>
       </PaginationContent>
     </ShadcnPagination>
+  );
+}
+
+export default function Pagination(props: PaginationProps) {
+  return (
+    <Suspense fallback={null}>
+      <PaginationInner {...props} />
+    </Suspense>
   );
 }
