@@ -50,10 +50,7 @@ function NoticeListContent() {
   }, [filterStatus, currentPage]);
 
   return (
-    <div className="grid grid-rows-[auto_auto_1fr_auto_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
-      <div className="justify-between items-center">
-        <SearchBar placeholder='공지사항 검색' /> 
-      </div>
+    <div className="grid grid-rows-[auto_1fr_auto_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
 
       <NoticeTab/>
 

@@ -158,10 +158,7 @@ function AdminCategoryPage(){
   };
 
   return (
-    <div className="grid grid-rows-[auto_auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
-      <div className="justify-between items-center">
-        <SearchBar placeholder='카테고리 검색' />
-      </div>
+    <div className="grid grid-rows-[auto_1fr_auto] p-10 pr-20 gap-8 h-screen overflow-hidden">
 
       <div className='flex flex-row justify-between'>
         <SortSection options={sortOptions} defaultSort='sortOrder' disableToggle={true} />
