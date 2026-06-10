@@ -284,6 +284,13 @@ export function NestDetailClient({ nestId }: Props) {
             </h1>
           )}
 
+          {/* 광고 배지 */}
+          {nest.ad && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-black/10 text-[#5C5346] text-[10px] font-bold tracking-wider">
+              AD
+            </span>
+          )}
+
           {/* 본문 */}
           <p className="text-sm text-[#3D3830] leading-relaxed whitespace-pre-wrap">
             {nest.content}
@@ -298,14 +305,16 @@ export function NestDetailClient({ nestId }: Props) {
                 type="button"
                 onClick={() => reactionMutation.mutate("LIKE")}
                 disabled={reactionMutation.isPending}
-                className={`flex items-center gap-1.5 transition-colors ${
+                className={`flex items-center gap-1.5 transition-colors active:scale-95 ${
                   localReaction === "LIKE"
-                    ? "text-[#5C5346]"
+                    ? "text-[#E8856A]"
                     : "text-[#B0AC9C] hover:text-[#8B8070]"
                 }`}
               >
                 <ThumbsUp
-                  className={`w-5 h-5 ${localReaction === "LIKE" ? "fill-[#5C5346]" : ""}`}
+                  className={`w-5 h-5 transition-transform ${
+                    localReaction === "LIKE" ? "fill-[#E8856A] scale-110" : ""
+                  }`}
                 />
                 <span className="text-xs font-medium">{displayLikeCount}</span>
               </button>
@@ -313,14 +322,18 @@ export function NestDetailClient({ nestId }: Props) {
                 type="button"
                 onClick={() => reactionMutation.mutate("DISLIKE")}
                 disabled={reactionMutation.isPending}
-                className={`flex items-center gap-1.5 transition-colors ${
+                className={`flex items-center gap-1.5 transition-all active:scale-95 ${
                   localReaction === "DISLIKE"
-                    ? "text-red-400"
+                    ? "text-[#6A9FD8]"
                     : "text-[#B0AC9C] hover:text-[#8B8070]"
                 }`}
               >
                 <ThumbsDown
-                  className={`w-5 h-5 ${localReaction === "DISLIKE" ? "fill-red-400" : ""}`}
+                  className={`w-5 h-5 transition-transform ${
+                    localReaction === "DISLIKE"
+                      ? "fill-[#6A9FD8] scale-110"
+                      : ""
+                  }`}
                 />
                 <span className="text-xs font-medium">
                   {displayDislikeCount}
@@ -442,7 +455,7 @@ export function NestDetailClient({ nestId }: Props) {
       </div>
 
       {/* 댓글 입력창 - 하단 고정 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#F7F4EC] border-t border-[#E0DDD3] px-4 py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FAF7E4] border-t border-[#E0DDD3] px-4 py-3">
         <div className="flex items-center gap-2 bg-white border border-[#E0DDD3] rounded-2xl px-3.5 py-2">
           <MessageCircle className="w-4 h-4 text-[#B0AC9C] shrink-0" />
           <input

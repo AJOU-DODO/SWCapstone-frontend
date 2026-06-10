@@ -107,13 +107,17 @@ export function CommentItem({
       <div className={`flex gap-2.5 ${isChild ? "pl-8 pt-2" : ""}`}>
         {/* 프로필 이미지 */}
         <div className="shrink-0 w-8 h-8 rounded-full overflow-hidden bg-[#EDEAE0]">
-          <Image
-            src={comment.profileImageUrl}
-            alt={comment.nickname}
-            width={32}
-            height={32}
-            className="object-cover w-full h-full"
-          />
+          {comment.nickname === "익명" ? (
+            <div className="w-full h-full bg-[#EDEAE0]" />
+          ) : (
+            <Image
+              src={comment.profileImageUrl}
+              alt={comment.nickname}
+              width={32}
+              height={32}
+              className="object-cover w-full h-full"
+            />
+          )}
         </div>
 
         {/* 댓글 내용 */}
