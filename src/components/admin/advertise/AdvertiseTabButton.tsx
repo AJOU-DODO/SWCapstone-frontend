@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from "react";
 
-export default function AdvertiseTabButton() {
+function AdvertiseTabButtonInner(){
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'APPROVED';
@@ -24,5 +25,12 @@ export default function AdvertiseTabButton() {
         승인 요청 광고
       </Button>
     </div>
+  );
+}
+export default function AdvertiseTabButton() {
+  return (
+    <Suspense fallback={null}>
+      <AdvertiseTabButtonInner />
+    </Suspense>
   );
 }

@@ -1,13 +1,12 @@
-// src/components/admin/NoticeTabs.tsx
 "use client";
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function NoticeTab() {
+function NoticeTabInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // 현재 주소창에서 status 값을 읽어옴 (없으면 'ALL'이 기본값)
   const currentStatus = searchParams.get('status') ?? 'ALL';
 
   const tabs = [
@@ -41,4 +40,12 @@ export default function NoticeTab() {
       ))}
     </div>
   );
+}
+
+export default function NoticeTab() {
+  return (
+      <Suspense fallback={null}>
+        <NoticeTabInner />
+      </Suspense>
+    );
 }

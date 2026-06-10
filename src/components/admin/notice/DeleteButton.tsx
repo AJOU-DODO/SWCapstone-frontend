@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { deleteNotice } from '@/lib/adminApi/notice';
 
-export default function DeleteButton({ id }: { id: number }) {
+function DeleteButtonInner({ id }: { id: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -85,5 +85,13 @@ export default function DeleteButton({ id }: { id: number }) {
         </div>
       )}
     </>
+  );
+}
+
+export default function DeleteButton({ id }: { id: number }) {
+  return (
+    <Suspense fallback={null}>
+      <DeleteButtonInner id={id} />
+    </Suspense>
   );
 }

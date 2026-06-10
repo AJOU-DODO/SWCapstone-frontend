@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from "react";
 
-export default function InquiryTabButton() {
+function InquiryTabButtonInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'PENDING';
@@ -24,5 +25,13 @@ export default function InquiryTabButton() {
         처리완료
       </Button>
     </div>
+  );
+}
+
+export default function InquiryTabButton() {
+  return (
+    <Suspense fallback={null}>
+      <InquiryTabButtonInner />
+    </Suspense>
   );
 }

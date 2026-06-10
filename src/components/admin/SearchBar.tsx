@@ -3,13 +3,13 @@
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 
 interface SearchBarProps {
   placeholder?: string; 
 }
 
-export default function SearchBar({ placeholder = "검색어를 입력하세요" }: SearchBarProps) {
+function SearchBarInner({ placeholder = "검색어를 입력하세요" }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,4 +59,12 @@ export default function SearchBar({ placeholder = "검색어를 입력하세요"
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#2B6340]" />
     </div>
   )
+}
+
+export default function SearchBar(props: SearchBarProps) {
+  return (
+      <Suspense fallback={null}>
+        <SearchBarInner {...props} />
+      </Suspense>
+    );
 }

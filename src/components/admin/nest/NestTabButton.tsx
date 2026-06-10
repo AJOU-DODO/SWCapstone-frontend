@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from "react";
 
-export default function NestTabButton() {
+function NestTabButtonInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'all'; // 기본값 'all'
@@ -27,5 +28,13 @@ export default function NestTabButton() {
         신고 댓글
       </Button>
     </div>
+  );
+}
+
+export default function NestTabButton() {
+  return (
+    <Suspense fallback={null}>
+      <NestTabButtonInner />
+    </Suspense>
   );
 }
