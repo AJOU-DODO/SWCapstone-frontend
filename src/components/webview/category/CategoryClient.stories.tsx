@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { userEvent, within, waitFor, expect } from "@storybook/test";
 import { http, HttpResponse } from "msw";
@@ -82,15 +83,17 @@ export const Default: Story = {
 
 export const NoInterests: Story = {
   decorators: [
-    (Story) => (
-      <QueryClientProvider
-        client={
-          new QueryClient({ defaultOptions: { queries: { retry: false } } })
-        }
-      >
-        <Story />
-      </QueryClientProvider>
-    ),
+    (Story) => {
+      const [queryClient] = useState(
+        () =>
+          new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+      );
+      return (
+        <QueryClientProvider client={queryClient}>
+          <Story />
+        </QueryClientProvider>
+      );
+    },
   ],
   parameters: {
     msw: {
@@ -127,15 +130,17 @@ export const NoInterests: Story = {
 
 export const ApiError: Story = {
   decorators: [
-    (Story) => (
-      <QueryClientProvider
-        client={
-          new QueryClient({ defaultOptions: { queries: { retry: false } } })
-        }
-      >
-        <Story />
-      </QueryClientProvider>
-    ),
+    (Story) => {
+      const [queryClient] = useState(
+        () =>
+          new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+      );
+      return (
+        <QueryClientProvider client={queryClient}>
+          <Story />
+        </QueryClientProvider>
+      );
+    },
   ],
   parameters: {
     msw: {
@@ -201,7 +206,7 @@ export const ToggleCategory: Story = {
     await userEvent.click(canvas.getAllByText("맛집")[0]);
 
     await waitFor(() => {
-      expect(canvas.getByText("선택된 카테고리")).toBeInTheDocument();
+      expect(canvas.getAllByText("맛집")).toHaveLength(2);
     });
   },
 };
