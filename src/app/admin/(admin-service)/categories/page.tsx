@@ -1,6 +1,5 @@
 "use client";
 
-import SearchBar from '@/components/admin/SearchBar';
 import CategoryCard from '@/components/admin/category/CategoryCard';
 import SortSection from '@/components/admin/SortSection';
 import IncludeDeletedToggle from '@/components/admin/IncludeDeletedToggle';
